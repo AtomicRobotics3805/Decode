@@ -38,6 +38,11 @@ object Spindexer : Subsystem {
         posPid(0.001, 0.0, 0.0)
     }
 
+    fun resetEncoder() {
+        encoder.currentPosition = 0.0
+        controller.goal = encoder.state
+    }
+
     val advanceToGreen : Command get() {
         var selectedIndex = -1
         var currentIndex = 0
