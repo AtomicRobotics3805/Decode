@@ -13,6 +13,7 @@ import dev.nextftc.core.units.rad
 import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.hardware.controllable.RunToPosition
 import dev.nextftc.hardware.impl.MotorEx
+import org.firstinspires.ftc.teamcode.DecoupledMotorEx
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -30,8 +31,7 @@ object Spindexer : Subsystem {
 
     val ticksPerRev = 1425.1
 
-    val motor = MotorEx("motor_e0").zeroed()
-    val encoder = MotorEx("motor_c1").zeroed()
+    val motor = DecoupledMotorEx("motor_e0", "motor_c1").zeroed()
 
     @JvmField
     val controller = controlSystem {
@@ -39,8 +39,8 @@ object Spindexer : Subsystem {
     }
 
     fun resetEncoder() {
-        encoder.currentPosition = 0.0
-        controller.goal = encoder.state
+        motor.currentPosition = 0.0
+        controller.goal = motor.state
     }
 
     val advanceToGreen : Command get() {
@@ -99,7 +99,7 @@ object Spindexer : Subsystem {
 
     val advanceToTravelPosition : Command get() {
         // Find which angle we're closest to (0, 120, or -120 degrees)
-        val currentAngle = ticksToAngleNormalized(encoder.currentPosition)
+        val currentAngle = ticksToAngleNormalized(motor.currentPosition)
         val distToZero = abs(0 - currentAngle)
         val distTo2Pi3 = abs(((2 * PI) / 3) - currentAngle)
         val distToNegative2Pi3 = abs((-(2 * PI) / 3) - currentAngle)
@@ -120,10 +120,10 @@ object Spindexer : Subsystem {
     }
 
     override fun periodic() {
-        val raw = controller.calculate(encoder.state)
+        val raw = controller.calculate(motor.state)
         motor.power = if (raw > 0.25) 0.25 else raw
 
-        ActiveOpMode.telemetry.addData("Raw Encoder", encoder.state.position)
+        ActiveOpMode.telemetry.addData("Raw Encoder", motor.state.position)
         ActiveOpMode.telemetry.addData("Angle", raw)
         ActiveOpMode.telemetry.update()
     }
@@ -143,13 +143,13 @@ object Spindexer : Subsystem {
         return normalized
     }
     private fun calculateTargetTicks(desiredAngle: Double): Double {
-        val difference = desiredAngle - ticksToAngleNormalized(encoder.currentPosition)
+        val difference = desiredAngle - ticksToAngleNormalized(motor.currentPosition)
         return if (difference > 0) {
             // COUNTERCLOCKWISE (probably)
-            angleToTicks(ticksToAngle(encoder.currentPosition) - difference)
+            angleToTicks(ticksToAngle(motor.currentPosition) - difference)
         } else {
             // CLOCKWISE
-            angleToTicks(ticksToAngle(encoder.currentPosition) + difference)
+            angleToTicks(ticksToAngle(motor.currentPosition) + difference)
         }
     }
     //endregion
