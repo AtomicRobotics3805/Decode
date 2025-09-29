@@ -10,13 +10,14 @@ object PusherArm : Subsystem {
 
     val servo = ServoEx("servo_c0")
 
-    val push = SetPosition(servo, 1.0)
-    val retract = SetPosition(servo, 0.65)
+    val up = SetPosition(servo, 1.0)
+    val down = SetPosition(servo, 0.65)
 
-    val pushCommand = SequentialGroup(
-        push,
+    val push = SequentialGroup(
+        up,
         Delay(0.25),
-        retract
+        down,
+        Delay(0.25)
     )
 
 }

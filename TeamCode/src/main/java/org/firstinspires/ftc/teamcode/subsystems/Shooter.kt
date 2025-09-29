@@ -25,21 +25,26 @@ object Shooter : Subsystem {
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
 
-    private val controller = controlSystem {
-        velPid(0.005, 0.0, 0.0)
+    @JvmField
+    val controller = controlSystem {
+        velPid(0.005, 0.0, 0.002)
         basicFF(0.0, 0.0, 0.0)
     }
 
-    val start = InstantCommand {  controller.goal = KineticState(0.0, (5400 / 60.0) * ticksPerRev) }
-    val stop = InstantCommand { controller.goal = KineticState() }
+//    val start = InstantCommand {  controller.goal = KineticState(0.0, (5400 / 60.0) * ticksPerRev) }
+//    val stop = InstantCommand { controller.goal = KineticState() }
 
-//    val start = RunToVelocity(controller, (5400 / 60.0) * ticksPerRev) // (desired RPM / 60) * ticks per rev
-//    val stop = RunToVelocity(controller, 0.0)
+    val start = RunToVelocity(controller, (4000 / 60.0) * ticksPerRev, KineticState(Double.POSITIVE_INFINITY, 500.0, Double.POSITIVE_INFINITY)) // (desired RPM / 60) * ticks per rev
+    val stop = RunToVelocity(controller, 0.0)
+
+    val reverseIntake = RunToVelocity(controller, -((400 / 60.0) * ticksPerRev))
 
     override fun periodic() {
         motor.power = controller.calculate(motor.state)
+
         ActiveOpMode.telemetry.addData("Current velocity:", motor.state.velocity)
         ActiveOpMode.telemetry.addData("Target velocity:", controller.goal.velocity)
+        ActiveOpMode.telemetry.addData("Shooter power", motor.power)
     }
 }
 

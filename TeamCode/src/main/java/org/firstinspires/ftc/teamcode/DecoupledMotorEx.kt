@@ -105,7 +105,7 @@ class DecoupledMotorEx @JvmOverloads constructor(cacheTolerance: Double, motorFa
     fun reversed() = apply { reverse() }
 
     fun zero() {
-        lazy.applyAfterInit { currentPosition = 0.0 }
+        encoderLazy.applyAfterInit { currentPosition = 0.0 }
     }
 
     fun zeroed() = apply { zero() }

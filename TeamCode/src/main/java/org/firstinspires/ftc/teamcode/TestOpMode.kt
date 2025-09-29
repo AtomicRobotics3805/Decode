@@ -4,10 +4,10 @@ import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import dev.nextftc.bindings.button
+import dev.nextftc.control.KineticState
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.core.units.deg
-import dev.nextftc.core.units.rad
 import dev.nextftc.ftc.Gamepads
 import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
@@ -35,11 +35,11 @@ class TestOpMode : NextFTCOpMode() {
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
 
-    private val frontLeftMotor = MotorEx("motor_c0").brakeMode().reversed()
+    private val frontLeftMotor = MotorEx("motor_c1").brakeMode().reversed()
     private val frontRightMotor = MotorEx("motor_c2").brakeMode()
-    private val backLeftMotor = MotorEx("motor_c1").brakeMode().reversed()
+    private val backLeftMotor = MotorEx("motor_c0").brakeMode().reversed()
     private val backRightMotor = MotorEx("motor_c3").brakeMode()
-    private val imu = IMUEx("imu", Direction.LEFT, Direction.UP).zeroed()
+    private val imu = IMUEx("imu", Direction.LEFT, Direction.UP)//.zeroed()
 
     val rightTrigger = button { gamepad1.right_trigger > 0.2 }
     val leftTrigger = button { gamepad1.left_trigger > 0.2 }
@@ -53,28 +53,51 @@ class TestOpMode : NextFTCOpMode() {
 
 
     override fun onStartButtonPressed() {
-        PusherArm.retract()
+        PusherArm.down()
         val driverControlled = MecanumDriverControlled(
             frontLeftMotor,
             frontRightMotor,
             backLeftMotor,
             backRightMotor,
-            Gamepads.gamepad1.leftStickY,
+            -Gamepads.gamepad1.leftStickY,
             Gamepads.gamepad1.leftStickX,
             Gamepads.gamepad1.rightStickX,
             FieldCentric(imu)
         )
         driverControlled()
-        dpadUp.whenBecomesTrue { Spindexer.setAngle(0.rad).invoke() }
-        dpadLeft.whenBecomesTrue { Spindexer.setAngle(120.deg).invoke() }
-        dpadRight.whenBecomesTrue { Spindexer.setAngle((-120).deg).invoke() }
-        dpadDown.whenBecomesTrue { Spindexer.advanceToTravelPosition.invoke() }
+//        dpadUp.whenBecomesTrue { Spindexer.setAngle(0.rad).invoke() }
+//        dpadLeft.whenBecomesTrue { Spindexer.setAngle(120.deg).invoke() }
+//        dpadRight.whenBecomesTrue { Spindexer.setAngle((-120).deg).invoke() }
+
+
+        dpadDown.whenBecomesTrue { Spindexer.enableTravel() }.whenBecomesFalse { Spindexer.disableTravel() }
+        Gamepads.gamepad1.a.whenBecomesTrue { Spindexer.advanceToIntake() }
+
+        Gamepads.gamepad1.dpadLeft.whenBecomesTrue { Spindexer.setAngle((-120).deg).schedule() }
+        Gamepads.gamepad1.dpadUp.whenBecomesTrue { Spindexer.setAngle((0).deg).schedule() }
+        Gamepads.gamepad1.dpadRight.whenBecomesTrue { Spindexer.setAngle((120).deg).schedule() }
+
+        Gamepads.gamepad1.x.whenBecomesTrue { if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
+        Gamepads.gamepad1.b.whenBecomesTrue { if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
+        Gamepads.gamepad1.y.whenBecomesTrue { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY }
+
+//        Gamepads.gamepad1.y.whenBecomesTrue { Spindexer.setAngle((60).deg).schedule() }
+//        Gamepads.gamepad1.b.whenBecomesTrue { Spindexer.setAngle((180).deg).schedule() }
+
         rightTrigger.whenBecomesTrue { Intake.start() }
         rightTrigger.whenBecomesFalse { Intake.stop() }
-        leftTrigger.whenBecomesTrue { Shooter.start() }
-        leftTrigger.whenBecomesFalse { Shooter.stop() }
-        rightBumper.whenBecomesTrue { PusherArm.pushCommand() }
-        leftBumper.whenBecomesTrue { }
-        startButton.whenBecomesTrue { Spindexer.resetEncoder() }
+
+        leftTrigger.whenBecomesTrue { Intake.reverse() }.whenBecomesFalse { Intake.stop() }
+        rightBumper.whenBecomesTrue { Routines.shoot() }
+
+        startButton.whenBecomesTrue { Spindexer.advanceToPurple() }
+        Gamepads.gamepad1.back.whenBecomesTrue { Spindexer.advanceToGreen() }
+
+        Gamepads.gamepad1.leftBumper.whenBecomesTrue { Shooter.reverseIntake() }.whenBecomesFalse { Shooter.stop() }
+    }
+
+    override fun onStop() {
+        Spindexer.controller.goal = KineticState()
+        Shooter.controller.goal = KineticState()
     }
 }
