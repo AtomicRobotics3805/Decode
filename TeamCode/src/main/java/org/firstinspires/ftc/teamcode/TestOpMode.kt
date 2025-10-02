@@ -51,7 +51,6 @@ class TestOpMode : NextFTCOpMode() {
     val rightBumper = button { gamepad1.right_bumper }
     val startButton = button { gamepad1.start }
 
-
     override fun onStartButtonPressed() {
         PusherArm.down()
         val driverControlled = MecanumDriverControlled(
@@ -94,6 +93,7 @@ class TestOpMode : NextFTCOpMode() {
         Gamepads.gamepad1.back.whenBecomesTrue { Spindexer.advanceToGreen() }
 
         Gamepads.gamepad1.leftBumper.whenBecomesTrue { Shooter.reverseIntake() }.whenBecomesFalse { Shooter.stop() }
+        Gamepads.gamepad1.leftStickButton.whenBecomesTrue { Shooter.uncontrolledStart() }.whenBecomesFalse { Shooter.uncontrolledStop() }
     }
 
     override fun onStop() {

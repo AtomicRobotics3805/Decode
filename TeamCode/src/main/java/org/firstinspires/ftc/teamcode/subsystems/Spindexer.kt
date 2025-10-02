@@ -1,20 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.Configurable
-import com.pedropathing.math.MathFunctions.normalizeAngle
-import com.qualcomm.hardware.lynx.commands.core.LynxSetPWMEnableCommand
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
 import dev.nextftc.control.feedback.AngleType
 import dev.nextftc.control.feedback.AngularFeedback
 import dev.nextftc.control.feedback.FeedbackType
 import dev.nextftc.control.feedback.PIDElement
-import dev.nextftc.control.filters.Filter
 import dev.nextftc.core.commands.Command
-import dev.nextftc.core.commands.conditionals.switchCommand
 import dev.nextftc.core.commands.groups.ParallelGroup
 import dev.nextftc.core.commands.groups.SequentialGroup
 import dev.nextftc.core.commands.utility.InstantCommand
@@ -25,12 +19,9 @@ import dev.nextftc.core.units.deg
 import dev.nextftc.core.units.rad
 import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.hardware.controllable.RunToPosition
-import dev.nextftc.hardware.impl.MotorEx
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
 import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.floor
-import kotlin.math.roundToInt
+
 
 @Configurable
 object Spindexer : Subsystem {
@@ -80,8 +71,10 @@ object Spindexer : Subsystem {
         }
 
         feedback(
-            AngularFeedback(AngleType.RADIANS,
-                PIDElement(FeedbackType.POSITION,
+            AngularFeedback(
+                AngleType.RADIANS,
+                PIDElement(
+                    FeedbackType.POSITION,
                     0.35, 0.0, 0.0
                 )
             )
@@ -108,11 +101,11 @@ object Spindexer : Subsystem {
     }
 
     fun setAngle(angle: Angle): Command {
-        return RunToPosition(controller, angle.inRad)
+        return RunToPosition(controller, angle.inRad).requires(this)
     }
 
     val updateAngle: Command get() {
-        return RunToPosition(controller, (currentStatus.angle - if (traveling) 30.deg else 0.deg).inRad)
+        return RunToPosition(controller, (currentStatus.angle - if (traveling) 30.deg else 0.deg).inRad).requires(this)
     }
 
     val advanceToPurple : Command get() {
@@ -129,14 +122,16 @@ object Spindexer : Subsystem {
         return if (selectedIndex == -1) {
             NullCommand()
         } else {
-            ParallelGroup(
-                updateAngle,
-                InstantCommand { currentStatus = when (selectedIndex) {
-                    0 -> CurrentSpindexerStatus.TOP_0
-                    1 -> CurrentSpindexerStatus.TOP_1
-                    2 -> CurrentSpindexerStatus.TOP_2
-                    else -> currentStatus
-                } }
+            SequentialGroup(
+                InstantCommand {
+                    currentStatus = when (selectedIndex) {
+                        0 -> CurrentSpindexerStatus.TOP_0
+                        1 -> CurrentSpindexerStatus.TOP_1
+                        2 -> CurrentSpindexerStatus.TOP_2
+                        else -> currentStatus
+                    }
+                },
+                updateAngle
             )
         }
     }

@@ -12,10 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 object Routines {
     val shoot
         get() = SequentialGroup(
-                ParallelRaceGroup(
-                    Shooter.start,
-                    Delay(0.5)
-                ),
+            Shooter.start.withDeadline(Delay(2.0)),
             PusherArm.push,
             Shooter.stop,
 //            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY }
