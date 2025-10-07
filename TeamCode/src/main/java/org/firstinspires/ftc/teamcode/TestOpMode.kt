@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -8,6 +9,7 @@ import dev.nextftc.control.KineticState
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.core.units.deg
+import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.Gamepads
 import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
@@ -20,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
-
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 
 @TeleOp
@@ -28,9 +30,10 @@ class TestOpMode : NextFTCOpMode() {
 
     init {
         addComponents(
-            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm),
+            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor),
             BulkReadComponent,
-            BindingsComponent
+            BindingsComponent,
+//            PedroComponent(Constants::createFollower)
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
@@ -68,13 +71,12 @@ class TestOpMode : NextFTCOpMode() {
 //        dpadLeft.whenBecomesTrue { Spindexer.setAngle(120.deg).invoke() }
 //        dpadRight.whenBecomesTrue { Spindexer.setAngle((-120).deg).invoke() }
 
+        Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue { Routines.intake() }
 
-        dpadDown.whenBecomesTrue { Spindexer.enableTravel() }.whenBecomesFalse { Spindexer.disableTravel() }
+        Gamepads.gamepad1.rightStickButton.whenBecomesTrue { Intake.stop() }
+
+
         Gamepads.gamepad1.a.whenBecomesTrue { Spindexer.advanceToIntake() }
-
-        Gamepads.gamepad1.dpadLeft.whenBecomesTrue { Spindexer.setAngle((-120).deg).schedule() }
-        Gamepads.gamepad1.dpadUp.whenBecomesTrue { Spindexer.setAngle((0).deg).schedule() }
-        Gamepads.gamepad1.dpadRight.whenBecomesTrue { Spindexer.setAngle((120).deg).schedule() }
 
         Gamepads.gamepad1.x.whenBecomesTrue { if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
         Gamepads.gamepad1.b.whenBecomesTrue { if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
@@ -82,9 +84,6 @@ class TestOpMode : NextFTCOpMode() {
 
 //        Gamepads.gamepad1.y.whenBecomesTrue { Spindexer.setAngle((60).deg).schedule() }
 //        Gamepads.gamepad1.b.whenBecomesTrue { Spindexer.setAngle((180).deg).schedule() }
-
-        rightTrigger.whenBecomesTrue { Intake.start() }
-        rightTrigger.whenBecomesFalse { Intake.stop() }
 
         leftTrigger.whenBecomesTrue { Intake.reverse() }.whenBecomesFalse { Intake.stop() }
         rightBumper.whenBecomesTrue { Routines.shoot() }

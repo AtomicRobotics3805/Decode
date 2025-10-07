@@ -9,7 +9,8 @@ import dev.nextftc.control.feedback.AngularFeedback
 import dev.nextftc.control.feedback.FeedbackType
 import dev.nextftc.control.feedback.PIDElement
 import dev.nextftc.core.commands.Command
-import dev.nextftc.core.commands.groups.ParallelGroup
+import dev.nextftc.core.commands.conditionals.IfElseCommand
+import dev.nextftc.core.commands.delays.Delay
 import dev.nextftc.core.commands.groups.SequentialGroup
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.commands.utility.NullCommand
@@ -18,6 +19,7 @@ import dev.nextftc.core.units.Angle
 import dev.nextftc.core.units.deg
 import dev.nextftc.core.units.rad
 import dev.nextftc.ftc.ActiveOpMode
+import dev.nextftc.ftc.Gamepads
 import dev.nextftc.hardware.controllable.RunToPosition
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
 import kotlin.math.PI
@@ -32,7 +34,7 @@ object Spindexer : Subsystem {
         GREEN
     }
 
-    enum class CurrentSpindexerStatus(
+    enum class SpindexerStatus(
         val onTop: Boolean,
         val id: Int,
         val angle: Angle
@@ -47,7 +49,9 @@ object Spindexer : Subsystem {
 
     var slots : Array<SpindexerSlotStatus> = arrayOf(SpindexerSlotStatus.GREEN, SpindexerSlotStatus.PURPLE, SpindexerSlotStatus.PURPLE)
 
-    var currentStatus = CurrentSpindexerStatus.TOP_0
+    var currentStatus = SpindexerStatus.TOP_0
+
+    @JvmField
     var traveling = false
 
     val ticksPerRev = 1425.1
@@ -57,7 +61,7 @@ object Spindexer : Subsystem {
     override fun initialize() {
         motor.encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         controller.goal = KineticState(0.0)
-        currentStatus = CurrentSpindexerStatus.TOP_0
+        currentStatus = SpindexerStatus.TOP_0
         slots = arrayOf(SpindexerSlotStatus.GREEN, SpindexerSlotStatus.PURPLE, SpindexerSlotStatus.PURPLE)
 //        motor.zero()
     }
@@ -66,7 +70,7 @@ object Spindexer : Subsystem {
     val controller = controlSystem {
         posFilter {
             it.custom { ticks ->
-                ticksToAngle(ticks).inRad
+                ticksToAngle(ticks).normalized.inRad
             }
         }
 
@@ -85,30 +89,22 @@ object Spindexer : Subsystem {
         motor.power = controller.calculate(motor.state)
 
         ActiveOpMode.telemetry.addData("Raw Encoder", motor.state.position)
-        ActiveOpMode.telemetry.addData("Angle", ticksToAngle(motor.state.position).inDeg)
+        ActiveOpMode.telemetry.addData("Angle", ticksToAngle(motor.state.position).normalized.inDeg)
         ActiveOpMode.telemetry.addData("Spindexer goal", controller.goal.position.rad.inDeg)
+        ActiveOpMode.telemetry.addData("Spindexer slots", "0:["+slots[0]+"], 1:["+slots[1]+"], 2:["+slots[2]+"]")
         ActiveOpMode.telemetry.update()
     }
 
-    // Given an input angle, go to that angle
-    fun angleToTicks(angle: Angle): Double {
-        // Assume 0 ticks is 0rad
-        return (angle.inRad * ticksPerRev) / (2 * PI)
-    }
-
-    fun ticksToAngle(ticks: Double): Angle {
-        return ((2 * PI * ticks) / ticksPerRev).rad
-    }
-
-    fun setAngle(angle: Angle): Command {
-        return RunToPosition(controller, angle.inRad).requires(this)
-    }
-
     val updateAngle: Command get() {
-        return RunToPosition(controller, (currentStatus.angle - if (traveling) 30.deg else 0.deg).inRad).requires(this)
+        var goal = (currentStatus.angle)
+        if (traveling) {
+            goal -= 30.deg
+        }
+        return RunToPosition(controller, goal.inRad, KineticState(10.deg.inRad, 2.deg.inRad, Double.POSITIVE_INFINITY)).requires(this)
     }
 
     val advanceToPurple : Command get() {
+        // TODO Make slot choice smarter
         var selectedIndex = -1
         var currentIndex = 0
         slots.forEach {
@@ -123,20 +119,23 @@ object Spindexer : Subsystem {
             NullCommand()
         } else {
             SequentialGroup(
+                InstantCommand { traveling = false },
                 InstantCommand {
                     currentStatus = when (selectedIndex) {
-                        0 -> CurrentSpindexerStatus.TOP_0
-                        1 -> CurrentSpindexerStatus.TOP_1
-                        2 -> CurrentSpindexerStatus.TOP_2
+                        0 -> SpindexerStatus.TOP_0
+                        1 -> SpindexerStatus.TOP_1
+                        2 -> SpindexerStatus.TOP_2
                         else -> currentStatus
                     }
                 },
-                updateAngle
+                Delay(0.1),
+                updateAngle,
             )
         }
     }
 
     val advanceToGreen : Command get() {
+        // TODO Make slot choice smarter
         var selectedIndex = -1
         var currentIndex = 0
         slots.forEach {
@@ -150,19 +149,21 @@ object Spindexer : Subsystem {
         return if (selectedIndex == -1) {
             NullCommand()
         } else {
-            ParallelGroup(
-                updateAngle,
+            SequentialGroup(
+                InstantCommand { traveling = false },
                 InstantCommand { currentStatus = when (selectedIndex) {
-                    0 -> CurrentSpindexerStatus.TOP_0
-                    1 -> CurrentSpindexerStatus.TOP_1
-                    2 -> CurrentSpindexerStatus.TOP_2
+                    0 -> SpindexerStatus.TOP_0
+                    1 -> SpindexerStatus.TOP_1
+                    2 -> SpindexerStatus.TOP_2
                     else -> currentStatus
-                } }
+                } },
+                updateAngle
             )
         }
     }
 
     val advanceToIntake : Command get() {
+        // TODO Make slot choice smarter
         var selectedIndex = -1
         var currentIndex = 0
         slots.forEach {
@@ -176,131 +177,26 @@ object Spindexer : Subsystem {
         return if (selectedIndex == -1) {
             NullCommand()
         } else {
-            ParallelGroup(
-                updateAngle,
+            SequentialGroup(
+                InstantCommand { traveling = false },
                 InstantCommand { currentStatus = when (selectedIndex) {
-                    0 -> CurrentSpindexerStatus.BOTTOM_0
-                    1 -> CurrentSpindexerStatus.BOTTOM_1
-                    2 -> CurrentSpindexerStatus.BOTTOM_2
+                    0 -> SpindexerStatus.BOTTOM_0
+                    1 -> SpindexerStatus.BOTTOM_1
+                    2 -> SpindexerStatus.BOTTOM_2
                     else -> currentStatus
-                } }
+                } },
+                updateAngle
             )
         }
     }
 
-    val enableTravel = SequentialGroup(
+    val advanceToTravel : Command = SequentialGroup(
         InstantCommand { traveling = true },
         updateAngle
     )
 
-    val disableTravel = SequentialGroup(
-        InstantCommand { traveling = false },
-        updateAngle
-    )
+    fun ticksToAngle(ticks: Double): Angle {
+        return ((2 * PI * ticks) / ticksPerRev).rad
+    }
 
-    /*
-        val advanceToGreen : Command get() {
-            var selectedIndex = -1
-            var currentIndex = 0
-            slots.forEach {
-                if (it == SpindexerSlotStatus.GREEN) {
-                    selectedIndex = currentIndex
-                }
-
-                currentIndex++;
-            }
-
-            return if (selectedIndex == -1) {
-                NullCommand()
-            } else {
-                setAngle((selectedIndex * 120).deg)
-            }
-        }
-
-        val advanceToPurple : Command get() {
-            var selectedIndex = -1
-            var currentIndex = 0
-            slots.forEach {
-                if (it == SpindexerSlotStatus.PURPLE) {
-                    selectedIndex = currentIndex
-                }
-
-                currentIndex++;
-            }
-
-            return if (selectedIndex == -1) {
-                NullCommand()
-            } else {
-                setAngle((selectedIndex * 120).deg)
-            }
-        }
-
-        val advanceToIntake : Command get() {
-            var selectedIndex = -1
-            var currentIndex = 0
-            slots.forEach {
-                if (it == SpindexerSlotStatus.EMPTY) {
-                    selectedIndex = currentIndex
-                }
-
-                currentIndex++;
-            }
-
-            return if (selectedIndex == -1) {
-                NullCommand()
-            } else {
-                setAngle(((selectedIndex * 120)+180).deg)
-            }
-        }
-
-        val advanceToTravelPosition : Command get() {
-            // Find which angle we're closest to (0, 120, or -120 degrees)
-            val currentAngle = ticksToAngleNormalized(motor.currentPosition)
-            val distToZero = abs(0 - currentAngle)
-            val distTo2Pi3 = abs(((2 * PI) / 3) - currentAngle)
-            val distToNegative2Pi3 = abs((-(2 * PI) / 3) - currentAngle)
-
-            return setAngle(if (distToZero < distTo2Pi3) {
-                if (distToZero < distToNegative2Pi3) {
-                    PI / 6
-                } else {
-                    (-5 * PI) / 6
-                }
-            } else {
-                PI / 2
-            }.rad)
-        }
-
-        fun setAngle(angle: Angle) : Command {
-            return RunToPosition(controller, calculateTargetTicks(angle.normalized.inRad))
-        }
-
-
-        //region Angle Calculation Stuff
-        private fun ticksToAngle(ticks: Double): Double {
-            return (2 * PI * ticks) / ticksPerRev
-        }
-        private fun angleToTicks(angle: Double): Double {
-            return ((angle * ticksPerRev) / (2 * PI))
-        }
-        private fun ticksToAngleNormalized(ticks: Double): Double {
-            var normalized = ticksToAngle(ticks) % (2 * PI)
-            if (normalized < 0) {
-                normalized += 2 * PI
-            }
-            return normalized
-        }
-        private fun calculateTargetTicks(desiredAngle: Double): Double {
-            val difference = desiredAngle - ticksToAngleNormalized(motor.currentPosition)
-            return if (difference > 0) {
-                // COUNTERCLOCKWISE (probably)
-                angleToTicks(ticksToAngle(motor.currentPosition) - difference)
-            } else {
-                // CLOCKWISE
-                angleToTicks(ticksToAngle(motor.currentPosition) + difference)
-            }
-        }
-        //endregion
-
-     */
 }
