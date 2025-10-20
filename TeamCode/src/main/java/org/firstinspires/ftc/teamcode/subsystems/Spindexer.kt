@@ -11,8 +11,10 @@ import dev.nextftc.control.feedback.PIDElement
 import dev.nextftc.core.commands.Command
 import dev.nextftc.core.commands.conditionals.IfElseCommand
 import dev.nextftc.core.commands.delays.Delay
+import dev.nextftc.core.commands.delays.WaitUntil
 import dev.nextftc.core.commands.groups.SequentialGroup
 import dev.nextftc.core.commands.utility.InstantCommand
+import dev.nextftc.core.commands.utility.LambdaCommand
 import dev.nextftc.core.commands.utility.NullCommand
 import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.core.units.Angle
@@ -21,8 +23,10 @@ import dev.nextftc.core.units.rad
 import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.ftc.Gamepads
 import dev.nextftc.hardware.controllable.RunToPosition
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
 import kotlin.math.PI
+import kotlin.math.abs
 
 
 @Configurable
@@ -54,7 +58,12 @@ object Spindexer : Subsystem {
     @JvmField
     var traveling = false
 
-    val ticksPerRev = 1425.1
+    var controllerDisabled = false
+
+    const val ticksPerRev = 1425.1
+
+    @JvmField
+    var wiggleTolerance = (ticksPerRev * (3).deg.inRad) / (2 * PI)
 
     val motor = DecoupledMotorEx("motor_e0", "motor_c1")
 
@@ -86,7 +95,15 @@ object Spindexer : Subsystem {
     }
 
     override fun periodic() {
-        motor.power = controller.calculate(motor.state)
+        if (!controllerDisabled) {
+            var goal = (currentStatus.angle)
+            if (traveling) {
+                goal -= 30.deg
+            }
+            controller.goal = KineticState(goal.inRad)
+
+            motor.power = controller.calculate(motor.state)
+        }
 
         ActiveOpMode.telemetry.addData("Raw Encoder", motor.state.position)
         ActiveOpMode.telemetry.addData("Angle", ticksToAngle(motor.state.position).normalized.inDeg)
@@ -95,12 +112,44 @@ object Spindexer : Subsystem {
         ActiveOpMode.telemetry.update()
     }
 
-    val updateAngle: Command get() {
-        var goal = (currentStatus.angle)
-        if (traveling) {
-            goal -= 30.deg
+    var clockwise = false
+    val wiggleThing: Command get() = LambdaCommand("WiggleThing").setIsDone { SpindexerSensor.sensor.getDistance(
+        DistanceUnit.CM) < SpindexerSensor.distanceThreshold
+    }.setUpdate {
+        controllerDisabled = true
+        if (clockwise && motor.state.position - controller.goal.position >= -wiggleTolerance) {
+            motor.power = 0.1
+        } else if (!clockwise && motor.state.position - controller.goal.position <= wiggleTolerance) {
+            motor.power = -0.1
+        } else {
+            clockwise = !clockwise
         }
-        return RunToPosition(controller, goal.inRad, KineticState(10.deg.inRad, 2.deg.inRad, Double.POSITIVE_INFINITY)).requires(this)
+
+        ActiveOpMode.telemetry.addLine("WIGGLING")
+    }.setStop {
+        motor.power = 0.0
+        controllerDisabled = false
+    }
+
+    val zeroClockwise: Command get() = InstantCommand {
+        controllerDisabled = true
+        motor.power = -0.05
+    }
+
+    val zeroCounterClockwise: Command get() = InstantCommand {
+        controllerDisabled = true
+        motor.power = 0.05
+    }
+
+    val endZero: Command get() = InstantCommand {
+        motor.power = 0.0
+        motor.encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+//        motor.currentPosition = 0.0
+        controllerDisabled = false
+    }
+
+    val updateAngle: Command get() {
+        return WaitUntil { controller.isWithinTolerance(KineticState(10.deg.inRad, 2.deg.inRad, Double.POSITIVE_INFINITY)) }
     }
 
     val advanceToPurple : Command get() {

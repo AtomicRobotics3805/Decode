@@ -14,6 +14,6 @@ object Intake : Subsystem {
     }
 
     val start = InstantCommand { motor.power = 1.0 }.requires(this)
-    val stop = InstantCommand { motor.power = 0.0 }.requires(this)
+    val stop = InstantCommand { motor.power = -0.2 }.requires(this)
     val reverse = InstantCommand { motor.power = -0.4 }.requires(this)
 }

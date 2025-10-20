@@ -23,6 +23,8 @@ import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
+import org.firstinspires.ftc.teamcode.subsystems.LimeLight
+import org.firstinspires.ftc.teamcode.subsystems.ZeroSensor
 
 
 @TeleOp
@@ -30,7 +32,7 @@ class TestOpMode : NextFTCOpMode() {
 
     init {
         addComponents(
-            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor),
+            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor/*, ZeroSensor, LimeLight*/),
             BulkReadComponent,
             BindingsComponent,
 //            PedroComponent(Constants::createFollower)
@@ -42,7 +44,7 @@ class TestOpMode : NextFTCOpMode() {
     private val frontRightMotor = MotorEx("motor_c2").brakeMode()
     private val backLeftMotor = MotorEx("motor_c0").brakeMode().reversed()
     private val backRightMotor = MotorEx("motor_c3").brakeMode()
-    private val imu = IMUEx("imu", Direction.LEFT, Direction.UP)//.zeroed()
+    private val imu = IMUEx("imu", Direction.LEFT, Direction.UP).zeroed()
 
     val rightTrigger = button { gamepad1.right_trigger > 0.2 }
     val leftTrigger = button { gamepad1.left_trigger > 0.2 }
@@ -73,7 +75,6 @@ class TestOpMode : NextFTCOpMode() {
 
         Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue { Routines.intake() }
 
-        Gamepads.gamepad1.rightStickButton.whenBecomesTrue { Intake.stop() }
 
 
         Gamepads.gamepad1.a.whenBecomesTrue { Spindexer.advanceToIntake() }
@@ -91,11 +92,19 @@ class TestOpMode : NextFTCOpMode() {
         startButton.whenBecomesTrue { Spindexer.advanceToPurple() }
         Gamepads.gamepad1.back.whenBecomesTrue { Spindexer.advanceToGreen() }
 
+        Gamepads.gamepad1.rightStickButton.whenBecomesTrue { imu.zero() }
+
         Gamepads.gamepad1.leftBumper.whenBecomesTrue { Shooter.reverseIntake() }.whenBecomesFalse { Shooter.stop() }
-        Gamepads.gamepad1.leftStickButton.whenBecomesTrue { Shooter.uncontrolledStart() }.whenBecomesFalse { Shooter.uncontrolledStop() }
+//        Gamepads.gamepad1.leftStickButton.whenBecomesTrue { Shooter.uncontrolledStart() }.whenBecomesFalse { Shooter.uncontrolledStop() }
+
+        Gamepads.gamepad1.dpadLeft.whenTrue { Spindexer.zeroClockwise() }.whenBecomesFalse { Spindexer.endZero() }
+        Gamepads.gamepad1.dpadRight.whenTrue { Spindexer.zeroCounterClockwise() }.whenBecomesFalse { Spindexer.endZero() }
+
+        Gamepads.gamepad1.dpadUp.whenTrue { Spindexer.wiggleThing() }
     }
 
     override fun onStop() {
+//        LimeLight.stop()
         Spindexer.controller.goal = KineticState()
         Shooter.controller.goal = KineticState()
     }

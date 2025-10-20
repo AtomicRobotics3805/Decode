@@ -1,21 +1,24 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.subsystems
 
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
 import dev.nextftc.control.feedback.PIDCoefficients
+import dev.nextftc.core.commands.utility.InstantCommand
+import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.ftc.ActiveOpMode
 
-class LimeLight {
+object LimeLight : Subsystem {
 
     //region Motif
     enum class Motif {
         GPP,
         PGP,
-        PPG
+        PPG,
+        UNKNOWN
     }
 
-    lateinit var matchMotif: Motif
+     var matchMotif = Motif.UNKNOWN
     //endregion
 
     //region Auto Align
@@ -48,7 +51,7 @@ class LimeLight {
 
     lateinit var ll: Limelight3A
 
-    fun init() {
+    override fun initialize() {
         ll = ActiveOpMode.hardwareMap.get(Limelight3A::class.java, "limelight")
 
         ll.pipelineSwitch(0)
@@ -60,7 +63,7 @@ class LimeLight {
         ll.stop()
     }
 
-    fun detectMotif() {
+    var detectMotif = InstantCommand {
         val fiducialResults = ll.getLatestResult().fiducialResults
         if (!fiducialResults.isEmpty()) {
             val snapshot = fiducialResults[0]
@@ -109,4 +112,3 @@ class LimeLight {
         lastLength = fiducialResults.size
     }
 }
-
