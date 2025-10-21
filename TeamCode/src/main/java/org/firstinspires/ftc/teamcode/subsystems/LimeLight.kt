@@ -63,6 +63,10 @@ object LimeLight : Subsystem {
         ll.stop()
     }
 
+    override fun periodic() {
+        ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
+    }
+
     var detectMotif = InstantCommand {
         val fiducialResults = ll.getLatestResult().fiducialResults
         if (!fiducialResults.isEmpty()) {
@@ -72,7 +76,6 @@ object LimeLight : Subsystem {
                 22 -> Motif.PGP
                 else -> Motif.PPG
             }
-            ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
         }
     }
 

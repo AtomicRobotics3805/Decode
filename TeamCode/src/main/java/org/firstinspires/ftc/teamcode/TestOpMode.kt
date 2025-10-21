@@ -77,11 +77,13 @@ class TestOpMode : NextFTCOpMode() {
 
 
 
-        Gamepads.gamepad1.a.whenBecomesTrue { Spindexer.advanceToIntake() }
+        Gamepads.gamepad1.a.whenBecomesTrue { Spindexer.spinToIntake() }
 
         Gamepads.gamepad1.x.whenBecomesTrue { if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
         Gamepads.gamepad1.b.whenBecomesTrue { if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
         Gamepads.gamepad1.y.whenBecomesTrue { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY }
+
+        Gamepads.gamepad1.dpadUp
 
 //        Gamepads.gamepad1.y.whenBecomesTrue { Spindexer.setAngle((60).deg).schedule() }
 //        Gamepads.gamepad1.b.whenBecomesTrue { Spindexer.setAngle((180).deg).schedule() }
@@ -89,8 +91,8 @@ class TestOpMode : NextFTCOpMode() {
         leftTrigger.whenBecomesTrue { Intake.reverse() }.whenBecomesFalse { Intake.stop() }
         rightBumper.whenBecomesTrue { Routines.shoot() }
 
-        startButton.whenBecomesTrue { Spindexer.advanceToPurple() }
-        Gamepads.gamepad1.back.whenBecomesTrue { Spindexer.advanceToGreen() }
+        startButton.whenBecomesTrue { Spindexer.spinToPurple() }
+        Gamepads.gamepad1.back.whenBecomesTrue { Spindexer.spinToGreen() }
 
         Gamepads.gamepad1.rightStickButton.whenBecomesTrue { imu.zero() }
 
@@ -100,7 +102,7 @@ class TestOpMode : NextFTCOpMode() {
         Gamepads.gamepad1.dpadLeft.whenTrue { Spindexer.zeroClockwise() }.whenBecomesFalse { Spindexer.endZero() }
         Gamepads.gamepad1.dpadRight.whenTrue { Spindexer.zeroCounterClockwise() }.whenBecomesFalse { Spindexer.endZero() }
 
-        Gamepads.gamepad1.dpadUp.whenTrue { Spindexer.wiggleThing() }
+        Gamepads.gamepad1.dpadUp.whenTrue { Routines.motifShoot() }
     }
 
     override fun onStop() {

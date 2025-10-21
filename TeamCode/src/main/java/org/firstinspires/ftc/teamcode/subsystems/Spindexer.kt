@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.Configurable
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
 import dev.nextftc.control.feedback.AngleType
@@ -25,6 +26,7 @@ import dev.nextftc.ftc.Gamepads
 import dev.nextftc.hardware.controllable.RunToPosition
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
+import org.firstinspires.ftc.teamcode.subsystems.Spindexer.slots
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -65,7 +67,7 @@ object Spindexer : Subsystem {
     @JvmField
     var wiggleTolerance = (ticksPerRev * (3).deg.inRad) / (2 * PI)
 
-    val motor = DecoupledMotorEx("motor_e0", "motor_c1")
+    val motor = DecoupledMotorEx("motor_e0", "motor_e0")
 
     override fun initialize() {
         motor.encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
@@ -112,10 +114,16 @@ object Spindexer : Subsystem {
         ActiveOpMode.telemetry.update()
     }
 
+    //region USEFUL COMMANDS
+
+    val spinToGreen = SpinTo(SpindexerSlotStatus.GREEN)
+    val spinToPurple = SpinTo(SpindexerSlotStatus.PURPLE)
+    val spinToIntake = SpinTo(SpindexerSlotStatus.EMPTY)
+
     var clockwise = false
     val wiggleThing: Command get() = LambdaCommand("WiggleThing").setIsDone { SpindexerSensor.sensor.getDistance(
         DistanceUnit.CM) < SpindexerSensor.distanceThreshold
-    }.setUpdate {
+    }/*.setUpdate {
         controllerDisabled = true
         if (clockwise && motor.state.position - controller.goal.position >= -wiggleTolerance) {
             motor.power = 0.1
@@ -129,7 +137,7 @@ object Spindexer : Subsystem {
     }.setStop {
         motor.power = 0.0
         controllerDisabled = false
-    }
+    }*/
 
     val zeroClockwise: Command get() = InstantCommand {
         controllerDisabled = true
@@ -146,12 +154,14 @@ object Spindexer : Subsystem {
         motor.encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 //        motor.currentPosition = 0.0
         controllerDisabled = false
+        currentStatus = SpindexerStatus.TOP_0
     }
 
     val updateAngle: Command get() {
         return WaitUntil { controller.isWithinTolerance(KineticState(10.deg.inRad, 2.deg.inRad, Double.POSITIVE_INFINITY)) }
     }
 
+    @Deprecated("Replace with SpinTo")
     val advanceToPurple : Command get() {
         // TODO Make slot choice smarter
         var selectedIndex = -1
@@ -183,6 +193,7 @@ object Spindexer : Subsystem {
         }
     }
 
+    @Deprecated("Replace with SpinTo")
     val advanceToGreen : Command get() {
         // TODO Make slot choice smarter
         var selectedIndex = -1
@@ -211,6 +222,7 @@ object Spindexer : Subsystem {
         }
     }
 
+    @Deprecated("Replace with SpinTo")
     val advanceToIntake : Command get() {
         // TODO Make slot choice smarter
         var selectedIndex = -1
@@ -246,6 +258,45 @@ object Spindexer : Subsystem {
 
     fun ticksToAngle(ticks: Double): Angle {
         return ((2 * PI * ticks) / ticksPerRev).rad
+    }
+
+    class SpinTo(val goal: SpindexerSlotStatus) : Command() {
+        override val isDone: Boolean
+            get() = controller.isWithinTolerance(KineticState(10.deg.inRad, 2.deg.inRad, Double.POSITIVE_INFINITY))
+
+        lateinit var target: SpindexerStatus
+
+        override fun start() {
+            // Decide which slot to go to
+            var selection = -1
+            var current = 0
+            slots.forEach {
+                if (it == goal) {
+                    selection = current
+                } else {
+                    current++
+                }
+            }
+
+            target = if (goal == SpindexerSlotStatus.EMPTY) {
+                when (selection) {
+                    0 -> SpindexerStatus.BOTTOM_0
+                    1 -> SpindexerStatus.BOTTOM_1
+                    2 -> SpindexerStatus.BOTTOM_2
+                    else -> currentStatus
+                }
+            } else {
+                when (selection) {
+                    0 -> SpindexerStatus.TOP_0
+                    1 -> SpindexerStatus.TOP_1
+                    2 -> SpindexerStatus.TOP_2
+                    else -> currentStatus
+                }
+            }
+
+            // Set goal to that slot
+            currentStatus = target
+        }
     }
 
 }

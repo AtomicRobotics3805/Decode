@@ -34,7 +34,7 @@ object Routines {
     val intake: Command
         get() = SequentialGroup(
             ParallelGroup(
-                Spindexer.advanceToIntake,
+                Spindexer.spinToIntake,
                 Intake.start
             ),
             ParallelRaceGroup(
@@ -50,68 +50,63 @@ object Routines {
         Intake.stop
     )
 
+    val shootPurpleNoStop: Command
+        get() = SequentialGroup(
+            Spindexer.spinToPurple,
+            Shooter.start.withDeadline(WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity }),
+            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
+            PusherArm.push
+        )
+
+    val shootGreenNoStop: Command
+        get() = SequentialGroup(
+            Spindexer.spinToGreen,
+            Shooter.start.withDeadline(WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity }),
+            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
+            PusherArm.push
+        )
+
     var selected = GPPMotifShoot
     val motifShoot: Command
-        get() = LambdaCommand("Motif Shoot").setIsDone { selected.isDone }.setStart {
+        get() = InstantCommand {
             selected = when(LimeLight.matchMotif) {
                 Motif.GPP -> GPPMotifShoot
                 Motif.PGP -> PGPMotifShoot
                 Motif.PPG -> PPGMotifShoot
                 Motif.UNKNOWN -> selected
             }
-
-            selected()
-        }
+        }.then(selected)
 
     val GPPMotifShoot: Command
         get() = SequentialGroup(
-            Spindexer.advanceToGreen,
-            Shooter.start.withDeadline(Delay(2.0)),
-            PusherArm.push,
-            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            Spindexer.advanceToPurple,
-            Shooter.start.withDeadline(Delay(2.0)),
-            PusherArm.push,
-            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            Spindexer.advanceToPurple,
-            Shooter.start.withDeadline(Delay(2.0)),
-            PusherArm.push,
-            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            Spindexer.advanceToTravel
+            shootGreenNoStop,
+            Delay(1.0),
+            shootPurpleNoStop,
+            Delay(1.0),
+            shootPurpleNoStop,
+            Delay(1.0),
+            Shooter.stop
         )
 
     val PGPMotifShoot: Command
         get() = SequentialGroup(
-            Spindexer.advanceToPurple,
-            Shooter.start.withDeadline(Delay(2.0)),
-            PusherArm.push,
-            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            Spindexer.advanceToGreen,
-            Shooter.start.withDeadline(Delay(2.0)),
-            PusherArm.push,
-            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            Spindexer.advanceToPurple,
-            Shooter.start.withDeadline(Delay(2.0)),
-            PusherArm.push,
-            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            Spindexer.advanceToTravel
+            shootPurpleNoStop,
+            Delay(1.0),
+            shootGreenNoStop,
+            Delay(1.0),
+            shootPurpleNoStop,
+            Delay(1.0),
+            Shooter.stop
         )
 
     val PPGMotifShoot: Command
         get() = SequentialGroup(
-            Spindexer.advanceToPurple,
-            Shooter.start.withDeadline(Delay(2.0)),
-            PusherArm.push,
-            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            Spindexer.advanceToPurple,
-            Shooter.start.withDeadline(Delay(2.0)),
-            PusherArm.push,
-            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            Spindexer.advanceToGreen,
-            Shooter.start.withDeadline(Delay(2.0)),
-            PusherArm.push,
-            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            Spindexer.advanceToTravel
+            shootPurpleNoStop,
+            Delay(0.2),
+            shootPurpleNoStop,
+            Delay(0.2),
+            shootGreenNoStop,
+            Delay(0.2),
+            Shooter.stop
         )
-
 }
