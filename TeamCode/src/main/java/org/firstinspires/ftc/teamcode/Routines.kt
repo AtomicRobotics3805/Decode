@@ -11,6 +11,7 @@ import dev.nextftc.core.commands.groups.ParallelRaceGroup
 import dev.nextftc.core.commands.groups.SequentialGroup
 import dev.nextftc.core.commands.utility.ForcedParallelCommand
 import dev.nextftc.core.commands.utility.InstantCommand
+import dev.nextftc.core.commands.utility.LambdaCommand
 import org.firstinspires.ftc.teamcode.Routines.intake
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
@@ -38,7 +39,7 @@ object Routines {
             ),
             ParallelRaceGroup(
                 SpindexerSensor.Read(),
-//                Spindexer.wiggleThing
+                Spindexer.wiggleThing
             ),
 //            haltIntake
             Intake.stop
@@ -49,11 +50,17 @@ object Routines {
         Intake.stop
     )
 
+    var selected = GPPMotifShoot
     val motifShoot: Command
-        get() = switchCommand({ LimeLight.matchMotif }) {
-            case(Motif.GPP, GPPMotifShoot)
-            case(Motif.PGP, PGPMotifShoot)
-            case(Motif.PPG, PPGMotifShoot)
+        get() = LambdaCommand("Motif Shoot").setIsDone { selected.isDone }.setStart {
+            selected = when(LimeLight.matchMotif) {
+                Motif.GPP -> GPPMotifShoot
+                Motif.PGP -> PGPMotifShoot
+                Motif.PPG -> PPGMotifShoot
+                Motif.UNKNOWN -> selected
+            }
+
+            selected()
         }
 
     val GPPMotifShoot: Command

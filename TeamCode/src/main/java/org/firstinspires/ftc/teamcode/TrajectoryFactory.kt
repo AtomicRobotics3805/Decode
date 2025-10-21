@@ -4,7 +4,10 @@ import com.pedropathing.follower.Follower
 import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
 import com.pedropathing.paths.PathBuilder
+import com.pedropathing.paths.PathChain
+import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
+import org.firstinspires.ftc.teamcode.TrajectoryFactory.builder
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 
@@ -16,7 +19,7 @@ object TrajectoryFactory {
 
     val farStartPos = Pose(87.0, 9.0, -90.0)
 
-    val obeliskSensePos = Pose(40.0, 110.0, -135.0)
+    val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(40.0, 110.0, -135.0)
 
     val scorePos = Pose(40.0, 110.0, -36.0)
 
@@ -49,47 +52,73 @@ object TrajectoryFactory {
     //region Paths
 
 
-    var builder: PathBuilder = PathBuilder(Constants.createFollower(ActiveOpMode.hardwareMap))
+    lateinit var builder: PathBuilder
 
-    val goalStartToObelisk = builder
-        .addPath(BezierLine(goalStartPos, obeliskSensePos)).build()
+    lateinit var goalStartToObelisk: PathChain
 
-    val obeliskToScore = builder
-        .addPath(BezierLine(obeliskSensePos, scorePos)).build()
+    lateinit var obeliskToScore: PathChain
 
-    val scoreToSpikeMark1 = builder
-        .addPath(BezierLine(scorePos, spikeMark1PosPre)).build()
+    lateinit var scoreToSpikeMark1: PathChain
 
-    val spikeMark1Pickup = builder
-        .addPath(BezierLine(spikeMark1PosPre, spikeMark1PosInner))
-        .addPath(BezierLine(spikeMark1PosInner, spikeMark1PosMiddle))
-        .addPath(BezierLine(spikeMark1PosMiddle, spikeMark1PosOuter)).build()
+    lateinit var spikeMark1Pickup: PathChain
 
-    val spikeMark1PickupToScore = builder
-        .addPath(BezierLine(spikeMark1PosOuter, scorePos)).build()
+    lateinit var spikeMark1PickupToScore: PathChain
 
-    val scoreToSpikeMark2 = builder
-        .addPath(BezierLine(scorePos, spikeMark2PosPre)).build()
+    lateinit var scoreToSpikeMark2: PathChain
 
-    val spikeMark2Pickup = builder
-        .addPath(BezierLine(spikeMark2PosPre, spikeMark2PosInner))
-        .addPath(BezierLine(spikeMark2PosInner, spikeMark2PosMiddle))
-        .addPath(BezierLine(spikeMark2PosMiddle, spikeMark2PosOuter)).build()
+    lateinit var spikeMark2Pickup: PathChain
 
-    val spikeMark2PickupToScore = builder
-        .addPath(BezierLine(spikeMark2PosOuter, scorePos)).build()
+    lateinit var spikeMark2PickupToScore: PathChain
 
-    val scoreToSpikeMark3 = builder
-        .addPath(BezierLine(scorePos, spikeMark3PosPre)).build()
+    lateinit var scoreToSpikeMark3: PathChain
 
-    val spikeMark3Pickup = builder
-        .addPath(BezierLine(spikeMark3PosPre, spikeMark3PosInner))
-        .addPath(BezierLine(spikeMark3PosInner, spikeMark3PosMiddle))
-        .addPath(BezierLine(spikeMark3PosMiddle, spikeMark3PosOuter)).build()
+    lateinit var spikeMark3Pickup: PathChain
 
-    val spikeMark3PickupToScore = builder
-        .addPath(BezierLine(spikeMark3PosOuter, scorePos)).build()
+    lateinit var spikeMark3PickupToScore: PathChain
 
+
+    fun buildTrajectories(follower: Follower) {
+        builder = PathBuilder(follower)
+
+        goalStartToObelisk = builder
+                .addPath(BezierLine(goalStartPos, obeliskSensePos)).build()
+
+        obeliskToScore = builder
+                .addPath(BezierLine(obeliskSensePos, scorePos)).build()
+
+        scoreToSpikeMark1 = builder
+            .addPath(BezierLine(scorePos, spikeMark1PosPre)).build()
+
+        spikeMark1Pickup = builder
+            .addPath(BezierLine(spikeMark1PosPre, spikeMark1PosInner))
+            .addPath(BezierLine(spikeMark1PosInner, spikeMark1PosMiddle))
+            .addPath(BezierLine(spikeMark1PosMiddle, spikeMark1PosOuter)).build()
+
+        spikeMark1PickupToScore = builder
+            .addPath(BezierLine(spikeMark1PosOuter, scorePos)).build()
+
+        scoreToSpikeMark2 = builder
+            .addPath(BezierLine(scorePos, spikeMark2PosPre)).build()
+
+        spikeMark2Pickup = builder
+            .addPath(BezierLine(spikeMark2PosPre, spikeMark2PosInner))
+            .addPath(BezierLine(spikeMark2PosInner, spikeMark2PosMiddle))
+            .addPath(BezierLine(spikeMark2PosMiddle, spikeMark2PosOuter)).build()
+
+        spikeMark2PickupToScore = builder
+            .addPath(BezierLine(spikeMark2PosOuter, scorePos)).build()
+
+        scoreToSpikeMark3 = builder
+            .addPath(BezierLine(scorePos, spikeMark3PosPre)).build()
+
+        spikeMark3Pickup = builder
+            .addPath(BezierLine(spikeMark3PosPre, spikeMark3PosInner))
+            .addPath(BezierLine(spikeMark3PosInner, spikeMark3PosMiddle))
+            .addPath(BezierLine(spikeMark3PosMiddle, spikeMark3PosOuter)).build()
+
+        spikeMark3PickupToScore = builder
+            .addPath(BezierLine(spikeMark3PosOuter, scorePos)).build()
+    }
 
 
     //endregion

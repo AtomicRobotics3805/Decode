@@ -7,11 +7,10 @@ import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 
 object AutoRoutines {
 
-    val threeArtifactGoalStartAutoRoutine = SequentialGroup(
+    val threeArtifactGoalStartAutoRoutine get() = SequentialGroup(
         FollowPath(TrajectoryFactory.goalStartToObelisk),
         LimeLight.detectMotif,
         FollowPath(TrajectoryFactory.obeliskToScore),
         Routines.motifShoot
-
     )
 }
