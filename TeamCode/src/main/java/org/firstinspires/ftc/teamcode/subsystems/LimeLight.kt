@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import com.bylazar.configurables.annotations.Configurable
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
@@ -8,6 +9,7 @@ import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.ftc.ActiveOpMode
 
+@Configurable
 object LimeLight : Subsystem {
 
     //region Motif
@@ -18,6 +20,7 @@ object LimeLight : Subsystem {
         UNKNOWN
     }
 
+    @JvmField
      var matchMotif = Motif.UNKNOWN
     //endregion
 

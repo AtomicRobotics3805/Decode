@@ -38,8 +38,7 @@ object Routines {
                 Intake.start
             ),
             ParallelRaceGroup(
-                SpindexerSensor.Read(),
-                Spindexer.wiggleThing
+                SpindexerSensor.Read()
             ),
 //            haltIntake
             Intake.stop
@@ -53,23 +52,27 @@ object Routines {
     val shootPurpleNoStop: Command
         get() = SequentialGroup(
             Spindexer.spinToPurple,
+            Delay(1.0),
             Shooter.start.withDeadline(WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity }),
             InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            PusherArm.push
+            PusherArm.push,
+            Delay(1.0)
         )
 
     val shootGreenNoStop: Command
         get() = SequentialGroup(
             Spindexer.spinToGreen,
+            Delay(1.0),
             Shooter.start.withDeadline(WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity }),
             InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            PusherArm.push
+            PusherArm.push,
+            Delay(1.0)
         )
 
     var selected = GPPMotifShoot
     val motifShoot: Command
         get() = InstantCommand {
-            selected = when(LimeLight.matchMotif) {
+            selected = when (LimeLight.matchMotif) {
                 Motif.GPP -> GPPMotifShoot
                 Motif.PGP -> PGPMotifShoot
                 Motif.PPG -> PPGMotifShoot
@@ -80,33 +83,24 @@ object Routines {
     val GPPMotifShoot: Command
         get() = SequentialGroup(
             shootGreenNoStop,
-            Delay(1.0),
             shootPurpleNoStop,
-            Delay(1.0),
             shootPurpleNoStop,
-            Delay(1.0),
             Shooter.stop
         )
 
     val PGPMotifShoot: Command
         get() = SequentialGroup(
             shootPurpleNoStop,
-            Delay(1.0),
             shootGreenNoStop,
-            Delay(1.0),
             shootPurpleNoStop,
-            Delay(1.0),
             Shooter.stop
         )
 
     val PPGMotifShoot: Command
         get() = SequentialGroup(
             shootPurpleNoStop,
-            Delay(0.2),
             shootPurpleNoStop,
-            Delay(0.2),
             shootGreenNoStop,
-            Delay(0.2),
             Shooter.stop
         )
 }

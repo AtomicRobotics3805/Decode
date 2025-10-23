@@ -57,6 +57,7 @@ class TestOpMode : NextFTCOpMode() {
     val startButton = button { gamepad1.start }
 
     override fun onStartButtonPressed() {
+        /*
         PusherArm.down()
         val driverControlled = MecanumDriverControlled(
             frontLeftMotor,
@@ -103,6 +104,8 @@ class TestOpMode : NextFTCOpMode() {
         Gamepads.gamepad1.dpadRight.whenTrue { Spindexer.zeroCounterClockwise() }.whenBecomesFalse { Spindexer.endZero() }
 
         Gamepads.gamepad1.dpadUp.whenTrue { Routines.motifShoot() }
+
+         */
     }
 
     override fun onStop() {

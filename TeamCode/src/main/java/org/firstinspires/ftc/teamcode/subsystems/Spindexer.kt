@@ -55,6 +55,7 @@ object Spindexer : Subsystem {
 
     var slots : Array<SpindexerSlotStatus> = arrayOf(SpindexerSlotStatus.GREEN, SpindexerSlotStatus.PURPLE, SpindexerSlotStatus.PURPLE)
 
+    @JvmField
     var currentStatus = SpindexerStatus.TOP_0
 
     @JvmField
@@ -97,15 +98,10 @@ object Spindexer : Subsystem {
     }
 
     override fun periodic() {
-        if (!controllerDisabled) {
-            var goal = (currentStatus.angle)
-            if (traveling) {
-                goal -= 30.deg
-            }
-            controller.goal = KineticState(goal.inRad)
+        val goal = (currentStatus.angle)
+        controller.goal = KineticState(goal.inRad)
 
-            motor.power = controller.calculate(motor.state)
-        }
+        motor.power = controller.calculate(motor.state)
 
         ActiveOpMode.telemetry.addData("Raw Encoder", motor.state.position)
         ActiveOpMode.telemetry.addData("Angle", ticksToAngle(motor.state.position).normalized.inDeg)
@@ -121,23 +117,7 @@ object Spindexer : Subsystem {
     val spinToIntake = SpinTo(SpindexerSlotStatus.EMPTY)
 
     var clockwise = false
-    val wiggleThing: Command get() = LambdaCommand("WiggleThing").setIsDone { SpindexerSensor.sensor.getDistance(
-        DistanceUnit.CM) < SpindexerSensor.distanceThreshold
-    }/*.setUpdate {
-        controllerDisabled = true
-        if (clockwise && motor.state.position - controller.goal.position >= -wiggleTolerance) {
-            motor.power = 0.1
-        } else if (!clockwise && motor.state.position - controller.goal.position <= wiggleTolerance) {
-            motor.power = -0.1
-        } else {
-            clockwise = !clockwise
-        }
 
-        ActiveOpMode.telemetry.addLine("WIGGLING")
-    }.setStop {
-        motor.power = 0.0
-        controllerDisabled = false
-    }*/
 
     val zeroClockwise: Command get() = InstantCommand {
         controllerDisabled = true
@@ -298,5 +278,4 @@ object Spindexer : Subsystem {
             currentStatus = target
         }
     }
-
 }
