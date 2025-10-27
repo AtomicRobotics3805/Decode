@@ -8,6 +8,7 @@ import dev.nextftc.control.builder.controlSystem
 import dev.nextftc.control.feedback.AngleType
 import dev.nextftc.control.feedback.AngularFeedback
 import dev.nextftc.control.feedback.FeedbackType
+import dev.nextftc.control.feedback.PIDCoefficients
 import dev.nextftc.control.feedback.PIDElement
 import dev.nextftc.core.commands.Command
 import dev.nextftc.core.commands.conditionals.IfElseCommand
@@ -79,6 +80,9 @@ object Spindexer : Subsystem {
     }
 
     @JvmField
+    var coefficients = PIDCoefficients(0.5, 0.0, 0.0001)
+
+    @JvmField
     val controller = controlSystem {
         posFilter {
             it.custom { ticks ->
@@ -91,15 +95,14 @@ object Spindexer : Subsystem {
                 AngleType.RADIANS,
                 PIDElement(
                     FeedbackType.POSITION,
-                    0.35, 0.0, 0.0
+                    coefficients
                 )
             )
         )
     }
 
     override fun periodic() {
-        val goal = (currentStatus.angle)
-        controller.goal = KineticState(goal.inRad)
+        controller.goal = KineticState(currentStatus.angle.inRad + if(traveling) 30.deg.inRad else 0.0)
 
         motor.power = controller.calculate(motor.state)
 
@@ -112,9 +115,9 @@ object Spindexer : Subsystem {
 
     //region USEFUL COMMANDS
 
-    val spinToGreen = SpinTo(SpindexerSlotStatus.GREEN)
-    val spinToPurple = SpinTo(SpindexerSlotStatus.PURPLE)
-    val spinToIntake = SpinTo(SpindexerSlotStatus.EMPTY)
+    val spinToGreen = InstantCommand { spinTo(SpindexerSlotStatus.GREEN) }
+    val spinToPurple = InstantCommand { spinTo(SpindexerSlotStatus.PURPLE) }
+    val spinToIntake = InstantCommand { spinTo(SpindexerSlotStatus.EMPTY) }
 
     var clockwise = false
 
@@ -231,13 +234,44 @@ object Spindexer : Subsystem {
         }
     }
 
-    val advanceToTravel : Command = SequentialGroup(
-        InstantCommand { traveling = true },
-        updateAngle
-    )
+    val enableTraveling : Command = InstantCommand { traveling = true }
 
     fun ticksToAngle(ticks: Double): Angle {
         return ((2 * PI * ticks) / ticksPerRev).rad
+    }
+
+    lateinit var newTarget: SpindexerStatus
+    fun spinTo(goal: SpindexerSlotStatus) {
+        // Decide which slot to go to
+        var selection = -1
+        var current = 0
+        slots.forEach {
+            if (it == goal) {
+                selection = current
+            } else {
+                current++
+            }
+        }
+
+        newTarget = if (goal == SpindexerSlotStatus.EMPTY) {
+            when (selection) {
+                0 -> SpindexerStatus.BOTTOM_0
+                1 -> SpindexerStatus.BOTTOM_1
+                2 -> SpindexerStatus.BOTTOM_2
+                else -> currentStatus
+            }
+        } else {
+            when (selection) {
+                0 -> SpindexerStatus.TOP_0
+                1 -> SpindexerStatus.TOP_1
+                2 -> SpindexerStatus.TOP_2
+                else -> currentStatus
+            }
+        }
+
+        traveling = false
+        // Set goal to that slot
+        currentStatus = newTarget
     }
 
     class SpinTo(val goal: SpindexerSlotStatus) : Command() {

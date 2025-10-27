@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode
 
 import com.pedropathing.follower.Follower
+import com.pedropathing.geometry.BezierCurve
 import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.BezierPoint
 import com.pedropathing.geometry.Pose
@@ -9,7 +10,6 @@ import com.pedropathing.paths.PathChain
 import dev.nextftc.core.units.deg
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
-import org.firstinspires.ftc.teamcode.TrajectoryFactory.builder
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 
@@ -23,7 +23,7 @@ object TrajectoryFactory {
 
     val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, -125.deg.inRad)
 
-    val scorePos = Pose(40.0, 110.0, -36.deg.inRad)
+    val scorePos = Pose(31.0, 120.0, -42.deg.inRad)
 
     val spikeMark1PosPre = Pose(40.6, 83.6, 180.deg.inRad)
 
@@ -53,73 +53,139 @@ object TrajectoryFactory {
 
     //region Paths
 
-
-    lateinit var builder: PathBuilder
-
     lateinit var goalStartToObelisk: PathChain
 
     lateinit var obeliskToScore: PathChain
 
     lateinit var scoreToSpikeMark1: PathChain
 
-    lateinit var spikeMark1Pickup: PathChain
+    lateinit var spikeMark1Pickup1: PathChain
+    lateinit var spikeMark1Pickup2: PathChain
+    lateinit var spikeMark1Pickup3: PathChain
 
     lateinit var spikeMark1PickupToScore: PathChain
 
     lateinit var scoreToSpikeMark2: PathChain
 
-    lateinit var spikeMark2Pickup: PathChain
+    lateinit var spikeMark2Pickup1: PathChain
+    lateinit var spikeMark2Pickup2: PathChain
+    lateinit var spikeMark2Pickup3: PathChain
 
     lateinit var spikeMark2PickupToScore: PathChain
 
     lateinit var scoreToSpikeMark3: PathChain
 
-    lateinit var spikeMark3Pickup: PathChain
+    lateinit var spikeMark3Pickup1: PathChain
+    lateinit var spikeMark3Pickup2: PathChain
+    lateinit var spikeMark3Pickup3: PathChain
 
     lateinit var spikeMark3PickupToScore: PathChain
 
 
     fun buildTrajectories(follower: Follower) {
-        builder = PathBuilder(follower)
+        goalStartToObelisk = follower.pathBuilder()
+                .addPath(BezierLine(goalStartPos, obeliskSensePos))
+                .setLinearHeadingInterpolation(goalStartPos.heading, obeliskSensePos.heading).build()
 
-        goalStartToObelisk = builder
-                .addPath(BezierPoint(obeliskSensePos)).build()
+        obeliskToScore = follower.pathBuilder()
+                .addPath(BezierLine(obeliskSensePos, scorePos))
+                .setLinearHeadingInterpolation(obeliskSensePos.heading, scorePos.heading)
+                .build()
 
-        obeliskToScore = builder
-                .addPath(BezierPoint(scorePos)).build()
+        scoreToSpikeMark1 = follower.pathBuilder()
+            .addPath(BezierCurve(scorePos, Pose(spikeMark1PosPre.x + 25, spikeMark1PosPre.y, spikeMark1PosPre.heading), spikeMark1PosPre))
+            .setLinearHeadingInterpolation(scorePos.heading, spikeMark1PosPre.heading)
+            .build()
 
-        scoreToSpikeMark1 = builder
-            .addPath(BezierPoint(spikeMark1PosPre)).build()
 
-        spikeMark1Pickup = builder
-            .addPath(BezierPoint(spikeMark1PosInner))
-            .addPath(BezierPoint(spikeMark1PosMiddle))
-            .addPath(BezierPoint(spikeMark1PosOuter)).build()
+        spikeMark1Pickup1 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark1PosPre, Pose(spikeMark1PosInner.x - 0.5, spikeMark1PosInner.y, spikeMark1PosInner.heading)))
+            .addPath(BezierLine(Pose(spikeMark1PosInner.x - 0.5, spikeMark1PosInner.y, spikeMark1PosInner.heading), spikeMark1PosInner))
+            .setLinearHeadingInterpolation(spikeMark1PosPre.heading, spikeMark1PosOuter.heading)
+            .build()
 
-        spikeMark1PickupToScore = builder
-            .addPath(BezierPoint(scorePos)).build()
+        /*
+        spikeMark1Pickup2 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark1PosInner, Pose(spikeMark1PosMiddle.x - 0.5, spikeMark1PosMiddle.y, spikeMark1PosMiddle.heading)))
+            .addPath(BezierLine(Pose(spikeMark1PosMiddle.x - 0.5, spikeMark1PosMiddle.y, spikeMark1PosInner.heading), spikeMark1PosMiddle))
+            .setLinearHeadingInterpolation(spikeMark1PosInner.heading, spikeMark1PosMiddle.heading)
+            .build()
 
-        scoreToSpikeMark2 = builder
-            .addPath(BezierPoint(spikeMark2PosPre)).build()
+        spikeMark1Pickup3 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark1PosMiddle, Pose(spikeMark1PosOuter.x - 0.5, spikeMark1PosOuter.y, spikeMark1PosOuter.heading)))
+            .addPath(BezierLine(Pose(spikeMark1PosOuter.x - 0.5, spikeMark1PosOuter.y, spikeMark1PosOuter.heading), spikeMark1PosOuter))
+            .setLinearHeadingInterpolation(spikeMark1PosMiddle.heading, spikeMark1PosOuter.heading)
+            .build()
 
-        spikeMark2Pickup = builder
-            .addPath(BezierPoint(spikeMark2PosInner))
-            .addPath(BezierPoint(spikeMark2PosMiddle))
-            .addPath(BezierPoint(spikeMark2PosOuter)).build()
+         */
 
-        spikeMark2PickupToScore = builder
-            .addPath(BezierPoint(scorePos)).build()
+//        spikeMark1Pickup1 = follower.pathBuilder()
+//            .addPath(BezierLine(spikeMark1PosPre, spikeMark1PosInner))
+//            .setLinearHeadingInterpolation(spikeMark1PosPre.heading, spikeMark1PosOuter.heading)
+//            .build()
 
-        scoreToSpikeMark3 = builder
-            .addPath(BezierPoint(spikeMark3PosPre)).build()
+        spikeMark1Pickup2 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark1PosInner, spikeMark1PosMiddle))
+            .setLinearHeadingInterpolation(spikeMark1PosInner.heading, spikeMark1PosMiddle.heading)
+            .build()
 
-        spikeMark3Pickup = builder
-            .addPath(BezierPoint(spikeMark3PosInner))
-            .addPath(BezierPoint(spikeMark3PosMiddle))
-            .addPath(BezierPoint(spikeMark3PosOuter)).build()
+        spikeMark1Pickup3 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark1PosMiddle, spikeMark1PosOuter))
+            .setLinearHeadingInterpolation(spikeMark1PosMiddle.heading, spikeMark1PosOuter.heading)
+            .build()
 
-        spikeMark3PickupToScore = builder
-            .addPath(BezierPoint(scorePos)).build()
+        spikeMark1PickupToScore = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark1PosOuter, scorePos))
+            .setLinearHeadingInterpolation(spikeMark1PosOuter.heading, scorePos.heading)
+            .build()
+
+        scoreToSpikeMark2 = follower.pathBuilder()
+            .addPath(BezierLine(scorePos, spikeMark2PosPre))
+            .setLinearHeadingInterpolation(scorePos.heading, spikeMark2PosPre.heading)
+            .build()
+
+        spikeMark2Pickup1 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark2PosPre, spikeMark2PosInner))
+            .setLinearHeadingInterpolation(spikeMark2PosPre.heading, spikeMark2PosOuter.heading)
+            .build()
+
+        spikeMark2Pickup2 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark2PosInner, spikeMark2PosMiddle))
+            .setLinearHeadingInterpolation(spikeMark2PosInner.heading, spikeMark2PosMiddle.heading)
+            .build()
+
+        spikeMark2Pickup3 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark2PosMiddle, spikeMark2PosOuter))
+            .setLinearHeadingInterpolation(spikeMark2PosMiddle.heading, spikeMark2PosOuter.heading)
+            .build()
+
+        spikeMark2PickupToScore = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark2PosOuter, scorePos))
+            .setLinearHeadingInterpolation(spikeMark2PosOuter.heading, scorePos.heading)
+            .build()
+
+        scoreToSpikeMark3 = follower.pathBuilder()
+            .addPath(BezierLine(scorePos, spikeMark3PosPre))
+            .setLinearHeadingInterpolation(scorePos.heading, spikeMark3PosPre.heading)
+            .build()
+
+        spikeMark3Pickup1 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark3PosPre, spikeMark3PosInner))
+            .setLinearHeadingInterpolation(spikeMark3PosPre.heading, spikeMark3PosOuter.heading)
+            .build()
+
+        spikeMark3Pickup2 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark3PosInner, spikeMark3PosMiddle))
+            .setLinearHeadingInterpolation(spikeMark3PosInner.heading, spikeMark3PosMiddle.heading)
+            .build()
+
+        spikeMark3Pickup3 = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark3PosMiddle, spikeMark3PosOuter))
+            .setLinearHeadingInterpolation(spikeMark3PosMiddle.heading, spikeMark3PosOuter.heading)
+            .build()
+
+        spikeMark3PickupToScore = follower.pathBuilder()
+            .addPath(BezierLine(spikeMark3PosOuter, scorePos)).build()
     }
 
 

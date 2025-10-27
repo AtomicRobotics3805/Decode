@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ZeroSensor
 
 
 @Autonomous
-class ThreeArtifactGoalStart : NextFTCOpMode() {
+class SixArtifactGoalStart : NextFTCOpMode() {
 
     init {
         addComponents(
@@ -45,7 +45,7 @@ class ThreeArtifactGoalStart : NextFTCOpMode() {
     }
 
     override fun onStartButtonPressed() {
-        AutoRoutines.threeArtifactGoalStartAutoRoutine()
+        AutoRoutines.sixArtifactGoalStartAutoRoutine()
     }
 
     override fun onUpdate() {

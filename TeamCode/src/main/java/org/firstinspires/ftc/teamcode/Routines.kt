@@ -1,18 +1,13 @@
 package org.firstinspires.ftc.teamcode
 
 import dev.nextftc.core.commands.Command
-import dev.nextftc.core.commands.conditionals.IfElseCommand
-import dev.nextftc.core.commands.conditionals.SwitchCommand
-import dev.nextftc.core.commands.conditionals.switchCommand
 import dev.nextftc.core.commands.delays.Delay
 import dev.nextftc.core.commands.delays.WaitUntil
 import dev.nextftc.core.commands.groups.ParallelGroup
 import dev.nextftc.core.commands.groups.ParallelRaceGroup
 import dev.nextftc.core.commands.groups.SequentialGroup
-import dev.nextftc.core.commands.utility.ForcedParallelCommand
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.commands.utility.LambdaCommand
-import org.firstinspires.ftc.teamcode.Routines.intake
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
@@ -41,32 +36,38 @@ object Routines {
                 SpindexerSensor.Read()
             ),
 //            haltIntake
-            Intake.stop
+            Intake.slowOut
         )
 
     val haltIntake = ParallelGroup(
         // Spindexer.toTravel
-        Intake.stop
+        Intake.slowOut
     )
 
     val shootPurpleNoStop: Command
         get() = SequentialGroup(
-            Spindexer.spinToPurple,
-            Delay(1.0),
-            Shooter.start.withDeadline(WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity }),
+            ParallelGroup(
+                Spindexer.spinToPurple,
+                Shooter.start
+            ),
+            Delay(0.1),
+//            WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity },
             InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            PusherArm.push,
-            Delay(1.0)
+            Delay(0.5),
+            PusherArm.push
         )
 
     val shootGreenNoStop: Command
         get() = SequentialGroup(
-            Spindexer.spinToGreen,
-            Delay(1.0),
-            Shooter.start.withDeadline(WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity }),
+            ParallelGroup(
+                Spindexer.spinToGreen,
+                Shooter.start
+            ),
+            Delay(0.1),
+//            WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity },
             InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY },
-            PusherArm.push,
-            Delay(1.0)
+            Delay(0.5),
+            PusherArm.push
         )
 
     var selected = GPPMotifShoot
@@ -78,29 +79,43 @@ object Routines {
                 Motif.PPG -> PPGMotifShoot
                 Motif.UNKNOWN -> selected
             }
-        }.then(selected)
+        }.then(shootSelected)
+
+    var selectedFinished = false
+
+    val shootSelected: Command = LambdaCommand().setIsDone { selectedFinished }.setStart { selectedFinished = false; selected.schedule() }
 
     val GPPMotifShoot: Command
         get() = SequentialGroup(
             shootGreenNoStop,
+            Delay(0.5),
             shootPurpleNoStop,
+            Delay(0.5),
             shootPurpleNoStop,
-            Shooter.stop
+            Shooter.stop,
+            InstantCommand { selectedFinished = true }
         )
 
     val PGPMotifShoot: Command
         get() = SequentialGroup(
             shootPurpleNoStop,
+            Delay(0.5),
             shootGreenNoStop,
+            Delay(0.5),
             shootPurpleNoStop,
-            Shooter.stop
+            Shooter.stop,
+            InstantCommand { selectedFinished = true }
         )
 
     val PPGMotifShoot: Command
         get() = SequentialGroup(
             shootPurpleNoStop,
+            Delay(0.5),
             shootPurpleNoStop,
+            Delay(0.5),
             shootGreenNoStop,
-            Shooter.stop
+            Delay(0.5),
+            Shooter.stop,
+            InstantCommand { selectedFinished = true }
         )
 }

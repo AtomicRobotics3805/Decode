@@ -4,12 +4,9 @@ import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import dev.nextftc.bindings.button
 import dev.nextftc.control.KineticState
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
-import dev.nextftc.core.units.deg
-import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.Gamepads
 import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
@@ -22,9 +19,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants
-import org.firstinspires.ftc.teamcode.subsystems.LimeLight
-import org.firstinspires.ftc.teamcode.subsystems.ZeroSensor
 
 
 @TeleOp
@@ -46,18 +40,13 @@ class TestOpMode : NextFTCOpMode() {
     private val backRightMotor = MotorEx("motor_c3").brakeMode()
     private val imu = IMUEx("imu", Direction.LEFT, Direction.UP).zeroed()
 
-    val rightTrigger = button { gamepad1.right_trigger > 0.2 }
-    val leftTrigger = button { gamepad1.left_trigger > 0.2 }
-    val dpadLeft = button { gamepad1.dpad_left }
-    val dpadUp = button { gamepad1.dpad_up }
-    val dpadRight = button { gamepad1.dpad_right }
-    val dpadDown = button { gamepad1.dpad_down }
-    val leftBumper = button { gamepad1.left_bumper }
-    val rightBumper = button { gamepad1.right_bumper }
-    val startButton = button { gamepad1.start }
-
     override fun onStartButtonPressed() {
-        /*
+
+//        Gamepads.gamepad1.a.whenBecomesTrue { Spindexer.spinToGreen() }
+//        Gamepads.gamepad1.x.whenBecomesTrue { SequentialGroup(PusherArm.push, Spindexer.spinToPurple)() }
+//        Gamepads.gamepad1.b.whenBecomesTrue { Spindexer.spinToIntake() }
+//        Gamepads.gamepad1.y.whenBecomesTrue { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY }
+
         PusherArm.down()
         val driverControlled = MecanumDriverControlled(
             frontLeftMotor,
@@ -89,10 +78,10 @@ class TestOpMode : NextFTCOpMode() {
 //        Gamepads.gamepad1.y.whenBecomesTrue { Spindexer.setAngle((60).deg).schedule() }
 //        Gamepads.gamepad1.b.whenBecomesTrue { Spindexer.setAngle((180).deg).schedule() }
 
-        leftTrigger.whenBecomesTrue { Intake.reverse() }.whenBecomesFalse { Intake.stop() }
-        rightBumper.whenBecomesTrue { Routines.shoot() }
+        Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 }.whenBecomesTrue { Intake.reverse() }.whenBecomesFalse { Intake.slowOut() }
+        Gamepads.gamepad1.rightBumper.whenBecomesTrue { Routines.shoot() }
 
-        startButton.whenBecomesTrue { Spindexer.spinToPurple() }
+        Gamepads.gamepad1.start.whenBecomesTrue { Spindexer.spinToPurple() }
         Gamepads.gamepad1.back.whenBecomesTrue { Spindexer.spinToGreen() }
 
         Gamepads.gamepad1.rightStickButton.whenBecomesTrue { imu.zero() }
@@ -104,8 +93,6 @@ class TestOpMode : NextFTCOpMode() {
         Gamepads.gamepad1.dpadRight.whenTrue { Spindexer.zeroCounterClockwise() }.whenBecomesFalse { Spindexer.endZero() }
 
         Gamepads.gamepad1.dpadUp.whenTrue { Routines.motifShoot() }
-
-         */
     }
 
     override fun onStop() {

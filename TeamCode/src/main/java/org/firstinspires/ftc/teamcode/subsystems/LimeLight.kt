@@ -112,9 +112,13 @@ object LimeLight : Subsystem {
                 ActiveOpMode.telemetry.addData("Tag ID:", snapshot.fiducialId)
                 ActiveOpMode.telemetry.addData("Axial:", -snapshot.robotPoseTargetSpace.position.z)
                 ActiveOpMode.telemetry.addData("Lateral:", snapshot.robotPoseTargetSpace.position.x)
-                ActiveOpMode.telemetry.addData("Yaw:",snapshot.robotPoseTargetSpace.orientation.yaw)
+                ActiveOpMode.telemetry.addData(
+                    "Yaw:",
+                    snapshot.robotPoseTargetSpace.orientation.yaw
+                )
             }
         }
         lastLength = fiducialResults.size
     }
+
 }

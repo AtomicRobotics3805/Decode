@@ -6,6 +6,8 @@ import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
 import dev.nextftc.control.feedback.PIDCoefficients
 import dev.nextftc.control.feedforward.BasicFeedforwardParameters
+import dev.nextftc.core.commands.delays.WaitUntil
+import dev.nextftc.core.commands.groups.ParallelGroup
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.ftc.ActiveOpMode
@@ -43,13 +45,36 @@ object Shooter : Subsystem {
 //    val start = InstantCommand {  controller.goal = KineticState(0.0, (5400 / 60.0) * ticksPerRev) }
 //    val stop = InstantCommand { controller.goal = KineticState() }
 
-    val start = RunToVelocity(controller, (2600 / 60.0) * ticksPerRev, KineticState(Double.POSITIVE_INFINITY, 500.0, Double.POSITIVE_INFINITY)).requires(this) // (desired RPM / 60) * ticks per rev
-    val stop = RunToVelocity(controller, 0.0).requires(this)
 
-    val uncontrolledStart = InstantCommand { controlled = false; motor.power = 1.0 }
-    val uncontrolledStop = InstantCommand { controlled = true; motor.power = 0.0 }
+    var loopCount = 0
+    val loopThreshold = 40
+    val checkWithinToleranceForCorrectNumberOfLoops = WaitUntil {
+        if (loopCount >= loopThreshold) {
+            true
+        } else {
+            if (motor.velocity > (controller.goal.velocity-10) && motor.velocity < (controller.goal.velocity + 60)) {
+                loopCount++
+            } else {
+                loopCount = 0
+            }
+
+            false
+        }
+    }
+
+    val start = ParallelGroup(
+        RunToVelocity(
+            controller,
+            (2400 / 60.0) * ticksPerRev,
+            KineticState(Double.POSITIVE_INFINITY, 500.0, Double.POSITIVE_INFINITY)
+        ).requires(this), // (desired RPM / 60) * ticks per rev
+        checkWithinToleranceForCorrectNumberOfLoops
+    )
+    val stop = RunToVelocity(controller, 0.0, KineticState(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
+        Double.POSITIVE_INFINITY)).requires(this)
 
     val reverseIntake = RunToVelocity(controller, -((1000 / 60.0) * ticksPerRev)).requires(this)
+
 
     override fun periodic() {
         if (controlled) {
