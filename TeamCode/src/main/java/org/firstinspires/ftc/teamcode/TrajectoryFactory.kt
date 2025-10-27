@@ -49,6 +49,8 @@ object TrajectoryFactory {
 
     val spikeMark3PosOuter = Pose(25.6, 35.6, 180.deg.inRad)
 
+    val outOfTheWayPos = Pose(40.0, 136.0, -90.deg.inRad)
+
     //endregion
 
     //region Paths
@@ -80,6 +82,8 @@ object TrajectoryFactory {
     lateinit var spikeMark3Pickup3: PathChain
 
     lateinit var spikeMark3PickupToScore: PathChain
+
+    lateinit var scoreToOutOfTheWay: PathChain
 
 
     fun buildTrajectories(follower: Follower) {
@@ -185,7 +189,14 @@ object TrajectoryFactory {
             .build()
 
         spikeMark3PickupToScore = follower.pathBuilder()
-            .addPath(BezierLine(spikeMark3PosOuter, scorePos)).build()
+            .addPath(BezierLine(spikeMark3PosOuter, scorePos))
+            .setLinearHeadingInterpolation(spikeMark3PosOuter.heading, scorePos.heading)
+            .build()
+
+        scoreToOutOfTheWay = follower.pathBuilder()
+            .addPath(BezierLine(scorePos, outOfTheWayPos))
+            .setLinearHeadingInterpolation(scorePos.heading, outOfTheWayPos.heading)
+            .build()
     }
 
 

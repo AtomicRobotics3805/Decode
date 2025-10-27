@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
+import org.firstinspires.ftc.teamcode.subsystems.ZeroSensor
 
 
 @TeleOp
@@ -26,7 +27,7 @@ class TestOpMode : NextFTCOpMode() {
 
     init {
         addComponents(
-            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor/*, ZeroSensor, LimeLight*/),
+            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor, ZeroSensor, /*LimeLight*/),
             BulkReadComponent,
             BindingsComponent,
 //            PedroComponent(Constants::createFollower)

@@ -16,10 +16,10 @@ object ZeroSensor : Subsystem {
     override fun periodic() {
         // TODO: Only check every X loops (probably 3)
 
-        if (sensor.state) {
+        if (!sensor.state) {
             Spindexer.motor.encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         }
 
-        ActiveOpMode.telemetry.addData("Magnet", sensor.state)
+        ActiveOpMode.telemetry.addData("Magnet", !sensor.state)
     }
 }

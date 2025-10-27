@@ -74,7 +74,8 @@ object AutoRoutines {
                 FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true),
                 Spindexer.enableTraveling
             ),
-            Routines.motifShoot
+            Routines.motifShoot,
+            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true)
         )
 
     val justThePaths
