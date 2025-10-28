@@ -7,6 +7,7 @@ import dev.nextftc.control.builder.controlSystem
 import dev.nextftc.control.feedback.PIDCoefficients
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.subsystems.Subsystem
+import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
 
 @Configurable
@@ -67,6 +68,13 @@ object LimeLight : Subsystem {
     }
 
     override fun periodic() {
+        val fiducialResults = ll.getLatestResult().fiducialResults
+        if (!fiducialResults.isEmpty()) {
+            val snapshot = fiducialResults[0]
+            if (snapshot.fiducialId == 20 || snapshot.fiducialId == 24) {
+                PedroComponent.follower.pose == snapshot.robotPoseTargetSpace
+            }
+        }
         ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
     }
 

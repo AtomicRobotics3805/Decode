@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 
-@Autonomous
+@Autonomous(name = "\uD83D\uDFE6 Goal Start SIX", group = "SIX")
 class SixArtifactGoalStartBlue : NextFTCOpMode() {
 
     init {

@@ -40,7 +40,7 @@ class ThreeArtifactGoalStartRed : NextFTCOpMode() {
     override fun onInit() {
         PusherArm.down()
         TrajectoryFactory.buildTrajectories(PedroComponent.follower)
-        PedroComponent.follower.setStartingPose(TrajectoryFactory.goalStartPos)
+        PedroComponent.follower.setStartingPose(TrajectoryFactory.goalStartPos.mirror())
         Drawing.init()
     }
 

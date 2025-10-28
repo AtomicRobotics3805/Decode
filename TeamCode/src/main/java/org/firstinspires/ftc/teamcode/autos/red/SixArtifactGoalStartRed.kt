@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
 
-@Autonomous
+@Autonomous(name = "\uD83D\uDFE5 Goal Start SIX", group = "SIX")
 class SixArtifactGoalStartRed : NextFTCOpMode() {
 
     init {
@@ -40,7 +40,7 @@ class SixArtifactGoalStartRed : NextFTCOpMode() {
     override fun onInit() {
         PusherArm.down()
         TrajectoryFactory.buildTrajectories(PedroComponent.follower)
-        PedroComponent.follower.setStartingPose(TrajectoryFactory.goalStartPos)
+        PedroComponent.follower.setStartingPose(TrajectoryFactory.goalStartPos.mirror())
         Drawing.init()
     }
 
