@@ -1,9 +1,7 @@
-package org.firstinspires.ftc.teamcode.autos
+package org.firstinspires.ftc.teamcode.autos.blue
 
-import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
-import com.pedropathing.follower.Follower
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import dev.nextftc.control.KineticState
 import dev.nextftc.core.components.SubsystemComponent
@@ -14,17 +12,17 @@ import dev.nextftc.ftc.components.BulkReadComponent
 import org.firstinspires.ftc.teamcode.AutoRoutines
 import org.firstinspires.ftc.teamcode.Drawing
 import org.firstinspires.ftc.teamcode.TrajectoryFactory
+import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
-import org.firstinspires.ftc.teamcode.subsystems.ZeroSensor
-
+import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 
 @Autonomous
-class ThreeArtifactGoalStart : NextFTCOpMode() {
+class SixArtifactGoalStartBlue : NextFTCOpMode() {
 
     init {
         addComponents(
@@ -33,25 +31,26 @@ class ThreeArtifactGoalStart : NextFTCOpMode() {
             PedroComponent(Constants::createFollower)
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
+        AutonomousInfo.redAuto = false
     }
 
 //    lateinit var follower: Follower
 
     override fun onInit() {
         PusherArm.down()
-        TrajectoryFactory.buildTrajectories(PedroComponent.follower)
-        PedroComponent.follower.setStartingPose(TrajectoryFactory.goalStartPos)
+        TrajectoryFactory.buildTrajectories(PedroComponent.Companion.follower)
+        PedroComponent.Companion.follower.setStartingPose(TrajectoryFactory.goalStartPos)
         Drawing.init()
     }
 
     override fun onStartButtonPressed() {
-        AutoRoutines.threeArtifactGoalStartAutoRoutine()
+        AutoRoutines.sixArtifactGoalStartAutoRoutine()
     }
 
     override fun onUpdate() {
-        Drawing.drawDebug(PedroComponent.follower)
-        ActiveOpMode.telemetry.addData("Current pos", PedroComponent.follower.pose)
-        ActiveOpMode.telemetry.addData("IsBusy", PedroComponent.follower.isBusy)
+        Drawing.drawDebug(PedroComponent.Companion.follower)
+        ActiveOpMode.telemetry.addData("Current pos", PedroComponent.Companion.follower.pose)
+        ActiveOpMode.telemetry.addData("IsBusy", PedroComponent.Companion.follower.isBusy)
 //        follower.update()
     }
 

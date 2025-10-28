@@ -35,6 +35,7 @@ object AutoRoutines {
 
     val sixArtifactGoalStartAutoRoutine
         get() = SequentialGroup(
+            //region First motif
             Spindexer.enableTraveling,
             FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
@@ -47,34 +48,46 @@ object AutoRoutines {
                     Routines.motifShoot
                 )
             ),
+            //endregion
 
-            // GO PICKUP BALLS
+            //region Second motif
+
+            // Drive to pre-pickup pos
             ParallelGroup(
                 FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
                 Spindexer.spinToIntake,
                 Intake.start
             ),
 
-            SequentialGroup(
+            // Pickup first ball
+            ParallelGroup(
                 FollowPath(TrajectoryFactory.spikeMark1Pickup1, true),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
-                ParallelGroup(
-                    Spindexer.spinToIntake,
-                    FollowPath(TrajectoryFactory.spikeMark1Pickup2, true)
-                ),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
-                ParallelGroup(
-                    Spindexer.spinToIntake,
-                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true)
-                ),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
             ),
+
+            // Pickup second ball
+            Spindexer.spinToIntake,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.spikeMark1Pickup2, true),
+                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
+            ),
+
+            // Pickup third ball
+            Spindexer.spinToIntake,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
+                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
+            ),
+
+            // Drive to score
             ParallelGroup(
                 Intake.slowOut,
                 FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true),
                 Spindexer.enableTraveling
             ),
             Routines.motifShoot,
+
+            //endregion
             FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true)
         )
 
