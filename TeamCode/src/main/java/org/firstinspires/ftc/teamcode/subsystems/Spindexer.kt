@@ -105,12 +105,6 @@ object Spindexer : Subsystem {
         controller.goal = KineticState(currentStatus.angle.inRad + if(traveling) 30.deg.inRad else 0.0)
 
         motor.power = controller.calculate(motor.state)
-
-        ActiveOpMode.telemetry.addData("Raw Encoder", motor.state.position)
-        ActiveOpMode.telemetry.addData("Angle", ticksToAngle(motor.state.position).normalized.inDeg)
-        ActiveOpMode.telemetry.addData("Spindexer goal", controller.goal.position.rad.inDeg)
-        ActiveOpMode.telemetry.addData("Spindexer slots", "0:["+slots[0]+"], 1:["+slots[1]+"], 2:["+slots[2]+"]")
-        ActiveOpMode.telemetry.update()
     }
 
     //region USEFUL COMMANDS

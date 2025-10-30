@@ -75,7 +75,6 @@ object LimeLight : Subsystem {
                 PedroComponent.follower.pose == snapshot.robotPoseTargetSpace
             }
         }
-        ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
     }
 
     var detectMotif = InstantCommand {

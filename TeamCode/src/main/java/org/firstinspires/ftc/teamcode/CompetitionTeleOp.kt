@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode
 
+import com.bylazar.graph.PanelsGraph
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.util.RobotLog
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
+import dev.nextftc.core.units.rad
 import dev.nextftc.extensions.pedro.PedroComponent
+import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.ftc.Gamepads
 import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
@@ -14,20 +18,26 @@ import dev.nextftc.hardware.driving.MecanumDriverControlled
 import dev.nextftc.hardware.impl.Direction
 import dev.nextftc.hardware.impl.IMUEx
 import dev.nextftc.hardware.impl.MotorEx
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
+import org.firstinspires.ftc.teamcode.subsystems.LimeLight.matchMotif
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
+import org.firstinspires.ftc.teamcode.subsystems.Shooter.controller
+import org.firstinspires.ftc.teamcode.subsystems.Shooter.motor
+import org.firstinspires.ftc.teamcode.subsystems.Shooter.ticksPerRev
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
+import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 import org.firstinspires.ftc.teamcode.subsystems.ZeroSensor
 
 @TeleOp(name = "Competition TeleOp")
 class CompetitionTeleOp : NextFTCOpMode() {
+    var graphManager = PanelsGraph.manager
     init {
         addComponents(
-            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor, LimeLight,
+            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor, /*LimeLight,*/
                 ZeroSensor),
             BulkReadComponent,
 //            PedroComponent(Constants::createFollower),
@@ -45,6 +55,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
     override fun onStartButtonPressed() {
         PusherArm.down()
+
+        graphManager = PanelsGraph.manager
 
         //region Gamepad bindings
 
@@ -100,6 +112,30 @@ class CompetitionTeleOp : NextFTCOpMode() {
         //endregion
 
         //endregion
+    }
+
+    override fun onUpdate() {
+        ActiveOpMode.telemetry.addData("Motor Amp: Left Front Drive: ", frontLeftMotor.motor.getCurrent(CurrentUnit.AMPS))
+        ActiveOpMode.telemetry.addData("Motor Amp: Left Back Drive: ", backLeftMotor.motor.getCurrent(CurrentUnit.AMPS))
+        ActiveOpMode.telemetry.addData("Motor Amp: Right Front Drive", frontRightMotor.motor.getCurrent(CurrentUnit.AMPS))
+        ActiveOpMode.telemetry.addData("Motor Amp: Right Back Drive", backRightMotor.motor.getCurrent(CurrentUnit.AMPS))
+
+        ActiveOpMode.telemetry.addData("Motor Amp: Intake Motor", Intake.motor.motor.getCurrent(CurrentUnit.AMPS))
+        ActiveOpMode.telemetry.addData("Motor Amp: Spindexer Motor", Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS))
+        ActiveOpMode.telemetry.addData("Motor Amp: Shooter Motor", Shooter.motor.motor.getCurrent(CurrentUnit.AMPS))
+
+        ActiveOpMode.telemetry.addData("Current velocity:", motor.state.velocity / ticksPerRev * 60.0)
+        ActiveOpMode.telemetry.addData("Target velocity:", controller.goal.velocity / ticksPerRev * 60.0)
+        ActiveOpMode.telemetry.addData("Shooter power", motor.power)
+
+        ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
+
+        ActiveOpMode.telemetry.addData("Raw Encoder", Spindexer.motor.state.position)
+        ActiveOpMode.telemetry.addData("Angle", ticksToAngle(Spindexer.motor.state.position).normalized.inDeg)
+        ActiveOpMode.telemetry.addData("Spindexer goal", Spindexer.controller.goal.position.rad.inDeg)
+        ActiveOpMode.telemetry.addData("Spindexer slots", "0:["+ Spindexer.slots[0]+"], 1:["+ Spindexer.slots[1]+"], 2:["+ Spindexer.slots[2]+"]")
+
+        ActiveOpMode.telemetry.update()
     }
 
 

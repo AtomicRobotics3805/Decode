@@ -8,7 +8,7 @@ import dev.nextftc.hardware.impl.MotorEx
 
 object Intake : Subsystem {
 
-    private val motor = MotorEx("motor_e2").reversed()
+    val motor = MotorEx("motor_e2").reversed()
 
     override fun initialize() {
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE

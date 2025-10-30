@@ -81,9 +81,6 @@ object Shooter : Subsystem {
             motor.power = controller.calculate(motor.state)
         }
 
-        ActiveOpMode.telemetry.addData("Current velocity:", motor.state.velocity / ticksPerRev * 60.0)
-        ActiveOpMode.telemetry.addData("Target velocity:", controller.goal.velocity / ticksPerRev * 60.0)
-        ActiveOpMode.telemetry.addData("Shooter power", motor.power)
     }
 }
 

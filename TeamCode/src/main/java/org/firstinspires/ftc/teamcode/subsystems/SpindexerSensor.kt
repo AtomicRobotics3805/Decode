@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import android.graphics.Color
 import com.qualcomm.hardware.rev.RevColorSensorV3
 import com.qualcomm.robotcore.hardware.NormalizedRGBA
 import dev.nextftc.control.KineticState
@@ -13,26 +12,29 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 object SpindexerSensor : Subsystem {
 
-    lateinit var sensor: RevColorSensorV3
+    lateinit var leftSensor: RevColorSensorV3
+    lateinit var rightSensor: RevColorSensorV3
 
     var distanceThreshold = 3 // CM
 
     public var pause = false
 
     override fun initialize() {
-        sensor = ActiveOpMode.hardwareMap.get(RevColorSensorV3::class.java, "spindexer_sensor")
-        sensor.enableLed(true)
+        leftSensor = ActiveOpMode.hardwareMap.get(RevColorSensorV3::class.java, "spindexer_sensor_left")
+        leftSensor.enableLed(true)
+        rightSensor = ActiveOpMode.hardwareMap.get(RevColorSensorV3::class.java, "spindexer_sensor_left")
+        rightSensor.enableLed(true)
     }
 
     override fun periodic() {
 
-        ActiveOpMode.telemetry.addData("Current slot color", Spindexer.slots[Spindexer.currentStatus.id])
-        ActiveOpMode.telemetry.addData("Raw distance sensor", sensor.getDistance(DistanceUnit.CM))
-//        ActiveOpMode.telemetry.addData("Raw hsv hue", tempHsv[0])
-        ActiveOpMode.telemetry.addData("Spindexer in tolerance", Spindexer.controller.isWithinTolerance(
-            KineticState(20.deg.inRad, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
-        ))
-        ActiveOpMode.telemetry.addData("Pause", pause)
+//        ActiveOpMode.telemetry.addData("Current slot color", Spindexer.slots[Spindexer.currentStatus.id])
+//        ActiveOpMode.telemetry.addData("Raw distance sensor", leftSensor.getDistance(DistanceUnit.CM))
+////        ActiveOpMode.telemetry.addData("Raw hsv hue", tempHsv[0])
+//        ActiveOpMode.telemetry.addData("Spindexer in tolerance", Spindexer.controller.isWithinTolerance(
+//            KineticState(20.deg.inRad, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
+//        ))
+//        ActiveOpMode.telemetry.addData("Pause", pause)
     }
 
     class Read: Command() {
@@ -55,14 +57,26 @@ object SpindexerSensor : Subsystem {
             // TODO: Only check every X loops (probably 3)
 
             Spindexer.slots[Spindexer.currentStatus.id] =
-                if (sensor.getDistance(DistanceUnit.CM) <= distanceThreshold) {
+                if (rightSensor.getDistance(DistanceUnit.CM) < leftSensor.getDistance(DistanceUnit.CM)) { // RIGHT SENSOR IS CLOSER, SO USE IT
+                    if (rightSensor.getDistance(DistanceUnit.CM) <= distanceThreshold) {
 
-                    val colors: NormalizedRGBA = sensor.getNormalizedColors()
+                        val colors: NormalizedRGBA = rightSensor.getNormalizedColors()
 
-                    if (colors.green > colors.red + colors.blue) Spindexer.SpindexerSlotStatus.GREEN
-                    else Spindexer.SpindexerSlotStatus.PURPLE
-                } else {
-                    Spindexer.SpindexerSlotStatus.EMPTY
+                        if (colors.green > colors.red + colors.blue) Spindexer.SpindexerSlotStatus.GREEN
+                        else Spindexer.SpindexerSlotStatus.PURPLE
+                    } else {
+                        Spindexer.SpindexerSlotStatus.EMPTY
+                    }
+                } else { // LEFT SENSOR IS CLOSER, SO USE IT
+                    if (leftSensor.getDistance(DistanceUnit.CM) <= distanceThreshold) {
+
+                        val colors: NormalizedRGBA = leftSensor.getNormalizedColors()
+
+                        if (colors.green > colors.red + colors.blue) Spindexer.SpindexerSlotStatus.GREEN
+                        else Spindexer.SpindexerSlotStatus.PURPLE
+                    } else {
+                        Spindexer.SpindexerSlotStatus.EMPTY
+                    }
                 }
         }
     }
