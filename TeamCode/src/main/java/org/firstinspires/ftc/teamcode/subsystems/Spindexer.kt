@@ -64,6 +64,8 @@ object Spindexer : Subsystem {
 
     var controllerDisabled = false
 
+    var empty = false
+
     const val ticksPerRev = 1425.1
 
     @JvmField
@@ -105,6 +107,7 @@ object Spindexer : Subsystem {
         controller.goal = KineticState(currentStatus.angle.inRad + if(traveling) 30.deg.inRad else 0.0)
 
         motor.power = controller.calculate(motor.state)
+
     }
 
     //region USEFUL COMMANDS
@@ -118,12 +121,12 @@ object Spindexer : Subsystem {
 
     val zeroClockwise: Command get() = InstantCommand {
         controllerDisabled = true
-        motor.power = -0.05
+        motor.power = 0.1
     }
 
     val zeroCounterClockwise: Command get() = InstantCommand {
         controllerDisabled = true
-        motor.power = 0.05
+        motor.power = -0.1
     }
 
     val endZero: Command get() = InstantCommand {

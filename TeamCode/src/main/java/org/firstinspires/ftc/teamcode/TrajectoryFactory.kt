@@ -107,7 +107,7 @@ object TrajectoryFactory {
                 .addPath(
                     BezierCurve(
                         scorePos.mirror(),
-                        Pose(spikeMark1PosPre.x + 25, spikeMark1PosPre.y, spikeMark1PosPre.heading).mirror(),
+                        Pose(spikeMark1PosPre.x + 30, spikeMark1PosPre.y, spikeMark1PosPre.heading).mirror(),
                         spikeMark1PosPre.mirror()
                     )
                 )

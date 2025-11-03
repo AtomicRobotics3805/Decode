@@ -24,9 +24,6 @@ import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight.matchMotif
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
-import org.firstinspires.ftc.teamcode.subsystems.Shooter.controller
-import org.firstinspires.ftc.teamcode.subsystems.Shooter.motor
-import org.firstinspires.ftc.teamcode.subsystems.Shooter.ticksPerRev
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
@@ -38,7 +35,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
     init {
         addComponents(
             SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor, /*LimeLight,*/
-                ZeroSensor),
+                /*ZeroSensor*/),
             BulkReadComponent,
 //            PedroComponent(Constants::createFollower),
             BindingsComponent
@@ -78,7 +75,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         Gamepads.gamepad1.rightStickButton whenBecomesTrue { imu.zero() }
         Gamepads.gamepad1.rightBumper whenBecomesTrue {
-            driverControlled.scalar = 0.5
+            driverControlled.scalar = 0.3
         } whenBecomesFalse {
             driverControlled.scalar = 1.0
         } // TODO: Add autoalign and make this enable auto alignment
@@ -86,7 +83,10 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.intake::schedule whenBecomesFalse Intake.slowOut::schedule
 
         Gamepads.gamepad1.leftBumper whenBecomesTrue Routines.shoot::schedule
-        Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.motifShoot whenBecomesFalse Routines.stopShoot
+        Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.motifShoot whenBecomesFalse {
+            Routines.selected.cancel()
+            Shooter.stop()
+        }
 
         Gamepads.gamepad1.back whenTrue Spindexer.zeroCounterClockwise::schedule whenBecomesFalse Spindexer.endZero::schedule
         Gamepads.gamepad1.start whenTrue Spindexer.zeroClockwise::schedule whenBecomesFalse Spindexer.endZero::schedule
@@ -115,18 +115,18 @@ class CompetitionTeleOp : NextFTCOpMode() {
     }
 
     override fun onUpdate() {
-        ActiveOpMode.telemetry.addData("Motor Amp: Left Front Drive: ", frontLeftMotor.motor.getCurrent(CurrentUnit.AMPS))
-        ActiveOpMode.telemetry.addData("Motor Amp: Left Back Drive: ", backLeftMotor.motor.getCurrent(CurrentUnit.AMPS))
-        ActiveOpMode.telemetry.addData("Motor Amp: Right Front Drive", frontRightMotor.motor.getCurrent(CurrentUnit.AMPS))
-        ActiveOpMode.telemetry.addData("Motor Amp: Right Back Drive", backRightMotor.motor.getCurrent(CurrentUnit.AMPS))
+        RobotLog.d("Motor Amp: Left Front Drive: " + frontLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
+        RobotLog.d("Motor Amp: Left Back Drive: " + backLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
+        RobotLog.d("Motor Amp: Right Front Drive: " + frontRightMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
+        RobotLog.d("Motor Amp: Right Back Drive: " + backRightMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
 
-        ActiveOpMode.telemetry.addData("Motor Amp: Intake Motor", Intake.motor.motor.getCurrent(CurrentUnit.AMPS))
-        ActiveOpMode.telemetry.addData("Motor Amp: Spindexer Motor", Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS))
-        ActiveOpMode.telemetry.addData("Motor Amp: Shooter Motor", Shooter.motor.motor.getCurrent(CurrentUnit.AMPS))
+        RobotLog.d("Motor Amp: Intake Motor: " + Intake.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
+        RobotLog.d("Motor Amp: Spindexer Motor: " + Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
+        RobotLog.d("Motor Amp: Shooter Motor: " + Shooter.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
 
-        ActiveOpMode.telemetry.addData("Current velocity:", motor.state.velocity / ticksPerRev * 60.0)
-        ActiveOpMode.telemetry.addData("Target velocity:", controller.goal.velocity / ticksPerRev * 60.0)
-        ActiveOpMode.telemetry.addData("Shooter power", motor.power)
+        ActiveOpMode.telemetry.addData("Current velocity:", Shooter.motor.state.velocity / Shooter.ticksPerRev * 60.0)
+        ActiveOpMode.telemetry.addData("Target velocity:", Shooter.controller.goal.velocity / Shooter.ticksPerRev * 60.0)
+        ActiveOpMode.telemetry.addData("Shooter power:", Shooter.motor.power)
 
         ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
 

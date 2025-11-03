@@ -22,9 +22,6 @@ import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight.matchMotif
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
-import org.firstinspires.ftc.teamcode.subsystems.Shooter.controller
-import org.firstinspires.ftc.teamcode.subsystems.Shooter.motor
-import org.firstinspires.ftc.teamcode.subsystems.Shooter.ticksPerRev
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
@@ -60,15 +57,15 @@ class SixArtifactGoalStartBlue : NextFTCOpMode() {
         ActiveOpMode.telemetry.addData("Current pos", PedroComponent.Companion.follower.pose)
         ActiveOpMode.telemetry.addData("IsBusy", PedroComponent.Companion.follower.isBusy)
 
-        RobotLog.d("Motor Amp: Drivetrain", PedroComponent.follower.drivetrain.voltage)
+        RobotLog.d("Motor Voltage: Drivetrain: " + PedroComponent.follower.drivetrain.voltage.toString())
 
-        RobotLog.d("Motor Amp: Intake Motor", Intake.motor.motor.getCurrent(CurrentUnit.AMPS))
-        RobotLog.d("Motor Amp: Spindexer Motor", Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS))
-        RobotLog.d("Motor Amp: Shooter Motor", Shooter.motor.motor.getCurrent(CurrentUnit.AMPS))
+        RobotLog.d("Motor Amp: Intake Motor: " + Intake.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
+        RobotLog.d("Motor Amp: Spindexer Motor: " + Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
+        RobotLog.d("Motor Amp: Shooter Motor: " + Shooter.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
 
-        ActiveOpMode.telemetry.addData("Current velocity:", motor.state.velocity / ticksPerRev * 60.0)
-        ActiveOpMode.telemetry.addData("Target velocity:", controller.goal.velocity / ticksPerRev * 60.0)
-        ActiveOpMode.telemetry.addData("Shooter power", motor.power)
+        ActiveOpMode.telemetry.addData("Current velocity:", Shooter.motor.state.velocity / Shooter.ticksPerRev * 60.0)
+        ActiveOpMode.telemetry.addData("Target velocity:", Shooter.controller.goal.velocity / Shooter.ticksPerRev * 60.0)
+        ActiveOpMode.telemetry.addData("Shooter power", Shooter.motor.power)
 
         ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
 

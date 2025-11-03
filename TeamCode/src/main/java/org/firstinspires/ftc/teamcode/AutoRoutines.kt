@@ -88,7 +88,8 @@ object AutoRoutines {
             Routines.motifShoot,
 
             //endregion
-            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true)
+            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
+            Intake.stop
         )
 
     val justThePaths

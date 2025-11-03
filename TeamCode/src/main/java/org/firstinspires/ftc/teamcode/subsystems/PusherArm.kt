@@ -24,7 +24,7 @@ object PusherArm : Subsystem {
         Delay(0.4),
         down,
         Delay(0.25)
-    )
+    ).requires(this)
 
     override fun initialize() {
 //        servo = ActiveOpMode.hardwareMap.servo["servo_c0"]
