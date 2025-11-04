@@ -19,11 +19,12 @@ object PusherArm : Subsystem {
 //    val up = InstantCommand { servo.position = 1.0 }
 //    val down = InstantCommand { servo.position = 0.65 }
 
-    val push = SequentialGroup(
+    val push get() = SequentialGroup(
+        Delay(0.2),
         up,
         Delay(0.4),
         down,
-        Delay(0.25)
+        Delay(0.1)
     ).requires(this)
 
     override fun initialize() {

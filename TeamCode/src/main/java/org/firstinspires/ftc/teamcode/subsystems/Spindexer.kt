@@ -28,6 +28,7 @@ import dev.nextftc.hardware.controllable.RunToPosition
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.slots
+import java.time.Instant
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -118,6 +119,11 @@ object Spindexer : Subsystem {
 
     var clockwise = false
 
+    val emptyTopSlot = InstantCommand {
+        if (currentStatus.onTop) {
+            slots[currentStatus.id] = SpindexerSlotStatus.EMPTY
+        }
+    }
 
     val zeroClockwise: Command get() = InstantCommand {
         controllerDisabled = true
@@ -247,6 +253,18 @@ object Spindexer : Subsystem {
                 selection = current
             } else {
                 current++
+            }
+        }
+
+        // IF WE CAN'T FIND ONE WITH THE GOAL COLOR, FIND ONE OF THE OTHER COLOR, IF POSSIBLE
+        if (selection == -1 && goal != SpindexerSlotStatus.EMPTY) {
+            current = 0
+            slots.forEach {
+                if (it == (if (goal == SpindexerSlotStatus.GREEN) SpindexerSlotStatus.PURPLE else SpindexerSlotStatus.GREEN)) {
+                    selection = current
+                } else {
+                    current++
+                }
             }
         }
 

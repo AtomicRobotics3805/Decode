@@ -24,11 +24,7 @@ object Routines {
     val shoot
         get() = SequentialGroup(
             Shooter.start.withDeadline(WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity }),
-            LambdaCommand().setIsDone { true }.setStart {
-                if (Spindexer.slots[Spindexer.currentStatus.id] != Spindexer.SpindexerSlotStatus.EMPTY) {
-                    Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY
-                }
-            },
+            Spindexer.emptyTopSlot,
             PusherArm.push,
             Shooter.stop
 //            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY }
@@ -58,6 +54,7 @@ object Routines {
         Intake.slowOut
     )
 
+    /*
     val shootPurpleNoStop: Command
         get() = SequentialGroup(
             ParallelGroup(
@@ -138,53 +135,78 @@ object Routines {
             PusherArm.push
         )
 
-    var selected = GPPMotifShoot
-    val motifShoot: Command
-        get() = InstantCommand {
-            selected = when (LimeLight.matchMotif) {
-                Motif.GPP -> GPPMotifShoot
-                Motif.PGP -> PGPMotifShoot
-                Motif.PPG -> PPGMotifShoot
-                Motif.UNKNOWN -> selected
-            }
-        }.then(shootSelected)
+     */
 
-    var selectedFinished = false
+    val shootGreenNoStop get() = SequentialGroup(
+        ParallelGroup(
+            Spindexer.spinToGreen,
+            Shooter.start
+        ),
+        Delay(0.2),
+        ParallelGroup(
+            Spindexer.emptyTopSlot,
+            PusherArm.push
+        )
+    )
 
-    val shootSelected: Command = LambdaCommand().setIsDone { selectedFinished }.setStart { selectedFinished = false; selected.schedule() }
+    val shootPurpleNoStop get() = SequentialGroup(
+        ParallelGroup(
+            Spindexer.spinToPurple,
+            Shooter.start
+        ),
+        Delay(0.2),
+        ParallelGroup(
+            Spindexer.emptyTopSlot,
+            PusherArm.push
+        )
+    )
+
+    fun setMotifSelection() {
+        selection = when (LimeLight.matchMotif) {
+            Motif.GPP -> GPPMotifShoot
+            Motif.PGP -> PGPMotifShoot
+            Motif.PPG -> PPGMotifShoot
+            Motif.UNKNOWN -> selection
+        }
+    }
+    var selection = GPPMotifShoot
+    var motifShootCompleted = false
+
+    val motifShoot = LambdaCommand().setStart { motifShootCompleted = false; selection() }.setIsDone { motifShootCompleted }
 
     val GPPMotifShoot: Command
         get() = SequentialGroup(
-
+            InstantCommand { motifShootCompleted = false },
             shootGreenNoStop,
-            Delay(0.5),
+            Delay(0.1),
             shootPurpleNoStop,
-            Delay(0.5),
+            Delay(0.1),
             shootPurpleNoStop,
             Shooter.stop,
-            InstantCommand { selectedFinished = true }
+            InstantCommand { motifShootCompleted = true }
         )
 
     val PGPMotifShoot: Command
         get() = SequentialGroup(
+            InstantCommand { motifShootCompleted = false },
             shootPurpleNoStop,
-            Delay(0.5),
+            Delay(0.1),
             shootGreenNoStop,
-            Delay(0.5),
+            Delay(0.1),
             shootPurpleNoStop,
             Shooter.stop,
-            InstantCommand { selectedFinished = true }
+            InstantCommand { motifShootCompleted = true }
         )
 
     val PPGMotifShoot: Command
         get() = SequentialGroup(
+            InstantCommand { motifShootCompleted = false },
             shootPurpleNoStop,
-            Delay(0.5),
+            Delay(0.1),
             shootPurpleNoStop,
-            Delay(0.5),
+            Delay(0.1),
             shootGreenNoStop,
-            Delay(0.5),
             Shooter.stop,
-            InstantCommand { selectedFinished = true }
+            InstantCommand { motifShootCompleted = true }
         )
 }

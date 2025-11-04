@@ -5,6 +5,8 @@ import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.RobotLog
+import dev.nextftc.core.commands.delays.Delay
+import dev.nextftc.core.commands.groups.SequentialGroup
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.core.units.rad
@@ -34,7 +36,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
     var graphManager = PanelsGraph.manager
     init {
         addComponents(
-            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor, /*LimeLight,*/
+            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor, LimeLight
                 /*ZeroSensor*/),
             BulkReadComponent,
 //            PedroComponent(Constants::createFollower),
@@ -52,6 +54,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
     override fun onStartButtonPressed() {
         PusherArm.down()
+        Routines.setMotifSelection()
 
         graphManager = PanelsGraph.manager
 
@@ -80,16 +83,16 @@ class CompetitionTeleOp : NextFTCOpMode() {
             driverControlled.scalar = 1.0
         } // TODO: Add autoalign and make this enable auto alignment
 
-        Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.intake::schedule whenBecomesFalse Intake.slowOut::schedule
+        Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.intake whenBecomesFalse Intake.slowOut
+        Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Intake.reverse whenBecomesFalse Intake.slowOut
 
-        Gamepads.gamepad1.leftBumper whenBecomesTrue Routines.shoot::schedule
-        Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.motifShoot whenBecomesFalse {
-            Routines.selected.cancel()
+        Gamepads.gamepad1.leftBumper whenBecomesTrue Routines.motifShoot whenBecomesFalse {
             Shooter.stop()
+            PusherArm.down()
         }
 
-        Gamepads.gamepad1.back whenTrue Spindexer.zeroCounterClockwise::schedule whenBecomesFalse Spindexer.endZero::schedule
-        Gamepads.gamepad1.start whenTrue Spindexer.zeroClockwise::schedule whenBecomesFalse Spindexer.endZero::schedule
+        Gamepads.gamepad1.back whenTrue Spindexer.zeroCounterClockwise whenBecomesFalse Spindexer.endZero
+        Gamepads.gamepad1.start whenTrue Spindexer.zeroClockwise whenBecomesFalse Spindexer.endZero
 
         Gamepads.gamepad1.x.whenBecomesTrue {
             if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] =
@@ -99,15 +102,14 @@ class CompetitionTeleOp : NextFTCOpMode() {
             if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] =
                 Spindexer.SpindexerSlotStatus.GREEN
         }
-        Gamepads.gamepad1.y whenBecomesTrue {
-            Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY
-        }
+        Gamepads.gamepad1.y whenBecomesTrue Spindexer.emptyTopSlot
 
-        Gamepads.gamepad1.dpadUp whenBecomesTrue Spindexer.enableTraveling::schedule
-        Gamepads.gamepad1.dpadLeft whenBecomesTrue Spindexer.spinToGreen::schedule
-        Gamepads.gamepad1.dpadRight whenBecomesTrue Spindexer.spinToPurple::schedule
-        Gamepads.gamepad1.dpadDown whenBecomesTrue Spindexer.spinToIntake::schedule
+        Gamepads.gamepad1.dpadUp whenBecomesTrue Routines.shoot
+        Gamepads.gamepad1.dpadLeft whenBecomesTrue Spindexer.spinToGreen
+        Gamepads.gamepad1.dpadRight whenBecomesTrue Spindexer.spinToPurple
+        Gamepads.gamepad1.dpadDown whenBecomesTrue Spindexer.spinToIntake
 
+        Gamepads.gamepad1.leftStickButton whenBecomesTrue LimeLight.detectMotif
 
         //endregion
 

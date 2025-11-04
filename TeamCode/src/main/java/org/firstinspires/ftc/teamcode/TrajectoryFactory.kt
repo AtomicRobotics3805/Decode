@@ -26,13 +26,13 @@ object TrajectoryFactory {
 
     val scorePos = Pose(31.0, 120.0, -42.deg.inRad)
 
-    val spikeMark1PosPre = Pose(40.6, 83.6, 180.deg.inRad)
+    val spikeMark1PosPre = Pose(41.6, 83.6, 180.deg.inRad)
 
-    val spikeMark1PosInner = Pose(35.75, 83.6, 180.deg.inRad)
+    val spikeMark1PosInner = Pose(36.75, 83.6, 180.deg.inRad)
 
-    val spikeMark1PosMiddle = Pose(30.6, 83.6, 180.deg.inRad)
+    val spikeMark1PosMiddle = Pose(31.6, 83.6, 180.deg.inRad)
 
-    val spikeMark1PosOuter = Pose(25.6, 83.6, 180.deg.inRad)
+    val spikeMark1PosOuter = Pose(26.6, 83.6, 180.deg.inRad)
 
     val spikeMark2PosPre = Pose(40.6, 59.6, 180.deg.inRad)
 
@@ -99,14 +99,14 @@ object TrajectoryFactory {
                 .build()
 
             obeliskToScore = follower.pathBuilder()
-                .addPath(BezierLine(obeliskSensePos.mirror(), scorePos.mirror()))
+                .addPath(BezierLine(obeliskSensePos.mirror(), Pose(scorePos.mirror().x, scorePos.mirror().y - 2, scorePos.mirror().heading)))
                 .setLinearHeadingInterpolation(obeliskSensePos.mirror().heading, scorePos.mirror().heading)
                 .build()
 
             scoreToSpikeMark1 = follower.pathBuilder()
                 .addPath(
                     BezierCurve(
-                        scorePos.mirror(),
+                        Pose(scorePos.mirror().x, scorePos.mirror().y - 2, scorePos.mirror().heading),
                         Pose(spikeMark1PosPre.x + 30, spikeMark1PosPre.y, spikeMark1PosPre.heading).mirror(),
                         spikeMark1PosPre.mirror()
                     )

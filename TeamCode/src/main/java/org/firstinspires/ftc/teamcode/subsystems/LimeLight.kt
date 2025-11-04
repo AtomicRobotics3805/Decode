@@ -9,6 +9,7 @@ import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
+import org.firstinspires.ftc.teamcode.Routines
 
 @Configurable
 object LimeLight : Subsystem {
@@ -69,12 +70,6 @@ object LimeLight : Subsystem {
 
     override fun periodic() {
         val fiducialResults = ll.getLatestResult().fiducialResults
-        if (!fiducialResults.isEmpty()) {
-            val snapshot = fiducialResults[0]
-            if (snapshot.fiducialId == 20 || snapshot.fiducialId == 24) {
-                PedroComponent.follower.pose == snapshot.robotPoseTargetSpace
-            }
-        }
     }
 
     var detectMotif = InstantCommand {
@@ -87,6 +82,8 @@ object LimeLight : Subsystem {
                 else -> Motif.PPG
             }
         }
+
+        Routines.setMotifSelection()
     }
 
     fun autoAlign(alignTag: Int) {
