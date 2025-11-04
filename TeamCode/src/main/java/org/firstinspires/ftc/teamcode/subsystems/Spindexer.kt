@@ -27,6 +27,7 @@ import dev.nextftc.ftc.Gamepads
 import dev.nextftc.hardware.controllable.RunToPosition
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
+import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.slots
 import java.time.Instant
 import kotlin.math.PI
@@ -78,7 +79,7 @@ object Spindexer : Subsystem {
         motor.encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         controller.goal = KineticState(0.0)
         currentStatus = SpindexerStatus.TOP_0
-        slots = arrayOf(SpindexerSlotStatus.GREEN, SpindexerSlotStatus.PURPLE, SpindexerSlotStatus.PURPLE)
+        slots = arrayOf(Spindexer.SpindexerSlotStatus.GREEN, Spindexer.SpindexerSlotStatus.PURPLE, Spindexer.SpindexerSlotStatus.PURPLE)
 //        motor.zero()
     }
 

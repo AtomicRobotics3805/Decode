@@ -42,7 +42,6 @@ class CompetitionTeleOp : NextFTCOpMode() {
 //            PedroComponent(Constants::createFollower),
             BindingsComponent
         )
-
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
 

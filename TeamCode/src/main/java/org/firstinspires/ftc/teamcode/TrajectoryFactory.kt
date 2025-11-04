@@ -50,7 +50,7 @@ object TrajectoryFactory {
 
     val spikeMark3PosOuter = Pose(25.6, 35.6, 180.deg.inRad)
 
-    val outOfTheWayPos = Pose(45.0, 136.0, -90.deg.inRad)
+    val outOfTheWayPos = Pose(45.0, 128.0, 180.deg.inRad)
 
     //endregion
 

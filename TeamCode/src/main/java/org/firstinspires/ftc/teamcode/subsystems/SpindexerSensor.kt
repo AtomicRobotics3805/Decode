@@ -47,7 +47,7 @@ object SpindexerSensor : Subsystem {
                 numTrue = 0
             }
 
-            return numTrue > 10
+            return numTrue > 20
         }
 
         var last = Spindexer.SpindexerSlotStatus.EMPTY

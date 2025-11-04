@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 
-@Autonomous(name = "\uD83D\uDFE6 Goal Start SIX", group = "SIX")
+@Autonomous(name = "\uD83D\uDFE6 Goal Start SIX", group = "SIX", preselectTeleOp = "Competition TeleOp")
 class SixArtifactGoalStartBlue : NextFTCOpMode() {
 
     init {
@@ -37,6 +37,7 @@ class SixArtifactGoalStartBlue : NextFTCOpMode() {
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
         AutonomousInfo.redAuto = false
+        AutonomousInfo.autonomousRun = false
     }
 
 //    lateinit var follower: Follower
@@ -81,5 +82,8 @@ class SixArtifactGoalStartBlue : NextFTCOpMode() {
     override fun onStop() {
         Spindexer.controller.goal = KineticState()
         Shooter.controller.goal = KineticState()
+        AutonomousInfo.finalHeading = PedroComponent.follower.heading
+        AutonomousInfo.autonomousRun = true
+        AutonomousInfo.finalSpindexerStatus = Spindexer.slots
     }
 }

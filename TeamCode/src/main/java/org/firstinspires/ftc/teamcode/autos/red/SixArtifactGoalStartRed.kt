@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
 
-@Autonomous(name = "\uD83D\uDFE5 Goal Start SIX", group = "SIX")
+@Autonomous(name = "\uD83D\uDFE5 Goal Start SIX", group = "SIX", preselectTeleOp = "Competition TeleOp")
 class SixArtifactGoalStartRed : NextFTCOpMode() {
 
     init {
@@ -33,6 +33,7 @@ class SixArtifactGoalStartRed : NextFTCOpMode() {
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
         AutonomousInfo.redAuto = true
+        AutonomousInfo.autonomousRun = false
     }
 
 //    lateinit var follower: Follower
@@ -58,5 +59,8 @@ class SixArtifactGoalStartRed : NextFTCOpMode() {
     override fun onStop() {
         Spindexer.controller.goal = KineticState()
         Shooter.controller.goal = KineticState()
+        AutonomousInfo.finalHeading = PedroComponent.follower.heading
+        AutonomousInfo.autonomousRun = true
+        AutonomousInfo.finalSpindexerStatus = Spindexer.slots
     }
 }
