@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import dev.nextftc.control.KineticState
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.extensions.pedro.PedroComponent
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
 
 @Autonomous
+@Disabled
 class ThreeArtifactGoalStartRed : NextFTCOpMode() {
 
     init {

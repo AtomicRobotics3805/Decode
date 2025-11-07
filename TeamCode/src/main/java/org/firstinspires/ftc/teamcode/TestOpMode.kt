@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import dev.nextftc.control.KineticState
 import dev.nextftc.core.components.BindingsComponent
@@ -24,6 +25,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ZeroSensor
 
 
 @TeleOp
+@Disabled
 class TestOpMode : NextFTCOpMode() {
 
     init {
