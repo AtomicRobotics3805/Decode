@@ -256,32 +256,22 @@ object Spindexer : Subsystem {
         var selection = -1
         var current = 0
         slots.forEach {
-            if (it == goal) {
-                selection = current
-            } else {
-                current++
+            if (selection == -1) {
+                if (it == goal) {
+                    selection = current
+                } else {
+                    current++
+                }
             }
         }
-//
-//        // IF WE CAN'T FIND ONE WITH THE GOAL COLOR, FIND ONE OF THE OTHER COLOR, IF POSSIBLE
-//        if (selection == -1 && goal != SpindexerSlotStatus.EMPTY) {
-//            current = 0
-//            slots.forEach {
-//                if (it == (if (goal == SpindexerSlotStatus.GREEN) SpindexerSlotStatus.PURPLE else SpindexerSlotStatus.GREEN)) {
-//                    selection = current
-//                } else {
-//                    current++
-//                }
-//            }
-//        }
 
-//        if (selection == -1 && allowOtherColor) {
-//            if (goal == SpindexerSlotStatus.GREEN) {
-//                spinTo(SpindexerSlotStatus.PURPLE, false)
-//            } else if (goal == SpindexerSlotStatus.PURPLE) {
-//                spinTo(SpindexerSlotStatus.GREEN, false)
-//            }
-//        }
+        if (selection == -1 && allowOtherColor) {
+            if (goal == SpindexerSlotStatus.GREEN) {
+                spinTo(SpindexerSlotStatus.PURPLE, false)
+            } else if (goal == SpindexerSlotStatus.PURPLE) {
+                spinTo(SpindexerSlotStatus.GREEN, false)
+            }
+        }
 
         newTarget = if (goal == SpindexerSlotStatus.EMPTY) {
             when (selection) {
@@ -302,7 +292,6 @@ object Spindexer : Subsystem {
         traveling = false
         // Set goal to that slot
         currentStatus = newTarget
-
 
     }
 
