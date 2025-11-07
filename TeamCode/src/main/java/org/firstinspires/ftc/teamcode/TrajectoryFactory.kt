@@ -225,7 +225,7 @@ object TrajectoryFactory {
 
             scoreToOutOfTheWay = follower.pathBuilder()
                 .addPath(BezierLine(scorePos.mirror(), outOfTheWayPos.mirror()))
-                .setLinearHeadingInterpolation(scorePos.heading, outOfTheWayPos.heading)
+                .setLinearHeadingInterpolation(scorePos.mirror().heading, outOfTheWayPos.mirror().heading)
                 .build()
         } else {
             goalStartToObelisk = follower.pathBuilder()

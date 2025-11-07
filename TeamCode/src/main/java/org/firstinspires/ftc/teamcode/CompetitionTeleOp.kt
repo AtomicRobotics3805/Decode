@@ -94,14 +94,15 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad1.start whenTrue Spindexer.zeroClockwise whenBecomesFalse Spindexer.endZero
 
         Gamepads.gamepad1.x.whenBecomesTrue {
-            if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] =
-                Spindexer.SpindexerSlotStatus.PURPLE
+            Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE
         }
         Gamepads.gamepad1.a.whenBecomesTrue {
-            if (!Spindexer.currentStatus.onTop) Spindexer.slots[Spindexer.currentStatus.id] =
-                Spindexer.SpindexerSlotStatus.GREEN
+            Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN
         }
-        Gamepads.gamepad1.y whenBecomesTrue Spindexer.emptyTopSlot
+
+        Gamepads.gamepad1.y.whenBecomesTrue {
+            Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY
+        }
 
         Gamepads.gamepad1.dpadUp whenBecomesTrue Routines.shoot
         Gamepads.gamepad1.dpadLeft whenBecomesTrue Spindexer.spinToGreen
@@ -109,6 +110,24 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad1.dpadDown whenBecomesTrue Spindexer.spinToIntake
 
         Gamepads.gamepad1.leftStickButton whenBecomesTrue LimeLight.detectMotif
+
+        //endregion
+
+        //region Backup
+
+        Gamepads.gamepad2.dpadLeft whenBecomesTrue Spindexer.spinToSlotZero
+        Gamepads.gamepad2.dpadUp whenBecomesTrue Spindexer.spinToSlotOne
+        Gamepads.gamepad2.dpadRight whenBecomesTrue Spindexer.spinToSlotTwo
+
+        Gamepads.gamepad2.a.whenBecomesTrue {
+            Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN
+        }
+        Gamepads.gamepad2.x.whenBecomesTrue {
+            Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE
+        }
+        Gamepads.gamepad2.b.whenBecomesTrue {
+            Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY
+        }
 
         //endregion
 
@@ -135,6 +154,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
         ActiveOpMode.telemetry.addData("Angle", ticksToAngle(Spindexer.motor.state.position).normalized.inDeg)
         ActiveOpMode.telemetry.addData("Spindexer goal", Spindexer.controller.goal.position.rad.inDeg)
         ActiveOpMode.telemetry.addData("Spindexer slots", "0:["+ Spindexer.slots[0]+"], 1:["+ Spindexer.slots[1]+"], 2:["+ Spindexer.slots[2]+"]")
+        ActiveOpMode.telemetry.addData("Spindexer status", Spindexer.currentStatus)
 
         ActiveOpMode.telemetry.update()
     }

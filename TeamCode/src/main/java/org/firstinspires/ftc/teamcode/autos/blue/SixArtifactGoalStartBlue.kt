@@ -37,7 +37,6 @@ class SixArtifactGoalStartBlue : NextFTCOpMode() {
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
         AutonomousInfo.redAuto = false
-        AutonomousInfo.autonomousRun = false
     }
 
 //    lateinit var follower: Follower
@@ -47,6 +46,8 @@ class SixArtifactGoalStartBlue : NextFTCOpMode() {
         TrajectoryFactory.buildTrajectories(PedroComponent.Companion.follower)
         PedroComponent.Companion.follower.setStartingPose(TrajectoryFactory.goalStartPos)
         Drawing.init()
+        Spindexer.slots = arrayOf(Spindexer.SpindexerSlotStatus.GREEN, Spindexer.SpindexerSlotStatus.PURPLE,
+            Spindexer.SpindexerSlotStatus.PURPLE)
     }
 
     override fun onStartButtonPressed() {
@@ -83,7 +84,5 @@ class SixArtifactGoalStartBlue : NextFTCOpMode() {
         Spindexer.controller.goal = KineticState()
         Shooter.controller.goal = KineticState()
         AutonomousInfo.finalHeading = PedroComponent.follower.heading
-        AutonomousInfo.autonomousRun = true
-        AutonomousInfo.finalSpindexerStatus = Spindexer.slots
     }
 }

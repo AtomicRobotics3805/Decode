@@ -8,7 +8,4 @@ object AutonomousInfo {
 
     var finalHeading = 0.0.deg.inRad
 
-    var autonomousRun = false
-
-    var finalSpindexerStatus = arrayOf(Spindexer.SpindexerSlotStatus.GREEN, Spindexer.SpindexerSlotStatus.PURPLE, Spindexer.SpindexerSlotStatus.PURPLE)
 }

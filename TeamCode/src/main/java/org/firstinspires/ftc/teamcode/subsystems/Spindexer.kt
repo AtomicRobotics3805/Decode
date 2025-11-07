@@ -79,7 +79,6 @@ object Spindexer : Subsystem {
         motor.encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         controller.goal = KineticState(0.0)
         currentStatus = SpindexerStatus.TOP_0
-        slots = arrayOf(Spindexer.SpindexerSlotStatus.GREEN, Spindexer.SpindexerSlotStatus.PURPLE, Spindexer.SpindexerSlotStatus.PURPLE)
 //        motor.zero()
     }
 
@@ -118,6 +117,12 @@ object Spindexer : Subsystem {
     val spinToPurple = InstantCommand { spinTo(SpindexerSlotStatus.PURPLE) }
     val spinToIntake = InstantCommand { spinTo(SpindexerSlotStatus.EMPTY) }
 
+    val spinToSlotZero = InstantCommand { currentStatus = SpindexerStatus.TOP_0 }
+    val spinToSlotOne = InstantCommand { currentStatus = SpindexerStatus.TOP_1 }
+    val spinToSlotTwo = InstantCommand { currentStatus = SpindexerStatus.TOP_2 }
+
+
+
     var clockwise = false
 
     val emptyTopSlot = InstantCommand {
@@ -148,7 +153,7 @@ object Spindexer : Subsystem {
         return WaitUntil { controller.isWithinTolerance(KineticState(10.deg.inRad, 2.deg.inRad, Double.POSITIVE_INFINITY)) }
     }
 
-    @Deprecated("Replace with SpinTo")
+    @Deprecated("Replace with spinToPurple")
     val advanceToPurple : Command get() {
         // TODO Make slot choice smarter
         var selectedIndex = -1
@@ -180,7 +185,7 @@ object Spindexer : Subsystem {
         }
     }
 
-    @Deprecated("Replace with SpinTo")
+    @Deprecated("Replace with spinToGreen")
     val advanceToGreen : Command get() {
         // TODO Make slot choice smarter
         var selectedIndex = -1
@@ -209,7 +214,7 @@ object Spindexer : Subsystem {
         }
     }
 
-    @Deprecated("Replace with SpinTo")
+    @Deprecated("Replace with spinToIntake")
     val advanceToIntake : Command get() {
         // TODO Make slot choice smarter
         var selectedIndex = -1
@@ -245,7 +250,8 @@ object Spindexer : Subsystem {
     }
 
     lateinit var newTarget: SpindexerStatus
-    fun spinTo(goal: SpindexerSlotStatus) {
+
+    fun spinTo(goal: SpindexerSlotStatus, allowOtherColor: Boolean = true) {
         // Decide which slot to go to
         var selection = -1
         var current = 0
@@ -256,18 +262,26 @@ object Spindexer : Subsystem {
                 current++
             }
         }
+//
+//        // IF WE CAN'T FIND ONE WITH THE GOAL COLOR, FIND ONE OF THE OTHER COLOR, IF POSSIBLE
+//        if (selection == -1 && goal != SpindexerSlotStatus.EMPTY) {
+//            current = 0
+//            slots.forEach {
+//                if (it == (if (goal == SpindexerSlotStatus.GREEN) SpindexerSlotStatus.PURPLE else SpindexerSlotStatus.GREEN)) {
+//                    selection = current
+//                } else {
+//                    current++
+//                }
+//            }
+//        }
 
-        // IF WE CAN'T FIND ONE WITH THE GOAL COLOR, FIND ONE OF THE OTHER COLOR, IF POSSIBLE
-        if (selection == -1 && goal != SpindexerSlotStatus.EMPTY) {
-            current = 0
-            slots.forEach {
-                if (it == (if (goal == SpindexerSlotStatus.GREEN) SpindexerSlotStatus.PURPLE else SpindexerSlotStatus.GREEN)) {
-                    selection = current
-                } else {
-                    current++
-                }
-            }
-        }
+//        if (selection == -1 && allowOtherColor) {
+//            if (goal == SpindexerSlotStatus.GREEN) {
+//                spinTo(SpindexerSlotStatus.PURPLE, false)
+//            } else if (goal == SpindexerSlotStatus.PURPLE) {
+//                spinTo(SpindexerSlotStatus.GREEN, false)
+//            }
+//        }
 
         newTarget = if (goal == SpindexerSlotStatus.EMPTY) {
             when (selection) {
@@ -288,8 +302,11 @@ object Spindexer : Subsystem {
         traveling = false
         // Set goal to that slot
         currentStatus = newTarget
+
+
     }
 
+    @Deprecated("Replace with spinTo")
     class SpinTo(val goal: SpindexerSlotStatus) : Command() {
         override val isDone: Boolean
             get() = controller.isWithinTolerance(KineticState(10.deg.inRad, 2.deg.inRad, Double.POSITIVE_INFINITY))

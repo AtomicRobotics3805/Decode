@@ -15,7 +15,7 @@ object SpindexerSensor : Subsystem {
     lateinit var leftSensor: RevColorSensorV3
     lateinit var rightSensor: RevColorSensorV3
 
-    var distanceThreshold = 3 // CM
+    var distanceThreshold = 2 // CM
 
     public var pause = false
 

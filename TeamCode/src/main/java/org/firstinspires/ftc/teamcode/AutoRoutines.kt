@@ -33,6 +33,8 @@ object AutoRoutines {
             )
         )
 
+    val secondVolleyDelay = 7.0
+
     val sixArtifactGoalStartAutoRoutine
         get() = SequentialGroup(
             //region First motif
@@ -85,6 +87,9 @@ object AutoRoutines {
                 FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true),
                 Spindexer.enableTraveling
             ),
+
+            Delay(secondVolleyDelay),
+
             Routines.motifShoot,
 
             //endregion
