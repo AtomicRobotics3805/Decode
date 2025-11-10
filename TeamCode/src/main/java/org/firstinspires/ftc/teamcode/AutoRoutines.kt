@@ -33,7 +33,8 @@ object AutoRoutines {
             )
         )
 
-    val secondVolleyDelay = 7.0
+    val secondVolleyDelay = 0.0
+    val preFirstVolleyDelay = 0.0
 
     val sixArtifactGoalStartAutoRoutine
         get() = SequentialGroup(
@@ -42,6 +43,7 @@ object AutoRoutines {
             FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
             Delay(0.25),
+            Delay(preFirstVolleyDelay),
             LimeLight.detectMotif,
             ParallelGroup(
                 FollowPath(TrajectoryFactory.obeliskToScore, true),
@@ -95,6 +97,11 @@ object AutoRoutines {
             //endregion
             FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
             Intake.stop
+        )
+
+    val farParkAutoRoutine
+        get() = SequentialGroup(
+            FollowPath(TrajectoryFactory.farStartToPark)
         )
 
     val justThePaths

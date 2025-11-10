@@ -22,9 +22,11 @@ object TrajectoryFactory {
 
     val farStartPos = Pose(87.0, 9.0, -90.deg.inRad)
 
+    val farParkPos = Pose(87.0, 29.0, 180.deg.inRad)
+
     val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, -125.deg.inRad)
 
-    val scorePos = Pose(31.0, 120.0, -42.deg.inRad)
+    val scorePos = Pose(30.0, 119.0, -42.deg.inRad)
 
     val spikeMark1PosPre = Pose(41.6, 83.6, 180.deg.inRad)
 
@@ -85,6 +87,8 @@ object TrajectoryFactory {
     lateinit var spikeMark3PickupToScore: PathChain
 
     lateinit var scoreToOutOfTheWay: PathChain
+
+    lateinit var farStartToPark: PathChain
 
     fun flipPaths() {
 
@@ -227,6 +231,11 @@ object TrajectoryFactory {
                 .addPath(BezierLine(scorePos.mirror(), outOfTheWayPos.mirror()))
                 .setLinearHeadingInterpolation(scorePos.mirror().heading, outOfTheWayPos.mirror().heading)
                 .build()
+
+            farStartToPark = follower.pathBuilder()
+                .addPath(BezierLine(farStartPos.mirror(), farParkPos.mirror()))
+                .setLinearHeadingInterpolation(farStartPos.mirror().heading, farParkPos.mirror().heading)
+                .build()
         } else {
             goalStartToObelisk = follower.pathBuilder()
                 .addPath(BezierLine(goalStartPos, obeliskSensePos))
@@ -361,6 +370,11 @@ object TrajectoryFactory {
             scoreToOutOfTheWay = follower.pathBuilder()
                 .addPath(BezierLine(scorePos, outOfTheWayPos))
                 .setLinearHeadingInterpolation(scorePos.heading, outOfTheWayPos.heading)
+                .build()
+
+            farStartToPark = follower.pathBuilder()
+                .addPath(BezierLine(farStartPos, farParkPos))
+                .setLinearHeadingInterpolation(farStartPos.heading, farParkPos.heading)
                 .build()
         }
     }
