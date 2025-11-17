@@ -10,6 +10,7 @@ import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.commands.utility.LambdaCommand
 import dev.nextftc.core.units.deg
 import dev.nextftc.extensions.pedro.FollowPath
+import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
@@ -195,13 +196,12 @@ object AutoRoutines {
             // Drive to score
             ParallelGroup(
                 Intake.slowOut,
-                FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true),
-                Spindexer.enableTraveling
+//                FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true),
             ),
-
-            Delay(thirdVollyDelay),
-
-            Routines.motifShoot,
+//
+//            Delay(thirdVollyDelay),
+//
+//            Routines.motifShoot,
 
             //endregion
             FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),

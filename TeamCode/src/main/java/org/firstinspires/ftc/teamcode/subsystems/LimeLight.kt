@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.Configurable
+import com.pedropathing.geometry.PedroCoordinates
+import com.pedropathing.geometry.Pose
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
@@ -73,7 +75,13 @@ object LimeLight : Subsystem {
         if (!fiducialResults.isEmpty()) {
             val snapshot = fiducialResults[0]
             if (snapshot.fiducialId == 20 || snapshot.fiducialId == 24) {
-                PedroComponent.follower.pose == snapshot.robotPoseTargetSpace
+                PedroComponent.follower.pose == PedroComponent.follower.pose.coordinateSystem.convertToPedro(
+                    Pose(
+                        snapshot.robotPoseFieldSpace.position.x,
+                        snapshot.robotPoseFieldSpace.position.y,
+                        snapshot.robotPoseFieldSpace.orientation.yaw
+                    )
+                )
             }
         }
     }

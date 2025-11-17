@@ -31,13 +31,13 @@ object TrajectoryFactory {
 
     val spikeMark1PosOuter = Pose(26.6, 83.6, 180.deg.inRad)
 
-    val spikeMark2PosPre = Pose(40.6, 59.6, 180.deg.inRad)
+    val spikeMark2PosPre = Pose(41.6, 60.0, 180.deg.inRad)
 
-    val spikeMark2PosInner = Pose(35.6, 59.6, 180.deg.inRad)
+    val spikeMark2PosInner = Pose(36.75, 60.0, 180.deg.inRad)
 
-    val spikeMark2PosMiddle = Pose(30.6, 59.6, 180.deg.inRad)
+    val spikeMark2PosMiddle = Pose(31.6, 60.0, 180.deg.inRad)
 
-    val spikeMark2PosOuter = Pose(25.6, 59.6, 180.deg.inRad)
+    val spikeMark2PosOuter = Pose(26.6, 60.0, 180.deg.inRad)
 
     val spikeMark3PosPre = Pose(40.6, 35.6, 180.deg.inRad)
 

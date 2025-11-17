@@ -80,6 +80,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         Gamepads.gamepad1.rightStickButton whenBecomesTrue { imu.zero() }
 
+
         Gamepads.gamepad1.rightBumper whenBecomesTrue {
             driverControlled.scalar = 0.3
         } whenBecomesFalse {
@@ -88,15 +89,14 @@ class CompetitionTeleOp : NextFTCOpMode() {
         /*
         Gamepads.gamepad1.rightBumper whenBecomesTrue {
             if (!AutonomousInfo.redAuto) {
-                PIDToPoint(TrajectoryFactory.scorePos, 1.0, 5.deg.inRad)()
+                PedroComponent.follower.holdPoint(TrajectoryFactory.scorePos)
             } else {
-                PIDToPoint(TrajectoryFactory.scorePos.mirror(), 1.0, 5.deg.inRad)()
+                PedroComponent.follower.holdPoint(TrajectoryFactory.scorePos.mirror())
             }
         } whenBecomesFalse {
             driverControlled()
         }
-
-         */
+        */
         Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.intake whenBecomesFalse Intake.slowOut
         Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Intake.reverse whenBecomesFalse Intake.slowOut
 
@@ -150,6 +150,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
     }
 
     override fun onUpdate() {
+        Drawing.drawDebug(PedroComponent.Companion.follower)
+
         RobotLog.d("Motor Amp: Left Front Drive: " + frontLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Left Back Drive: " + backLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Right Front Drive: " + frontRightMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
@@ -158,6 +160,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
         RobotLog.d("Motor Amp: Intake Motor: " + Intake.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Spindexer Motor: " + Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Shooter Motor: " + Shooter.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
+
+        ActiveOpMode.telemetry.addData("Limelight on", LimeLight.ll.isRunning)
 
         ActiveOpMode.telemetry.addData("Current velocity:", Shooter.motor.state.velocity / Shooter.ticksPerRev * 60.0)
         ActiveOpMode.telemetry.addData("Target velocity:", Shooter.controller.goal.velocity / Shooter.ticksPerRev * 60.0)
