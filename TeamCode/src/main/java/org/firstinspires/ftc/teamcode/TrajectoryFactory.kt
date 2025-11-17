@@ -3,15 +3,10 @@ package org.firstinspires.ftc.teamcode
 import com.pedropathing.follower.Follower
 import com.pedropathing.geometry.BezierCurve
 import com.pedropathing.geometry.BezierLine
-import com.pedropathing.geometry.BezierPoint
 import com.pedropathing.geometry.Pose
-import com.pedropathing.paths.PathBuilder
 import com.pedropathing.paths.PathChain
 import dev.nextftc.core.units.deg
-import dev.nextftc.extensions.pedro.PedroComponent
-import dev.nextftc.ftc.ActiveOpMode
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 
 object TrajectoryFactory {
@@ -20,9 +15,9 @@ object TrajectoryFactory {
 
     val goalStartPos = Pose(26.0, 130.0, -40.deg.inRad)
 
-    val farStartPos = Pose(87.0, 9.0, -90.deg.inRad)
+    val farStartPos = Pose(56.0, 8.0, 180.deg.inRad)
 
-    val farParkPos = Pose(87.0, 29.0, 180.deg.inRad)
+    val farParkPos = Pose(36.0, 8.0, 180.deg.inRad)
 
     val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, -125.deg.inRad)
 
@@ -166,7 +161,10 @@ object TrajectoryFactory {
                 .build()
 
             scoreToSpikeMark2 = follower.pathBuilder()
-                .addPath(BezierLine(scorePos.mirror(), spikeMark2PosPre.mirror()))
+                .addPath(BezierCurve(
+                    scorePos.mirror(),
+                    Pose(spikeMark2PosPre.x + 25, spikeMark2PosPre.y, spikeMark2PosPre.heading).mirror(),
+                    spikeMark2PosPre.mirror()))
                 .setLinearHeadingInterpolation(scorePos.mirror().heading, spikeMark2PosPre.mirror().heading)
                 .build()
 
@@ -233,10 +231,16 @@ object TrajectoryFactory {
                 .build()
 
             farStartToPark = follower.pathBuilder()
-                .addPath(BezierLine(farStartPos.mirror(), farParkPos.mirror()))
+                .addPath(
+                    BezierCurve(
+                        farStartPos.mirror(),
+                        Pose(42.000, 15.000).mirror(),
+                        farParkPos.mirror()
+                    ))
                 .setLinearHeadingInterpolation(farStartPos.mirror().heading, farParkPos.mirror().heading)
                 .build()
-        } else {
+        }
+        else {
             goalStartToObelisk = follower.pathBuilder()
                 .addPath(BezierLine(goalStartPos, obeliskSensePos))
                 .setLinearHeadingInterpolation(goalStartPos.heading, obeliskSensePos.heading)
@@ -306,7 +310,12 @@ object TrajectoryFactory {
                 .build()
 
             scoreToSpikeMark2 = follower.pathBuilder()
-                .addPath(BezierLine(scorePos, spikeMark2PosPre))
+                .addPath(
+                    BezierCurve(
+                        scorePos,
+                        Pose(spikeMark2PosPre.x + 25, spikeMark2PosPre.y, spikeMark2PosPre.heading),
+                        spikeMark2PosPre)
+                )
                 .setLinearHeadingInterpolation(scorePos.heading, spikeMark2PosPre.heading)
                 .build()
 
@@ -373,7 +382,12 @@ object TrajectoryFactory {
                 .build()
 
             farStartToPark = follower.pathBuilder()
-                .addPath(BezierLine(farStartPos, farParkPos))
+                .addPath(
+                    BezierCurve(
+                        farStartPos,
+                        Pose(42.000, 15.000),
+                        farParkPos
+                    ))
                 .setLinearHeadingInterpolation(farStartPos.heading, farParkPos.heading)
                 .build()
         }

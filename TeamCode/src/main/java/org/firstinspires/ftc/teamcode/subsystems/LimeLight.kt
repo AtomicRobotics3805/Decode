@@ -70,6 +70,12 @@ object LimeLight : Subsystem {
 
     override fun periodic() {
         val fiducialResults = ll.getLatestResult().fiducialResults
+        if (!fiducialResults.isEmpty()) {
+            val snapshot = fiducialResults[0]
+            if (snapshot.fiducialId == 20 || snapshot.fiducialId == 24) {
+                PedroComponent.follower.pose == snapshot.robotPoseTargetSpace
+            }
+        }
     }
 
     var detectMotif = InstantCommand {
@@ -86,6 +92,7 @@ object LimeLight : Subsystem {
         Routines.setMotifSelection()
     }
 
+    @Deprecated("Use PIDToPoint")
     fun autoAlign(alignTag: Int) {
         val fiducialResults = ll.getLatestResult().fiducialResults
         if (!fiducialResults.isEmpty()) {

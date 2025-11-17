@@ -33,8 +33,11 @@ object AutoRoutines {
             )
         )
 
-    val secondVolleyDelay = 0.0
+
     val preFirstVolleyDelay = 0.0
+    val secondVolleyDelay = 0.0
+
+    val thirdVollyDelay = 0.0
 
     val sixArtifactGoalStartAutoRoutine
         get() = SequentialGroup(
@@ -95,9 +98,116 @@ object AutoRoutines {
             Routines.motifShoot,
 
             //endregion
+
             FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
             Intake.stop
         )
+
+    val nineArtifactGoalStartAutoRoutine
+        get() = SequentialGroup(
+            //region First motif
+            Spindexer.enableTraveling,
+            FollowPath(TrajectoryFactory.goalStartToObelisk, true),
+//            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
+            Delay(0.25),
+            Delay(preFirstVolleyDelay),
+            LimeLight.detectMotif,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.obeliskToScore, true),
+                SequentialGroup(
+                    Delay(0.5),
+                    Routines.motifShoot
+                )
+            ),
+            //endregion
+
+            //region Second motif
+
+            // Drive to pre-pickup pos
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
+                Spindexer.spinToIntake,
+                Intake.start
+            ),
+
+            // Pickup first ball
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.spikeMark1Pickup1, true),
+                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
+            ),
+
+            // Pickup second ball
+            Spindexer.spinToIntake,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.spikeMark1Pickup2, true),
+                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
+            ),
+
+            // Pickup third ball
+            Spindexer.spinToIntake,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
+                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
+            ),
+
+            // Drive to score
+            ParallelGroup(
+                Intake.slowOut,
+                FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true),
+                Spindexer.enableTraveling
+            ),
+
+            Delay(secondVolleyDelay),
+
+            Routines.motifShoot,
+
+            //endregion
+
+            //region Third motif
+
+            // Drive to pre-pickup pos
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.scoreToSpikeMark2, true),
+                Spindexer.spinToIntake,
+                Intake.start
+            ),
+
+            // Pickup first ball
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.spikeMark2Pickup1, true),
+                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
+            ),
+
+            // Pickup second ball
+            Spindexer.spinToIntake,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.spikeMark2Pickup2, true),
+                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
+            ),
+
+            // Pickup third ball
+            Spindexer.spinToIntake,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
+                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
+            ),
+
+            // Drive to score
+            ParallelGroup(
+                Intake.slowOut,
+                FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true),
+                Spindexer.enableTraveling
+            ),
+
+            Delay(thirdVollyDelay),
+
+            Routines.motifShoot,
+
+            //endregion
+            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
+            Intake.stop
+        )
+
 
     val farParkAutoRoutine
         get() = SequentialGroup(

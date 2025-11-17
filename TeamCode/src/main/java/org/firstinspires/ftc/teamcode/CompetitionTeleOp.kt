@@ -9,6 +9,7 @@ import dev.nextftc.core.commands.delays.Delay
 import dev.nextftc.core.commands.groups.SequentialGroup
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
+import dev.nextftc.core.units.deg
 import dev.nextftc.core.units.rad
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
@@ -21,6 +22,8 @@ import dev.nextftc.hardware.impl.Direction
 import dev.nextftc.hardware.impl.IMUEx
 import dev.nextftc.hardware.impl.MotorEx
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight.matchMotif
@@ -39,15 +42,15 @@ class CompetitionTeleOp : NextFTCOpMode() {
             SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor, LimeLight
                 /*ZeroSensor*/),
             BulkReadComponent,
-//            PedroComponent(Constants::createFollower),
+            PedroComponent(Constants::createFollower),
             BindingsComponent
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
 
-    private val frontLeftMotor = MotorEx("motor_c1").brakeMode().reversed()
+    private val frontLeftMotor = MotorEx("motor_c1").brakeMode()
     private val frontRightMotor = MotorEx("motor_c2").brakeMode()
-    private val backLeftMotor = MotorEx("motor_c0").brakeMode().reversed()
+    private val backLeftMotor = MotorEx("motor_c0").brakeMode()
     private val backRightMotor = MotorEx("motor_c3").brakeMode()
     private val imu = IMUEx("imu", Direction.LEFT, Direction.UP).zeroed()
 
@@ -76,12 +79,24 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
 
         Gamepads.gamepad1.rightStickButton whenBecomesTrue { imu.zero() }
+
         Gamepads.gamepad1.rightBumper whenBecomesTrue {
             driverControlled.scalar = 0.3
         } whenBecomesFalse {
             driverControlled.scalar = 1.0
         } // TODO: Add autoalign and make this enable auto alignment
+        /*
+        Gamepads.gamepad1.rightBumper whenBecomesTrue {
+            if (!AutonomousInfo.redAuto) {
+                PIDToPoint(TrajectoryFactory.scorePos, 1.0, 5.deg.inRad)()
+            } else {
+                PIDToPoint(TrajectoryFactory.scorePos.mirror(), 1.0, 5.deg.inRad)()
+            }
+        } whenBecomesFalse {
+            driverControlled()
+        }
 
+         */
         Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.intake whenBecomesFalse Intake.slowOut
         Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Intake.reverse whenBecomesFalse Intake.slowOut
 
