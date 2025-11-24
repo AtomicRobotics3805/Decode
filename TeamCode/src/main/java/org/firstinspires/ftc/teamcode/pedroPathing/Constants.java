@@ -18,8 +18,8 @@ import dev.nextftc.core.units.Distance;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(10.2)
-            .forwardZeroPowerAcceleration(-39.40622042)
-            .lateralZeroPowerAcceleration(-86.65760804)
+            .forwardZeroPowerAcceleration(-44.25950971)
+            .lateralZeroPowerAcceleration(-159.5056479)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.08, 0, 0.006, 0.01))
             .headingPIDFCoefficients(new PIDFCoefficients(1.2,0,0.09,0.01))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.004, 0, 0.001, 0.6, 0.0));
@@ -34,8 +34,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(74.4143976908)
-            .yVelocity(50.5478407734)
+            .xVelocity(73.9903023125)
+            .yVelocity(51.8706334024)
             ;
 
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()

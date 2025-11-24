@@ -16,9 +16,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 object TrajectoryFactory {
 
+    val redPickupOffset = 4.5
+
+    val bluePickupOffset = 2.0
+
     //region Poses
 
-    val goalStartPos = Pose(26.0, 130.0, -40.deg.inRad)
+    val goalStartPos = Pose(26.0, 130.0, (-40 - 90).deg.inRad)
 
     val farStartPos = Pose(87.0, 9.0, -90.deg.inRad)
 
@@ -28,21 +32,21 @@ object TrajectoryFactory {
 
     val scorePos = Pose(30.0, 119.0, -42.deg.inRad)
 
-    val spikeMark1PosPre = Pose(41.6, 83.6, 180.deg.inRad)
+    val spikeMark1PosPre = Pose(41.6, 83.1, 180.deg.inRad)
 
-    val spikeMark1PosInner = Pose(36.75, 83.6, 180.deg.inRad)
+    val spikeMark1PosInner = Pose(36.6, 83.1, 180.deg.inRad)
 
-    val spikeMark1PosMiddle = Pose(31.6, 83.6, 180.deg.inRad)
+    val spikeMark1PosMiddle = Pose(31.6, 83.1, 180.deg.inRad)
 
-    val spikeMark1PosOuter = Pose(26.6, 83.6, 180.deg.inRad)
+    val spikeMark1PosOuter = Pose(26.6, 83.1, 180.deg.inRad)
 
-    val spikeMark2PosPre = Pose(40.6, 59.6, 180.deg.inRad)
+    val spikeMark2PosPre = Pose(41.6, 61.0, 180.deg.inRad)
 
-    val spikeMark2PosInner = Pose(35.6, 59.6, 180.deg.inRad)
+    val spikeMark2PosInner = Pose(36.75, 61.0, 180.deg.inRad)
 
-    val spikeMark2PosMiddle = Pose(30.6, 59.6, 180.deg.inRad)
+    val spikeMark2PosMiddle = Pose(31.6, 61.0, 180.deg.inRad)
 
-    val spikeMark2PosOuter = Pose(25.6, 59.6, 180.deg.inRad)
+    val spikeMark2PosOuter = Pose(26.6, 61.0, 180.deg.inRad)
 
     val spikeMark3PosPre = Pose(40.6, 35.6, 180.deg.inRad)
 
@@ -103,7 +107,7 @@ object TrajectoryFactory {
                 .build()
 
             obeliskToScore = follower.pathBuilder()
-                .addPath(BezierLine(obeliskSensePos.mirror(), Pose(scorePos.mirror().x, scorePos.mirror().y - 2, scorePos.mirror().heading)))
+                .addPath(BezierLine(obeliskSensePos.mirror(), Pose(scorePos.x, scorePos.y - 2, scorePos.heading).mirror()))
                 .setLinearHeadingInterpolation(obeliskSensePos.mirror().heading, scorePos.mirror().heading)
                 .build()
 
@@ -112,7 +116,7 @@ object TrajectoryFactory {
                     BezierCurve(
                         Pose(scorePos.mirror().x, scorePos.mirror().y - 2, scorePos.mirror().heading),
                         Pose(spikeMark1PosPre.x + 30, spikeMark1PosPre.y, spikeMark1PosPre.heading).mirror(),
-                        spikeMark1PosPre.mirror()
+                        Pose(spikeMark1PosPre.x - redPickupOffset, spikeMark1PosPre.y, spikeMark1PosPre.heading).mirror()
                     )
                 )
                 .setLinearHeadingInterpolation(scorePos.mirror().heading, spikeMark1PosPre.mirror().heading)
@@ -120,7 +124,8 @@ object TrajectoryFactory {
 
 
             spikeMark1Pickup1 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark1PosPre.mirror(), spikeMark1PosInner.mirror()))
+                .addPath(BezierLine(Pose(spikeMark1PosPre.x - redPickupOffset, spikeMark1PosPre.y, spikeMark1PosPre.heading).mirror(),
+                    Pose(spikeMark1PosInner.x - redPickupOffset, spikeMark1PosInner.y, spikeMark1PosInner.heading).mirror()))
                 .setLinearHeadingInterpolation(spikeMark1PosPre.mirror().heading, spikeMark1PosInner.mirror().heading)
                 .build()
 
@@ -145,7 +150,8 @@ object TrajectoryFactory {
 //            .build()
 
             spikeMark1Pickup2 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark1PosInner.mirror(), spikeMark1PosMiddle.mirror()))
+                .addPath(BezierLine(Pose(spikeMark1PosInner.x - redPickupOffset, spikeMark1PosInner.y, spikeMark1PosInner.heading).mirror(),
+                    Pose(spikeMark1PosMiddle.x - redPickupOffset, spikeMark1PosMiddle.y, spikeMark1PosMiddle.heading).mirror()))
                 .setLinearHeadingInterpolation(
                     spikeMark1PosInner.mirror().heading,
                     spikeMark1PosMiddle.mirror().heading
@@ -153,7 +159,8 @@ object TrajectoryFactory {
                 .build()
 
             spikeMark1Pickup3 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark1PosMiddle.mirror(), spikeMark1PosOuter.mirror()))
+                .addPath(BezierLine(Pose(spikeMark1PosMiddle.x - redPickupOffset, spikeMark1PosMiddle.y, spikeMark1PosMiddle.heading).mirror(),
+                    Pose(spikeMark1PosOuter.x - redPickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading).mirror()))
                 .setLinearHeadingInterpolation(
                     spikeMark1PosMiddle.mirror().heading,
                     spikeMark1PosOuter.mirror().heading
@@ -161,22 +168,27 @@ object TrajectoryFactory {
                 .build()
 
             spikeMark1PickupToScore = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark1PosOuter.mirror(), scorePos.mirror()))
+                .addPath(BezierLine(Pose(spikeMark1PosOuter.x - redPickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading).mirror(),
+                    scorePos.mirror()))
                 .setLinearHeadingInterpolation(spikeMark1PosOuter.mirror().heading, scorePos.mirror().heading)
                 .build()
 
             scoreToSpikeMark2 = follower.pathBuilder()
-                .addPath(BezierLine(scorePos.mirror(), spikeMark2PosPre.mirror()))
+                .addPath(BezierCurve(scorePos.mirror(),
+                    Pose(spikeMark2PosPre.x + 25, spikeMark2PosPre.y, spikeMark2PosPre.heading).mirror(),
+                    Pose(spikeMark2PosPre.x - redPickupOffset, spikeMark2PosPre.y, spikeMark2PosPre.heading).mirror()))
                 .setLinearHeadingInterpolation(scorePos.mirror().heading, spikeMark2PosPre.mirror().heading)
                 .build()
 
             spikeMark2Pickup1 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark2PosPre.mirror(), spikeMark2PosInner.mirror()))
+                .addPath(BezierLine(Pose(spikeMark2PosPre.x - redPickupOffset, spikeMark2PosPre.y, spikeMark2PosPre.heading).mirror(),
+                    Pose(spikeMark2PosInner.x - redPickupOffset, spikeMark2PosInner.y, spikeMark2PosInner.heading).mirror()))
                 .setLinearHeadingInterpolation(spikeMark2PosPre.mirror().heading, spikeMark2PosOuter.mirror().heading)
                 .build()
 
             spikeMark2Pickup2 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark2PosInner.mirror(), spikeMark2PosMiddle.mirror()))
+                .addPath(BezierLine(Pose(spikeMark2PosInner.x - redPickupOffset, spikeMark2PosInner.y, spikeMark2PosInner.heading).mirror(),
+                    Pose(spikeMark2PosMiddle.x - redPickupOffset, spikeMark2PosMiddle.y, spikeMark2PosMiddle.heading).mirror()))
                 .setLinearHeadingInterpolation(
                     spikeMark2PosInner.mirror().heading,
                     spikeMark2PosMiddle.mirror().heading
@@ -184,7 +196,8 @@ object TrajectoryFactory {
                 .build()
 
             spikeMark2Pickup3 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark2PosMiddle.mirror(), spikeMark2PosOuter.mirror()))
+                .addPath(BezierLine(Pose(spikeMark2PosMiddle.x - redPickupOffset, spikeMark2PosMiddle.y, spikeMark2PosMiddle.heading).mirror(),
+                    Pose(spikeMark2PosOuter.x - redPickupOffset, spikeMark2PosOuter.y, spikeMark2PosOuter.heading).mirror()))
                 .setLinearHeadingInterpolation(
                     spikeMark2PosMiddle.mirror().heading,
                     spikeMark2PosOuter.mirror().heading
@@ -192,7 +205,9 @@ object TrajectoryFactory {
                 .build()
 
             spikeMark2PickupToScore = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark2PosOuter.mirror(), scorePos.mirror()))
+                .addPath(BezierCurve(Pose(spikeMark2PosOuter.x - redPickupOffset, spikeMark2PosOuter.y, spikeMark2PosOuter.heading).mirror(),
+                    Pose(33.0, 71.0, scorePos.heading).mirror(),
+                    scorePos.mirror()))
                 .setLinearHeadingInterpolation(spikeMark2PosOuter.mirror().heading, scorePos.mirror().heading)
                 .build()
 
@@ -252,7 +267,8 @@ object TrajectoryFactory {
                     BezierCurve(
                         scorePos,
                         Pose(spikeMark1PosPre.x + 25, spikeMark1PosPre.y, spikeMark1PosPre.heading),
-                        spikeMark1PosPre
+                        Pose(spikeMark1PosPre.x - bluePickupOffset, spikeMark1PosPre.y, spikeMark1PosPre.heading)
+                        // 
                     )
                 )
                 .setLinearHeadingInterpolation(scorePos.heading, spikeMark1PosPre.heading)
@@ -260,7 +276,10 @@ object TrajectoryFactory {
 
 
             spikeMark1Pickup1 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark1PosPre, spikeMark1PosInner))
+                .addPath(BezierLine(
+
+                    Pose(spikeMark1PosPre.x - bluePickupOffset, spikeMark1PosPre.y, spikeMark1PosPre.heading),
+                    Pose(spikeMark1PosInner.x - bluePickupOffset, spikeMark1PosInner.y, spikeMark1PosInner.heading)))
                 .setLinearHeadingInterpolation(spikeMark1PosPre.heading, spikeMark1PosInner.heading)
                 .build()
 
@@ -285,7 +304,9 @@ object TrajectoryFactory {
 //            .build()
 
             spikeMark1Pickup2 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark1PosInner, spikeMark1PosMiddle))
+                .addPath(BezierLine(
+                    Pose(spikeMark1PosInner.x - bluePickupOffset, spikeMark1PosInner.y, spikeMark1PosInner.heading),
+                    Pose(spikeMark1PosMiddle.x - bluePickupOffset, spikeMark1PosMiddle.y, spikeMark1PosMiddle.heading)))
                 .setLinearHeadingInterpolation(
                     spikeMark1PosInner.heading,
                     spikeMark1PosMiddle.heading
@@ -293,7 +314,8 @@ object TrajectoryFactory {
                 .build()
 
             spikeMark1Pickup3 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark1PosMiddle, spikeMark1PosOuter))
+                .addPath(BezierLine(Pose(spikeMark1PosMiddle.x - bluePickupOffset, spikeMark1PosMiddle.y, spikeMark1PosMiddle.heading),
+                    Pose(spikeMark1PosOuter.x - bluePickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading)))
                 .setLinearHeadingInterpolation(
                     spikeMark1PosMiddle.heading,
                     spikeMark1PosOuter.heading
@@ -301,22 +323,27 @@ object TrajectoryFactory {
                 .build()
 
             spikeMark1PickupToScore = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark1PosOuter, scorePos))
+                .addPath(BezierLine(Pose(spikeMark1PosOuter.x - bluePickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading),
+                    scorePos))
                 .setLinearHeadingInterpolation(spikeMark1PosOuter.heading, scorePos.heading)
                 .build()
 
             scoreToSpikeMark2 = follower.pathBuilder()
-                .addPath(BezierLine(scorePos, spikeMark2PosPre))
+                .addPath(BezierCurve(scorePos,
+                    Pose(spikeMark2PosPre.x + 25, spikeMark2PosPre.y, spikeMark2PosPre.heading),
+                    Pose(spikeMark2PosPre.x - bluePickupOffset, spikeMark2PosPre.y, spikeMark2PosPre.heading)))
                 .setLinearHeadingInterpolation(scorePos.heading, spikeMark2PosPre.heading)
                 .build()
 
             spikeMark2Pickup1 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark2PosPre, spikeMark2PosInner))
-                .setLinearHeadingInterpolation(spikeMark2PosPre.heading, spikeMark2PosOuter.heading)
+                .addPath(BezierLine(Pose(spikeMark2PosPre.x - bluePickupOffset, spikeMark2PosPre.y, spikeMark2PosPre.heading),
+                    Pose(spikeMark2PosInner.x - bluePickupOffset, spikeMark2PosInner.y, spikeMark2PosInner.heading)))
+                .setLinearHeadingInterpolation(spikeMark2PosPre.heading, spikeMark2PosInner.heading)
                 .build()
 
             spikeMark2Pickup2 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark2PosInner, spikeMark2PosMiddle))
+                .addPath(BezierLine(Pose(spikeMark2PosInner.x - bluePickupOffset, spikeMark2PosInner.y, spikeMark2PosInner.heading),
+                    Pose(spikeMark2PosMiddle.x - bluePickupOffset, spikeMark2PosMiddle.y, spikeMark2PosMiddle.heading)))
                 .setLinearHeadingInterpolation(
                     spikeMark2PosInner.heading,
                     spikeMark2PosMiddle.heading
@@ -324,7 +351,8 @@ object TrajectoryFactory {
                 .build()
 
             spikeMark2Pickup3 = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark2PosMiddle, spikeMark2PosOuter))
+                .addPath(BezierLine(Pose(spikeMark2PosMiddle.x - bluePickupOffset, spikeMark2PosMiddle.y, spikeMark2PosMiddle.heading),
+                    Pose(spikeMark2PosOuter.x - bluePickupOffset, spikeMark2PosOuter.y, spikeMark2PosOuter.heading)))
                 .setLinearHeadingInterpolation(
                     spikeMark2PosMiddle.heading,
                     spikeMark2PosOuter.heading
@@ -332,7 +360,9 @@ object TrajectoryFactory {
                 .build()
 
             spikeMark2PickupToScore = follower.pathBuilder()
-                .addPath(BezierLine(spikeMark2PosOuter, scorePos))
+                .addPath(BezierCurve(Pose(spikeMark2PosOuter.x - bluePickupOffset, spikeMark2PosOuter.y, spikeMark2PosOuter.heading),
+                    Pose(33.0, 71.0, scorePos.heading),
+                    scorePos))
                 .setLinearHeadingInterpolation(spikeMark2PosOuter.heading, scorePos.heading)
                 .build()
 
