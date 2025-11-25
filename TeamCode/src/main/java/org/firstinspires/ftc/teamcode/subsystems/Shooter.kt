@@ -70,10 +70,10 @@ object Shooter : Subsystem {
         ).requires(this), // (desired RPM / 60) * ticks per rev
         checkWithinToleranceForCorrectNumberOfLoops
     )
-    val stop = RunToVelocity(controller, 0.0, KineticState(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
+    val stop = RunToVelocity(controller, (1000 / 60.0) * ticksPerRev, KineticState(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
         Double.POSITIVE_INFINITY)).requires(this)
 
-    val reverseIntake = RunToVelocity(controller, -((1000 / 60.0) * ticksPerRev)).requires(this)
+    val reverse = RunToVelocity(controller, -((1000 / 60.0) * ticksPerRev)).requires(this)
 
 
     override fun periodic() {

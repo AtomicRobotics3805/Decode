@@ -42,11 +42,11 @@ object Routines {
                 Spindexer.spinToIntake,
                 Intake.start
             ),
-            ParallelRaceGroup(
-                SpindexerSensor.Read()
-            ),
-//            haltIntake
-            Intake.slowOut
+//            ParallelRaceGroup(
+//                SpindexerSensor.Read()
+//            ),
+////            haltIntake
+//            Intake.slowOut
         )
 
     val haltIntake = ParallelGroup(

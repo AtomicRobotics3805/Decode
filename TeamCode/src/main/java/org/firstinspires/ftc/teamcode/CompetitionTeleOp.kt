@@ -21,6 +21,8 @@ import dev.nextftc.hardware.impl.Direction
 import dev.nextftc.hardware.impl.IMUEx
 import dev.nextftc.hardware.impl.MotorEx
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight.matchMotif
@@ -36,18 +38,18 @@ class CompetitionTeleOp : NextFTCOpMode() {
     var graphManager = PanelsGraph.manager
     init {
         addComponents(
-            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, SpindexerSensor, LimeLight
+            SubsystemComponent(Spindexer, Intake, Shooter, PusherArm, /*SpindexerSensor,*/ LimeLight
                 /*ZeroSensor*/),
             BulkReadComponent,
-//            PedroComponent(Constants::createFollower),
+            PedroComponent(Constants::createFollower),
             BindingsComponent
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
 
-    private val frontLeftMotor = MotorEx("motor_c1").brakeMode().reversed()
+    private val frontLeftMotor = MotorEx("motor_c1").brakeMode()
     private val frontRightMotor = MotorEx("motor_c2").brakeMode()
-    private val backLeftMotor = MotorEx("motor_c0").brakeMode().reversed()
+    private val backLeftMotor = MotorEx("motor_c0").brakeMode()
     private val backRightMotor = MotorEx("motor_c3").brakeMode()
     private val imu = IMUEx("imu", Direction.LEFT, Direction.UP).zeroed()
 
@@ -82,6 +84,19 @@ class CompetitionTeleOp : NextFTCOpMode() {
             driverControlled.scalar = 1.0
         } // TODO: Add autoalign and make this enable auto alignment
 
+//        Gamepads.gamepad1.rightBumper whenBecomesTrue {
+//            if (!AutonomousInfo.redAuto) {
+//                PedroComponent.follower.resumePathFollowing()
+//                PedroComponent.follower.holdPoint(TrajectoryFactory.scorePos)
+//            } else {
+//                PedroComponent.follower.resumePathFollowing()
+//                PedroComponent.follower.holdPoint(TrajectoryFactory.scorePos.mirror())
+//            }
+//        } whenBecomesFalse {
+//            driverControlled()
+//            PedroComponent.follower.pausePathFollowing()
+//        }
+
         Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.intake whenBecomesFalse Intake.slowOut
         Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Intake.reverse whenBecomesFalse Intake.slowOut
 
@@ -109,7 +124,10 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad1.dpadRight whenBecomesTrue Spindexer.spinToPurple
         Gamepads.gamepad1.dpadDown whenBecomesTrue Spindexer.spinToIntake
 
-        Gamepads.gamepad1.leftStickButton whenBecomesTrue LimeLight.detectMotif
+//        Gamepads.gamepad1.leftStickButton whenBecomesTrue LimeLight.detectMotif
+        Gamepads.gamepad1.leftStickButton whenBecomesTrue { LimeLight.resetPos() }
+
+
 
         //endregion
 
@@ -135,6 +153,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
     }
 
     override fun onUpdate() {
+        Drawing.drawDebug(PedroComponent.Companion.follower)
+
         RobotLog.d("Motor Amp: Left Front Drive: " + frontLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Left Back Drive: " + backLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Right Front Drive: " + frontRightMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
@@ -155,6 +175,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
         ActiveOpMode.telemetry.addData("Spindexer goal", Spindexer.controller.goal.position.rad.inDeg)
         ActiveOpMode.telemetry.addData("Spindexer slots", "0:["+ Spindexer.slots[0]+"], 1:["+ Spindexer.slots[1]+"], 2:["+ Spindexer.slots[2]+"]")
         ActiveOpMode.telemetry.addData("Spindexer status", Spindexer.currentStatus)
+
+        ActiveOpMode.telemetry.addData("Pose", PedroComponent.follower.pose)
 
         ActiveOpMode.telemetry.update()
     }

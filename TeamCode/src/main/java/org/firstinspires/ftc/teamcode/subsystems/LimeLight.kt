@@ -1,12 +1,18 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.Configurable
+import com.pedropathing.ftc.FTCCoordinates
+import com.pedropathing.geometry.PedroCoordinates
+import com.pedropathing.geometry.Pose
 import com.qualcomm.hardware.limelightvision.Limelight3A
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
 import dev.nextftc.control.feedback.PIDCoefficients
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.subsystems.Subsystem
+import dev.nextftc.core.units.deg
+import dev.nextftc.core.units.m
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
 import org.firstinspires.ftc.teamcode.Routines
@@ -69,7 +75,10 @@ object LimeLight : Subsystem {
     }
 
     override fun periodic() {
-        val fiducialResults = ll.getLatestResult().fiducialResults
+        val latestResult = ll.latestResult
+//        PedroComponent.follower.pose =
+//            Pose(latestResult.botpose.position.x, latestResult.botpose.position.y, latestResult.botpose.orientation.yaw,
+//                FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE)
     }
 
     var detectMotif = InstantCommand {
@@ -86,43 +95,10 @@ object LimeLight : Subsystem {
         Routines.setMotifSelection()
     }
 
-    fun autoAlign(alignTag: Int) {
-        val fiducialResults = ll.getLatestResult().fiducialResults
-        if (!fiducialResults.isEmpty()) {
-            val snapshot = fiducialResults[0]
-
-            if (snapshot.fiducialId == alignTag) {
-                if (lastLength != fiducialResults.size) {
-                    axial = axialPID.calculate(
-                        KineticState(
-                            axialOffset - snapshot.robotPoseTargetSpace.position.z
-                        )
-                    )
-                    lateral = lateralPID.calculate(
-                        KineticState(
-                            -lateralOffset + snapshot.robotPoseTargetSpace.position.x
-                        )
-                    )
-                    yaw = yawPID.calculate(
-                        KineticState(
-                            -yawOffset - snapshot.robotPoseTargetSpace.orientation.yaw
-                        )
-                    )
-                } else {
-                    axial = 0.0
-                    lateral = 0.0
-                    yaw = 0.0
-                }
-                ActiveOpMode.telemetry.addData("Tag ID:", snapshot.fiducialId)
-                ActiveOpMode.telemetry.addData("Axial:", -snapshot.robotPoseTargetSpace.position.z)
-                ActiveOpMode.telemetry.addData("Lateral:", snapshot.robotPoseTargetSpace.position.x)
-                ActiveOpMode.telemetry.addData(
-                    "Yaw:",
-                    snapshot.robotPoseTargetSpace.orientation.yaw
-                )
-            }
-        }
-        lastLength = fiducialResults.size
+    fun resetPos() {
+        val latestResult = ll.latestResult
+        PedroComponent.follower.pose =
+            Pose(latestResult.botpose.position.x, latestResult.botpose.position.y, latestResult.botpose.orientation.yaw,
+                FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE)
     }
-
 }

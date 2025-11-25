@@ -67,8 +67,6 @@ class TestOpMode : NextFTCOpMode() {
 //        dpadLeft.whenBecomesTrue { Spindexer.setAngle(120.deg).invoke() }
 //        dpadRight.whenBecomesTrue { Spindexer.setAngle((-120).deg).invoke() }
 
-        Gamepads.gamepad1.a.whenBecomesTrue { LimeLight.autoAlign(20) }
-
     }
 
     override fun onStop() {
