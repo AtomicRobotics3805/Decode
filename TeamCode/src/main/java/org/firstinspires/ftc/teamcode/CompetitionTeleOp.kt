@@ -110,13 +110,19 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         Gamepads.gamepad1.x.whenBecomesTrue {
             Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE
+            Spindexer.spinToIntake()
         }
         Gamepads.gamepad1.a.whenBecomesTrue {
             Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN
+            Spindexer.spinToIntake()
         }
 
         Gamepads.gamepad1.y.whenBecomesTrue {
             Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY
+        }
+
+        Gamepads.gamepad1.b.whenBecomesTrue {
+            // TODO: SPIN SPINDEXER BACK TO LAST LOCATION
         }
 
         Gamepads.gamepad1.dpadUp whenBecomesTrue Routines.shoot
