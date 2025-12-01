@@ -75,10 +75,7 @@ object LimeLight : Subsystem {
     }
 
     override fun periodic() {
-        val latestResult = ll.latestResult
-//        PedroComponent.follower.pose =
-//            Pose(latestResult.botpose.position.x, latestResult.botpose.position.y, latestResult.botpose.orientation.yaw,
-//                FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE)
+
     }
 
     var detectMotif = InstantCommand {

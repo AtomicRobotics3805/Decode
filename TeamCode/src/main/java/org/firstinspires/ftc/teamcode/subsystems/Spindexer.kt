@@ -64,6 +64,8 @@ object Spindexer : Subsystem {
     @JvmField
     var traveling = false
 
+    var lastStatus = SpindexerStatus.TOP_0
+
     var controllerDisabled = false
 
     var empty = false
@@ -252,6 +254,7 @@ object Spindexer : Subsystem {
     lateinit var newTarget: SpindexerStatus
 
     fun spinTo(goal: SpindexerSlotStatus, allowOtherColor: Boolean = true) {
+        lastStatus = currentStatus
         // Decide which slot to go to
         var selection = -1
         var current = 0
@@ -288,6 +291,15 @@ object Spindexer : Subsystem {
                 else -> currentStatus
             }
         }
+
+        traveling = false
+        // Set goal to that slot
+        currentStatus = newTarget
+
+    }
+
+    fun spinToLast() {
+        newTarget = lastStatus
 
         traveling = false
         // Set goal to that slot

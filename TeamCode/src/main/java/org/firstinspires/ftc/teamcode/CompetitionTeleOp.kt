@@ -84,18 +84,6 @@ class CompetitionTeleOp : NextFTCOpMode() {
             driverControlled.scalar = 1.0
         } // TODO: Add autoalign and make this enable auto alignment
 
-//        Gamepads.gamepad1.rightBumper whenBecomesTrue {
-//            if (!AutonomousInfo.redAuto) {
-//                PedroComponent.follower.resumePathFollowing()
-//                PedroComponent.follower.holdPoint(TrajectoryFactory.scorePos)
-//            } else {
-//                PedroComponent.follower.resumePathFollowing()
-//                PedroComponent.follower.holdPoint(TrajectoryFactory.scorePos.mirror())
-//            }
-//        } whenBecomesFalse {
-//            driverControlled()
-//            PedroComponent.follower.pausePathFollowing()
-//        }
 
         Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.intake whenBecomesFalse Intake.slowOut
         Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Intake.reverse whenBecomesFalse Intake.slowOut
@@ -129,9 +117,10 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad1.dpadLeft whenBecomesTrue Spindexer.spinToGreen
         Gamepads.gamepad1.dpadRight whenBecomesTrue Spindexer.spinToPurple
         Gamepads.gamepad1.dpadDown whenBecomesTrue Spindexer.spinToIntake
+        Gamepads.gamepad1.b whenBecomesTrue { Spindexer.spinToLast() }
 
 //        Gamepads.gamepad1.leftStickButton whenBecomesTrue LimeLight.detectMotif
-        Gamepads.gamepad1.leftStickButton whenBecomesTrue { LimeLight.resetPos() }
+        Gamepads.gamepad1.leftStickButton whenBecomesTrue { LimeLight.detectMotif }
 
 
 
