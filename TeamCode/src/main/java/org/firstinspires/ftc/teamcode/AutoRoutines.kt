@@ -13,6 +13,7 @@ import dev.nextftc.extensions.pedro.FollowPath
 import dev.nextftc.ftc.ActiveOpMode
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
+import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
 object AutoRoutines {
@@ -104,7 +105,10 @@ object AutoRoutines {
         get() = SequentialGroup(
             //region First motif
             Spindexer.enableTraveling,
-            FollowPath(TrajectoryFactory.goalStartToObelisk, true),
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.goalStartToObelisk, true),
+//                Shooter.stop
+            ),
 //            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
             LimeLight.detectMotif,
             ParallelGroup(
@@ -124,37 +128,31 @@ object AutoRoutines {
                 Spindexer.spinToIntake,
                 SequentialGroup(
                     Delay(1.0),
-                Intake.start
+                    Intake.start
                 )
             ),
 
-            // Pickup first ball
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.spikeMark1Pickup1, true).withDeadline(Delay(0.9)),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
+            // Pickup ballz
+            SequentialGroup(
+                ParallelGroup(
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
+                    SequentialGroup(
+                        Delay(0.2),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(0.5),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(0.5),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                        Intake.slowOut
+                    ),
+                    SequentialGroup(
+                        Delay(0.6),
+                        FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true)
+                    )
+                )
             ),
-
-            // Pickup second ball
-            Spindexer.spinToIntake,
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.spikeMark1Pickup2, true).withDeadline(Delay(0.9)),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
-            ),
-
-            // Pickup third ball
-            Spindexer.spinToIntake,
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.spikeMark1Pickup3, true).withDeadline(Delay(0.9)),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
-            ),
-
-            // Drive to score
-            ParallelGroup(
-                Intake.slowOut,
-                FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true),
-                Spindexer.enableTraveling
-            ),
-
 
             Routines.motifShoot,
 
@@ -171,33 +169,27 @@ object AutoRoutines {
                 )
             ),
 
-            // Pickup first ball
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.spikeMark2Pickup1, true).withDeadline(Delay(0.9)),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
+            // Pickup ballz
+            SequentialGroup(
+                ParallelGroup(
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
+                    SequentialGroup(
+                        Delay(0.4),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(0.5),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                        Spindexer.spinToIntake,
+                        Delay(0.5),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Intake.slowOut
+                    ),
+                    SequentialGroup(
+                        Delay(0.6),
+                        FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
+                    )
+                )
             ),
-
-            // Pickup second ball
-            Spindexer.spinToIntake,
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.spikeMark2Pickup2, true).withDeadline(Delay(0.9)),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
-            ),
-
-            // Pickup third ball
-            Spindexer.spinToIntake,
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.spikeMark2Pickup3, true).withDeadline(Delay(0.9)),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
-            ),
-
-            // Drive to score
-            ParallelGroup(
-                Intake.slowOut,
-                FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true),
-                Spindexer.enableTraveling
-            ),
-
             Routines.motifShoot,
 
             //endregion

@@ -4,12 +4,14 @@ import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.util.RobotLog
 import dev.nextftc.control.KineticState
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.AutoRoutines
 import org.firstinspires.ftc.teamcode.Drawing
 import org.firstinspires.ftc.teamcode.TrajectoryFactory
@@ -52,6 +54,11 @@ class NineArtifactGoalStartRed : NextFTCOpMode() {
 
     override fun onUpdate() {
         Drawing.drawDebug(PedroComponent.follower)
+
+        RobotLog.d("Motor Amp: Intake Motor: " + Intake.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
+        RobotLog.d("Motor Amp: Spindexer Motor: " + Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
+        RobotLog.d("Motor Amp: Shooter Motor: " + Shooter.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
+
         ActiveOpMode.telemetry.addData("Current pos", PedroComponent.follower.pose)
         ActiveOpMode.telemetry.addData("IsBusy", PedroComponent.follower.isBusy)
 //        follower.update()
