@@ -24,9 +24,11 @@ object TrajectoryFactory {
 
     val goalStartPos = Pose(26.0, 130.0, (-40 - 90).deg.inRad)
 
-    val farStartPos = Pose(87.0, 9.0, -90.deg.inRad)
+    val farStartPos = Pose(57.0, 9.0, 270.deg.inRad)
 
-    val farParkPos = Pose(87.0, 29.0, 180.deg.inRad)
+    val farParkPos = Pose(57.0, 29.0, 180.deg.inRad)
+
+    val farAutoShootPos = Pose(35.0, 132.0, 0.deg.inRad)
 
     val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, -125.deg.inRad)
 
@@ -47,6 +49,8 @@ object TrajectoryFactory {
     val spikeMark2PosMiddle = Pose(31.6, 61.0, 180.deg.inRad)
 
     val spikeMark2PosOuter = Pose(26.6, 61.0, 180.deg.inRad)
+
+    val dumpPos = Pose(20.0, 70.0, 270.deg.inRad)
 
     val spikeMark3PosPre = Pose(40.6, 35.6, 180.deg.inRad)
 
@@ -80,6 +84,10 @@ object TrajectoryFactory {
     lateinit var spikeMark2Pickup2: PathChain
     lateinit var spikeMark2Pickup3: PathChain
 
+    lateinit var spikeMark2ToDump: PathChain
+
+    lateinit var dumpToScore: PathChain
+
     lateinit var spikeMark2PickupToScore: PathChain
 
     lateinit var scoreToSpikeMark3: PathChain
@@ -94,9 +102,10 @@ object TrajectoryFactory {
 
     lateinit var farStartToPark: PathChain
 
-    fun flipPaths() {
+    lateinit var farStartToShoot: PathChain
 
-    }
+    lateinit var farShootPosToPark: PathChain
+
 
     fun buildTrajectories(follower: Follower) {
 
@@ -204,6 +213,20 @@ object TrajectoryFactory {
                 )
                 .build()
 
+            spikeMark2ToDump = follower.pathBuilder()
+                .addPath(BezierCurve(Pose(spikeMark2PosOuter.x - redPickupOffset, spikeMark2PosOuter.y, spikeMark2PosOuter.heading).mirror(),
+                    Pose(40.0, 73.0).mirror(),
+                    dumpPos.mirror()))
+                .setLinearHeadingInterpolation(spikeMark2PosOuter.mirror().heading, dumpPos.mirror().heading)
+                .build()
+
+            dumpToScore = follower.pathBuilder()
+                .addPath(BezierCurve(dumpPos.mirror(),
+                    Pose(40.0, 71.0, scorePos.heading).mirror(),
+                    scorePos.mirror()))
+                .setLinearHeadingInterpolation(spikeMark2PosOuter.mirror().heading, scorePos.mirror().heading)
+                .build()
+
             spikeMark2PickupToScore = follower.pathBuilder()
                 .addPath(BezierCurve(Pose(spikeMark2PosOuter.x - redPickupOffset, spikeMark2PosOuter.y, spikeMark2PosOuter.heading).mirror(),
                     Pose(33.0, 71.0, scorePos.heading).mirror(),
@@ -245,6 +268,24 @@ object TrajectoryFactory {
             scoreToOutOfTheWay = follower.pathBuilder()
                 .addPath(BezierLine(scorePos.mirror(), outOfTheWayPos.mirror()))
                 .setLinearHeadingInterpolation(scorePos.mirror().heading, outOfTheWayPos.mirror().heading)
+                .build()
+
+            farStartToShoot = follower.pathBuilder()
+                .addPath(BezierCurve(
+                    farStartPos.mirror(),
+                    Pose(68.0, 137.0).mirror(),
+                    farAutoShootPos.mirror()
+                ))
+                .setLinearHeadingInterpolation(farStartPos.mirror().heading, farAutoShootPos.mirror().heading)
+                .build()
+
+            farShootPosToPark = follower.pathBuilder()
+                .addPath(BezierCurve(
+                    farAutoShootPos.mirror(),
+                    Pose(68.0, 137.0).mirror(),
+                    farParkPos.mirror()
+                ))
+                .setLinearHeadingInterpolation(farAutoShootPos.mirror().heading, farParkPos.mirror().heading)
                 .build()
 
             farStartToPark = follower.pathBuilder()
@@ -359,6 +400,27 @@ object TrajectoryFactory {
                 )
                 .build()
 
+            spikeMark2ToDump = follower.pathBuilder()
+                .addPath(BezierCurve(Pose(spikeMark2PosOuter.x - bluePickupOffset, spikeMark2PosOuter.y, spikeMark2PosOuter.heading),
+                    Pose(40.0, 73.0),
+                    dumpPos))
+                .setLinearHeadingInterpolation(spikeMark2PosOuter.heading, dumpPos.heading)
+                .build()
+
+            dumpToScore = follower.pathBuilder()
+                .addPath(BezierCurve(dumpPos,
+                    Pose(40.0, 71.0, scorePos.heading),
+                    scorePos))
+                .setLinearHeadingInterpolation(spikeMark2PosOuter.heading, scorePos.heading)
+                .build()
+
+            spikeMark2PickupToScore = follower.pathBuilder()
+                .addPath(BezierCurve(dumpPos,
+                    Pose(33.0, 71.0, scorePos.heading),
+                    scorePos))
+                .setLinearHeadingInterpolation(dumpPos.heading, scorePos.heading)
+                .build()
+
             spikeMark2PickupToScore = follower.pathBuilder()
                 .addPath(BezierCurve(Pose(spikeMark2PosOuter.x - bluePickupOffset, spikeMark2PosOuter.y, spikeMark2PosOuter.heading),
                     Pose(33.0, 71.0, scorePos.heading),
@@ -400,6 +462,24 @@ object TrajectoryFactory {
             scoreToOutOfTheWay = follower.pathBuilder()
                 .addPath(BezierLine(scorePos, outOfTheWayPos))
                 .setLinearHeadingInterpolation(scorePos.heading, outOfTheWayPos.heading)
+                .build()
+
+            farStartToShoot = follower.pathBuilder()
+                .addPath(BezierCurve(
+                    farStartPos,
+                    Pose(68.0, 137.0),
+                    farAutoShootPos
+                ))
+                .setLinearHeadingInterpolation(farStartPos.heading, farAutoShootPos.heading)
+                .build()
+
+            farShootPosToPark = follower.pathBuilder()
+                .addPath(BezierCurve(
+                    farAutoShootPos,
+                    Pose(68.0, 137.0),
+                    farParkPos
+                ))
+                .setLinearHeadingInterpolation(farAutoShootPos.heading, farParkPos.heading)
                 .build()
 
             farStartToPark = follower.pathBuilder()
