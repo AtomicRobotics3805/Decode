@@ -32,7 +32,7 @@ object TrajectoryFactory {
 
     val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, -125.deg.inRad)
 
-    val scorePos = Pose(30.0, 119.0, -42.deg.inRad)
+    val scorePos = Pose(29.5, 119.5, -42.deg.inRad)
 
     val spikeMark1PosPre = Pose(41.6, 83.1, 180.deg.inRad)
 
@@ -50,7 +50,7 @@ object TrajectoryFactory {
 
     val spikeMark2PosOuter = Pose(26.6, 61.0, 180.deg.inRad)
 
-    val dumpPos = Pose(20.0, 70.0, 270.deg.inRad)
+    val dumpPos = Pose(14.5, 77.0, 180.deg.inRad)
 
     val spikeMark3PosPre = Pose(40.6, 35.6, 180.deg.inRad)
 
@@ -84,6 +84,7 @@ object TrajectoryFactory {
     lateinit var spikeMark2Pickup2: PathChain
     lateinit var spikeMark2Pickup3: PathChain
 
+    lateinit var spikeMark1ToDump: PathChain
     lateinit var spikeMark2ToDump: PathChain
 
     lateinit var dumpToScore: PathChain
@@ -211,6 +212,13 @@ object TrajectoryFactory {
                     spikeMark2PosMiddle.mirror().heading,
                     spikeMark2PosOuter.mirror().heading
                 )
+                .build()
+
+            spikeMark1ToDump = follower.pathBuilder()
+                .addPath(BezierCurve(Pose(spikeMark1PosOuter.x - redPickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading).mirror(),
+                    Pose(28.5, 75.5).mirror(),
+                    dumpPos.mirror()))
+                .setLinearHeadingInterpolation(spikeMark1PosOuter.mirror().heading, dumpPos.mirror().heading)
                 .build()
 
             spikeMark2ToDump = follower.pathBuilder()
@@ -399,6 +407,15 @@ object TrajectoryFactory {
                     spikeMark2PosOuter.heading
                 )
                 .build()
+
+
+            spikeMark1ToDump = follower.pathBuilder()
+                .addPath(BezierCurve(Pose(spikeMark1PosOuter.x - redPickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading),
+                    Pose(28.5, 75.5),
+                    dumpPos))
+                .setLinearHeadingInterpolation(spikeMark1PosOuter.heading, dumpPos.heading)
+                .build()
+
 
             spikeMark2ToDump = follower.pathBuilder()
                 .addPath(BezierCurve(Pose(spikeMark2PosOuter.x - bluePickupOffset, spikeMark2PosOuter.y, spikeMark2PosOuter.heading),

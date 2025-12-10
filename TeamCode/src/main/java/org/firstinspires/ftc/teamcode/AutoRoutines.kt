@@ -245,7 +245,9 @@ object AutoRoutines {
                     ),
                     SequentialGroup(
                         Delay(0.6),
-                        FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true)
+                        FollowPath(TrajectoryFactory.spikeMark1ToDump, true),
+                        Delay(1.5),
+                        FollowPath(TrajectoryFactory.dumpToScore, true)
                     )
                 )
             ),
@@ -282,9 +284,7 @@ object AutoRoutines {
                     ),
                     SequentialGroup(
                         Delay(0.6),
-                        FollowPath(TrajectoryFactory.spikeMark2ToDump, true),
-                        Delay(1.5),
-                        FollowPath(TrajectoryFactory.dumpToScore, true)
+                        FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
                     )
                 )
             ),
