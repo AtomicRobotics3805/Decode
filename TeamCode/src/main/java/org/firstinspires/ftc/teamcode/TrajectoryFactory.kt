@@ -32,7 +32,7 @@ object TrajectoryFactory {
 
     val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, -125.deg.inRad)
 
-    val scorePos = Pose(54.5, 110.0, 153.deg.inRad)
+    val scorePos = Pose(59.0, 104.5, 153.deg.inRad)
 
     val spikeMark1PosPre = Pose(41.6, 83.1, 180.deg.inRad)
 
@@ -42,13 +42,13 @@ object TrajectoryFactory {
 
     val spikeMark1PosOuter = Pose(26.6, 83.1, 180.deg.inRad)
 
-    val spikeMark2PosPre = Pose(41.6, 61.0, 180.deg.inRad)
+    val spikeMark2PosPre = Pose(41.6, 59.5, 180.deg.inRad)
 
-    val spikeMark2PosInner = Pose(36.75, 61.0, 180.deg.inRad)
+    val spikeMark2PosInner = Pose(36.75, 59.5, 180.deg.inRad)
 
-    val spikeMark2PosMiddle = Pose(31.6, 61.0, 180.deg.inRad)
+    val spikeMark2PosMiddle = Pose(31.6, 59.5, 180.deg.inRad)
 
-    val spikeMark2PosOuter = Pose(26.6, 61.0, 180.deg.inRad)
+    val spikeMark2PosOuter = Pose(26.6, 59.5, 180.deg.inRad)
 
     val dumpPos = Pose(14.5, 77.0, 180.deg.inRad)
 

@@ -137,7 +137,7 @@ object AutoRoutines {
                 ParallelGroup(
                     FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
                     SequentialGroup(
-                        Delay(0.3),
+                        Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(0.7),
@@ -174,7 +174,7 @@ object AutoRoutines {
                 ParallelGroup(
                     FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
                     SequentialGroup(
-                        Delay(0.4),
+                        Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(0.7),
@@ -233,7 +233,7 @@ object AutoRoutines {
                 ParallelGroup(
                     FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
                     SequentialGroup(
-                        Delay(0.3),
+                        Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(0.7),
@@ -272,7 +272,7 @@ object AutoRoutines {
                 ParallelGroup(
                     FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
                     SequentialGroup(
-                        Delay(0.4),
+                        Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(0.7),
