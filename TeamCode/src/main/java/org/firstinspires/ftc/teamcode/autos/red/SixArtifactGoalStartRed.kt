@@ -61,5 +61,6 @@ class SixArtifactGoalStartRed : NextFTCOpMode() {
         Spindexer.controller.goal = KineticState()
         Shooter.controller.goal = KineticState()
         AutonomousInfo.finalHeading = PedroComponent.follower.heading
+        AutonomousInfo.autoEndPos = PedroComponent.follower.pose
     }
 }

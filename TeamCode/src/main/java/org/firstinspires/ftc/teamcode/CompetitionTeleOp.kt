@@ -45,6 +45,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
             BindingsComponent
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
+        PedroComponent.follower.pose = AutonomousInfo.autoEndPos
     }
 
     private val frontLeftMotor = MotorEx("motor_c1").brakeMode()

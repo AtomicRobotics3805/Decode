@@ -59,5 +59,6 @@ class ThreeArtifactGoalStartBlue : NextFTCOpMode() {
     override fun onStop() {
         Spindexer.controller.goal = KineticState()
         Shooter.controller.goal = KineticState()
+        AutonomousInfo.autoEndPos = PedroComponent.follower.pose
     }
 }
