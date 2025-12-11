@@ -23,6 +23,7 @@ import dev.nextftc.hardware.impl.MotorEx
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
+import org.firstinspires.ftc.teamcode.subsystems.AutoAdjustingCalc
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight.matchMotif
@@ -124,14 +125,16 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad1.leftStickButton whenBecomesTrue { LimeLight.detectMotif }
 
 
-
         //endregion
 
         //region Backup
 
-        Gamepads.gamepad2.dpadLeft whenBecomesTrue Spindexer.spinToSlotZero
-        Gamepads.gamepad2.dpadUp whenBecomesTrue Spindexer.spinToSlotOne
-        Gamepads.gamepad2.dpadRight whenBecomesTrue Spindexer.spinToSlotTwo
+//        Gamepads.gamepad2.dpadLeft whenBecomesTrue Spindexer.spinToSlotZero
+//        Gamepads.gamepad2.dpadUp whenBecomesTrue Spindexer.spinToSlotOne
+//        Gamepads.gamepad2.dpadRight whenBecomesTrue Spindexer.spinToSlotTwo
+
+        Gamepads.gamepad2.dpadUp whenBecomesTrue { Shooter.shooterSpeedNoRatio += 50 }
+        Gamepads.gamepad2.dpadDown whenBecomesTrue { Shooter.shooterSpeedNoRatio -= 50 }
 
         Gamepads.gamepad2.a.whenBecomesTrue {
             Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN
@@ -173,6 +176,11 @@ class CompetitionTeleOp : NextFTCOpMode() {
         ActiveOpMode.telemetry.addData("Spindexer status", Spindexer.currentStatus)
 
         ActiveOpMode.telemetry.addData("Pose", PedroComponent.follower.pose)
+
+        ActiveOpMode.telemetry.addLine("=+=+=+=+=+=+=+=+=+=")
+        ActiveOpMode.telemetry.addData("Distance", AutoAdjustingCalc.calculateDistance())
+        ActiveOpMode.telemetry.addData("Shooter target", Shooter.shooterSpeedNoRatio)
+
 
         ActiveOpMode.telemetry.update()
     }

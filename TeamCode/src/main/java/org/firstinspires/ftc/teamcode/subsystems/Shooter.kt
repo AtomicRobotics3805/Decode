@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.Configurable
+import com.pedropathing.geometry.Pose
 import com.qualcomm.robotcore.hardware.DcMotor
 import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
@@ -10,13 +11,17 @@ import dev.nextftc.core.commands.delays.WaitUntil
 import dev.nextftc.core.commands.groups.ParallelGroup
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.subsystems.Subsystem
+import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.hardware.controllable.RunToVelocity
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
 import java.time.Instant
+import kotlin.math.sqrt
 
 @Configurable
 object Shooter : Subsystem {
+
+    var shooterSpeedNoRatio = 2400
 
     val ticksPerRev = 112/4
 
@@ -65,7 +70,7 @@ object Shooter : Subsystem {
     val start = ParallelGroup(
         RunToVelocity(
             controller,
-            (2400 / 60.0) * ticksPerRev,
+            (shooterSpeedNoRatio / 60.0) * ticksPerRev,
             KineticState(Double.POSITIVE_INFINITY, 500.0, Double.POSITIVE_INFINITY)
         ).requires(this), // (desired RPM / 60) * ticks per rev
         checkWithinToleranceForCorrectNumberOfLoops
@@ -97,3 +102,17 @@ object Shooter : Subsystem {
 //    val reverse = InstantCommand { motor.power = -1.0 }
 //
 //}
+
+
+object AutoAdjustingCalc {
+
+    val goalPos = Pose(16.3, 131.8)
+
+    fun calculateDistance(): Double {
+        val currentPos = PedroComponent.follower.pose
+
+        return sqrt(((goalPos.x - currentPos.x)*(goalPos.x - currentPos.x)) + ((goalPos.y - currentPos.y)*(goalPos.y - currentPos.y)))
+    }
+
+
+}
