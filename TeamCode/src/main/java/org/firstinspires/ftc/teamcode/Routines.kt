@@ -54,6 +54,20 @@ object Routines {
         Intake.slowOut
     )
 
+    val teleOpMotifShoot
+        get() = SequentialGroup(
+            ParallelGroup(
+                Shooter.start,
+                WaitUntil {
+                    if (!CompetitionTeleOp.autoAimPID.usePID) {
+                        true
+                    }
+                    CompetitionTeleOp.autoAimPID.get() < 0.1
+                }
+            ),
+            motifShoot
+        )
+
     /*
     val shootPurpleNoStop: Command
         get() = SequentialGroup(

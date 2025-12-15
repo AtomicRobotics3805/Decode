@@ -1,10 +1,18 @@
 package org.firstinspires.ftc.teamcode
 
+import com.bylazar.configurables.annotations.Configurable
 import com.bylazar.graph.PanelsGraph
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.RobotLog
+import dev.nextftc.control.KineticState
+import dev.nextftc.control.builder.controlSystem
+import dev.nextftc.control.feedback.AngleType
+import dev.nextftc.control.feedback.AngularFeedback
+import dev.nextftc.control.feedback.FeedbackType
+import dev.nextftc.control.feedback.PIDCoefficients
+import dev.nextftc.control.feedback.PIDElement
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.core.units.deg
@@ -19,9 +27,9 @@ import dev.nextftc.hardware.driving.MecanumDriverControlled
 import org.firstinspires.ftc.teamcode.subsystems.Direction
 import dev.nextftc.hardware.impl.MotorEx
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcode.AutoAdjustingCalc.goalPos
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
-import org.firstinspires.ftc.teamcode.subsystems.AutoAdjustingCalc.goalPos
 import org.firstinspires.ftc.teamcode.subsystems.Gyro
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
@@ -30,8 +38,11 @@ import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
+import java.util.function.Supplier
 import kotlin.math.sqrt
 
+
+@Configurable
 @TeleOp(name = "Competition TeleOp")
 class CompetitionTeleOp : NextFTCOpMode() {
     var graphManager = PanelsGraph.manager
@@ -47,6 +58,32 @@ class CompetitionTeleOp : NextFTCOpMode() {
     }
 
     val imuOffset = 0.0.deg.inRad
+
+    companion object {
+        @JvmField
+        var coefficients = PIDCoefficients(-0.8, 0.0, 0.005)
+
+        @JvmField
+        val controller = controlSystem {
+            feedback(
+                AngularFeedback(
+                    AngleType.RADIANS,
+                    PIDElement(
+                        FeedbackType.POSITION,
+                        coefficients
+                    )
+                )
+            )
+        }
+
+        fun calculateHeadingPID(): Double {
+            controller.goal = KineticState(AutoAdjustingCalc.calculateAimAngle())
+
+            return controller.calculate(KineticState(PedroComponent.follower.heading))
+        }
+
+        val autoAimPID = PIDJoystickBlend(Gamepads.gamepad1.rightStickX::get, ::calculateHeadingPID)
+    }
 
     private val frontLeftMotor = MotorEx("motor_c1").brakeMode()
     private val frontRightMotor = MotorEx("motor_c2").brakeMode()
@@ -70,7 +107,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
             backRightMotor,
             -Gamepads.gamepad1.leftStickY,
             Gamepads.gamepad1.leftStickX,
-            Gamepads.gamepad1.rightStickX,
+            autoAimPID,
             FieldCentric(imu)
         )
         driverControlled()
@@ -90,7 +127,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.intake whenBecomesFalse Intake.slowOut
         Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Intake.reverse whenBecomesFalse Intake.slowOut
 
-        Gamepads.gamepad1.leftBumper whenBecomesTrue Routines.motifShoot whenBecomesFalse {
+        Gamepads.gamepad1.leftBumper whenBecomesTrue Routines.teleOpMotifShoot whenBecomesFalse {
             Shooter.stop()
             PusherArm.down()
         }
@@ -109,10 +146,6 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         Gamepads.gamepad1.y.whenBecomesTrue {
             Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY
-        }
-
-        Gamepads.gamepad1.b.whenBecomesTrue {
-            // TODO: SPIN SPINDEXER BACK TO LAST LOCATION
         }
 
         Gamepads.gamepad1.dpadUp whenBecomesTrue Routines.shoot
@@ -149,7 +182,15 @@ class CompetitionTeleOp : NextFTCOpMode() {
         }
 
         Gamepads.gamepad1.rightStickX lessThan(0.1) and Gamepads.gamepad1.leftBumper whenBecomesTrue {
+            autoAimPID.usePID = true
+        } whenBecomesFalse {
+            autoAimPID.usePID = false
+        }
 
+        Gamepads.gamepad2.rightBumper whenBecomesTrue {
+            autoAimPID.usePID = true
+        } whenBecomesFalse {
+            autoAimPID.usePID = false
         }
 
 

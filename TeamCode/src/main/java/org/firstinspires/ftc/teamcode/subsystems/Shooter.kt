@@ -15,12 +15,9 @@ import dev.nextftc.core.commands.utility.NullCommand
 import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.hardware.controllable.RunToVelocity
+import org.firstinspires.ftc.teamcode.AutoAdjustingCalc.calculatePower
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
-import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
-import org.firstinspires.ftc.teamcode.subsystems.AutoAdjustingCalc.calculatePower
-import kotlin.math.atan2
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 @Configurable
 object Shooter : Subsystem {
@@ -132,41 +129,3 @@ object Shooter : Subsystem {
 //    val reverse = InstantCommand { motor.power = -1.0 }
 //
 //}
-
-
-object AutoAdjustingCalc {
-
-    val goalPos = Pose(16.3, 131.8)
-
-    fun calculatePower(): Double {
-        val currentPos = PedroComponent.follower.pose
-
-        if (AutonomousInfo.redAuto) {
-            val distance = sqrt(((goalPos.mirror().x - currentPos.x)*(goalPos.mirror().x - currentPos.x)) + ((goalPos.mirror().y - currentPos.y)*(goalPos.mirror().y - currentPos.y)))
-
-            return (0.00559054*(distance*distance)) + (10.59177 * distance) + 1906.02268
-        }
-        else {
-            val distance = sqrt(((goalPos.x - currentPos.x)*(goalPos.x - currentPos.x)) + ((goalPos.y - currentPos.y)*(goalPos.y - currentPos.y)))
-
-            return (0.00559054*(distance*distance)) + (10.59177 * distance) + 1906.02268
-        }
-    }
-
-    fun calculateAimAngle(): Double {
-        val currentPos = PedroComponent.follower.pose
-
-        if (AutonomousInfo.redAuto) {
-            val dx = 144 - currentPos.x
-            val dy = 144 - currentPos.y
-
-            return atan2(dx, dy)
-        } else {
-            val dx = -currentPos.x
-            val dy = 144 - currentPos.y
-
-            return atan2(dx, dy)
-        }
-    }
-
-}
