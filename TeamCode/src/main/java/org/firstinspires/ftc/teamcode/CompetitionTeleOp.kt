@@ -5,10 +5,9 @@ import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.RobotLog
-import dev.nextftc.core.commands.delays.Delay
-import dev.nextftc.core.commands.groups.SequentialGroup
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
+import dev.nextftc.core.units.deg
 import dev.nextftc.core.units.rad
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
@@ -17,13 +16,13 @@ import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
 import dev.nextftc.hardware.driving.FieldCentric
 import dev.nextftc.hardware.driving.MecanumDriverControlled
-import dev.nextftc.hardware.impl.Direction
-import dev.nextftc.hardware.impl.IMUEx
+import org.firstinspires.ftc.teamcode.subsystems.Direction
 import dev.nextftc.hardware.impl.MotorEx
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
-import org.firstinspires.ftc.teamcode.subsystems.AutoAdjustingCalc
+import org.firstinspires.ftc.teamcode.subsystems.AutoAdjustingCalc.goalPos
+import org.firstinspires.ftc.teamcode.subsystems.Gyro
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight.matchMotif
@@ -31,8 +30,7 @@ import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
-import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
-import org.firstinspires.ftc.teamcode.subsystems.ZeroSensor
+import kotlin.math.sqrt
 
 @TeleOp(name = "Competition TeleOp")
 class CompetitionTeleOp : NextFTCOpMode() {
@@ -46,16 +44,18 @@ class CompetitionTeleOp : NextFTCOpMode() {
             BindingsComponent
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
-        PedroComponent.follower.pose = AutonomousInfo.autoEndPos
     }
+
+    val imuOffset = 0.0.deg.inRad
 
     private val frontLeftMotor = MotorEx("motor_c1").brakeMode()
     private val frontRightMotor = MotorEx("motor_c2").brakeMode()
     private val backLeftMotor = MotorEx("motor_c0").brakeMode()
     private val backRightMotor = MotorEx("motor_c3").brakeMode()
-    private val imu = IMUEx("imu", Direction.LEFT, Direction.UP).zeroed()
+    private val imu = Gyro("imu", Direction.LEFT, Direction.UP).zeroed()
 
     override fun onStartButtonPressed() {
+        PedroComponent.follower.pose = AutonomousInfo.autoEndPos
         PusherArm.down()
         Routines.setMotifSelection()
 
@@ -133,6 +133,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
 //        Gamepads.gamepad2.dpadUp whenBecomesTrue Spindexer.spinToSlotOne
 //        Gamepads.gamepad2.dpadRight whenBecomesTrue Spindexer.spinToSlotTwo
 
+        Gamepads.gamepad2.start whenBecomesTrue { AutonomousInfo.redAuto = !AutonomousInfo.redAuto }
+
         Gamepads.gamepad2.dpadUp whenBecomesTrue { Shooter.shooterSpeedNoRatio += 50 }
         Gamepads.gamepad2.dpadDown whenBecomesTrue { Shooter.shooterSpeedNoRatio -= 50 }
 
@@ -145,6 +147,11 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad2.b.whenBecomesTrue {
             Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY
         }
+
+        Gamepads.gamepad1.rightStickX lessThan(0.1) and Gamepads.gamepad1.leftBumper whenBecomesTrue {
+
+        }
+
 
         //endregion
 
@@ -178,7 +185,9 @@ class CompetitionTeleOp : NextFTCOpMode() {
         ActiveOpMode.telemetry.addData("Pose", PedroComponent.follower.pose)
 
         ActiveOpMode.telemetry.addLine("=+=+=+=+=+=+=+=+=+=")
-        ActiveOpMode.telemetry.addData("Distance", AutoAdjustingCalc.calculateDistance())
+
+        ActiveOpMode.telemetry.addData("Distance", sqrt(((goalPos.x - PedroComponent.follower.pose.x)*(goalPos.x - PedroComponent.follower.pose.x)) + ((goalPos.y - PedroComponent.follower.pose.y)*(goalPos.y - PedroComponent.follower.pose.y)))
+        )
         ActiveOpMode.telemetry.addData("Shooter target", Shooter.shooterSpeedNoRatio)
 
 

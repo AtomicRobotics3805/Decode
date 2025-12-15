@@ -176,6 +176,7 @@ object Routines {
 
     val GPPMotifShoot: Command
         get() = SequentialGroup(
+            Shooter.start,
             InstantCommand { motifShootCompleted = false },
             shootGreenNoStop,
             Delay(0.1),
@@ -188,6 +189,7 @@ object Routines {
 
     val PGPMotifShoot: Command
         get() = SequentialGroup(
+            Shooter.start,
             InstantCommand { motifShootCompleted = false },
             shootPurpleNoStop,
             Delay(0.1),
@@ -200,6 +202,7 @@ object Routines {
 
     val PPGMotifShoot: Command
         get() = SequentialGroup(
+            Shooter.start,
             InstantCommand { motifShootCompleted = false },
             shootPurpleNoStop,
             Delay(0.1),

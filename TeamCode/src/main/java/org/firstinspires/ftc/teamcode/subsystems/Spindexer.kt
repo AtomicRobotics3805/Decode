@@ -254,7 +254,10 @@ object Spindexer : Subsystem {
     lateinit var newTarget: SpindexerStatus
 
     fun spinTo(goal: SpindexerSlotStatus, allowOtherColor: Boolean = true) {
-        lastStatus = currentStatus
+        if (lastStatus != currentStatus) {
+            lastStatus = currentStatus
+        }
+
         // Decide which slot to go to
         var selection = -1
         var current = 0
