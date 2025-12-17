@@ -86,13 +86,14 @@ class CompetitionTeleOp : NextFTCOpMode() {
         }
 
         val autoAimPID = PIDJoystickBlend(Gamepads.gamepad1.rightStickX::get, ::calculateHeadingPID)
+
+        val imu = Gyro("imu", Direction.LEFT, Direction.UP).zeroed()
     }
 
     private val frontLeftMotor = MotorEx("motor_c1").brakeMode()
     private val frontRightMotor = MotorEx("motor_c2").brakeMode()
     private val backLeftMotor = MotorEx("motor_c0").brakeMode()
     private val backRightMotor = MotorEx("motor_c3").brakeMode()
-    private val imu = Gyro("imu", Direction.LEFT, Direction.UP).zeroed()
 
     override fun onStartButtonPressed() {
         LimeLight.autoRelocalize = true
@@ -185,7 +186,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
             Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY
         }
 
-        Gamepads.gamepad1.rightStickX lessThan(0.1) and Gamepads.gamepad1.leftBumper whenBecomesTrue {
+        Gamepads.gamepad1.rightStickX lessThan(0.1) and Gamepads.gamepad1.leftBumper and Gamepads.gamepad2.back.not() whenBecomesTrue {
             autoAimPID.usePID = true
         } whenBecomesFalse {
             autoAimPID.usePID = false
