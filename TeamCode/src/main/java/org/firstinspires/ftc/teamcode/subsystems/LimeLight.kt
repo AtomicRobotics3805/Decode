@@ -4,18 +4,19 @@ import com.bylazar.configurables.annotations.Configurable
 import com.pedropathing.ftc.FTCCoordinates
 import com.pedropathing.geometry.PedroCoordinates
 import com.pedropathing.geometry.Pose
+import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
-import dev.nextftc.control.KineticState
-import dev.nextftc.control.builder.controlSystem
-import dev.nextftc.control.feedback.PIDCoefficients
+import com.qualcomm.robotcore.hardware.Gyroscope
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.core.units.deg
-import dev.nextftc.core.units.m
+import dev.nextftc.core.units.rad
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
 import org.firstinspires.ftc.teamcode.Routines
+import java.io.PipedOutputStream
+import kotlin.math.abs
+
 
 @Configurable
 object LimeLight : Subsystem {
@@ -32,35 +33,11 @@ object LimeLight : Subsystem {
      var matchMotif = Motif.UNKNOWN
     //endregion
 
-    //region Auto Align
-
-    var lastLength = 0
-    var axial = 0.0
-    var lateral = 0.0
-    var yaw = 0.0
-
-    var yawPIDCoefficients = PIDCoefficients(0.0, 0.0, 0.0)
-    var axialPIDCoefficients = PIDCoefficients(0.0, 0.0, 0.0)
-    var lateralPIDCoefficients = PIDCoefficients(0.0, 0.0, 0.0)
-
-    var axialOffset = 0.0
-    var lateralOffset = 0.0
-    var yawOffset = 0.0
-
-
-    var yawPID = controlSystem {
-        posPid(yawPIDCoefficients)
-    }
-    var axialPID = controlSystem {
-        posPid(axialPIDCoefficients)
-    }
-    var lateralPID = controlSystem {
-        posPid(lateralPIDCoefficients)
-    }
-
-    //endregion
-
     lateinit var ll: Limelight3A
+
+    var autoRelocalize = false
+
+    const val METER_TO_INCH: Double = 39.3701
 
     override fun initialize() {
         ll = ActiveOpMode.hardwareMap.get(Limelight3A::class.java, "limelight")
@@ -74,8 +51,14 @@ object LimeLight : Subsystem {
         ll.stop()
     }
 
+    var counter = 0
     override fun periodic() {
-
+        if (autoRelocalize && counter >= 5) {
+            updatePos()
+            counter = 0
+        } else if (autoRelocalize) {
+            counter++
+        }
     }
 
     var detectMotif = InstantCommand {
@@ -92,10 +75,23 @@ object LimeLight : Subsystem {
         Routines.setMotifSelection()
     }
 
-    fun resetPos() {
-        val latestResult = ll.latestResult
-        PedroComponent.follower.pose =
-            Pose(latestResult.botpose.position.x, latestResult.botpose.position.y, latestResult.botpose.orientation.yaw,
-                FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE)
+    fun updatePos() {
+        ll.updateRobotOrientation((PedroComponent.follower.heading.rad + 90.deg).inDeg)
+
+        val result: LLResult? = ll.getLatestResult()
+
+        if (result != null && result.isValid) {
+            if (abs(result.botpose_MT2.position.x * METER_TO_INCH - result.botpose.position.x * METER_TO_INCH) < 3 && (result.botpose_MT2.position.y * METER_TO_INCH - result.botpose.position.y * METER_TO_INCH) < 3) {
+                val newPos = Pose(
+                        result.botpose_MT2.position.y * METER_TO_INCH + 72,
+                (-result.botpose_MT2.position.x * METER_TO_INCH + 72),
+                PedroComponent.follower.heading
+                )
+
+                if (newPos.distanceFrom(PedroComponent.follower.pose) < 2) {
+                    PedroComponent.follower.pose = newPos
+                }
+            }
+        }
     }
 }

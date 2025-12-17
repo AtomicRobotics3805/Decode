@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer.slots
 
 object Routines {
     val shoot
-        get() = SequentialGroup(
-            Shooter.start.withDeadline(WaitUntil { Shooter.motor.velocity > Shooter.controller.goal.velocity }),
+        get() = SequentialGroupLocal(
+            Shooter.start.withDeadline( WaitUntil {Shooter.motor.velocity > Shooter.controller.goal.velocity }),
             Spindexer.emptyTopSlot,
             PusherArm.push,
             Shooter.stop
@@ -37,7 +37,7 @@ object Routines {
         )
 
     val intake: Command
-        get() = SequentialGroup(
+        get() = SequentialGroupLocal(
             ParallelGroup(
                 Spindexer.spinToIntake,
                 Intake.start
@@ -55,9 +55,9 @@ object Routines {
     )
 
     val teleOpMotifShoot
-        get() = SequentialGroup(
+        get() = SequentialGroupLocal(
             ParallelGroup(
-                Shooter.start,
+                Shooter.start.withDeadline( WaitUntil {Shooter.motor.velocity > Shooter.controller.goal.velocity }),
                 WaitUntil {
                     if (!CompetitionTeleOp.autoAimPID.usePID) {
                         true
@@ -70,7 +70,7 @@ object Routines {
 
     /*
     val shootPurpleNoStop: Command
-        get() = SequentialGroup(
+        get() = SequentialGroupLocal(
             ParallelGroup(
                 LambdaCommand("").setIsDone { Spindexer.controller.isWithinTolerance(KineticState(10.deg.inRad, 2.deg.inRad, Double.POSITIVE_INFINITY)) }.setStart {
                     var selectedIndex = -1
@@ -110,7 +110,7 @@ object Routines {
         )
 
     val shootGreenNoStop: Command
-        get() = SequentialGroup(
+        get() = SequentialGroupLocal(
             ParallelGroup(
                 LambdaCommand("").setIsDone { Spindexer.controller.isWithinTolerance(KineticState(10.deg.inRad, 2.deg.inRad, Double.POSITIVE_INFINITY)) }.setStart {
                     var selectedIndex = -1
@@ -151,10 +151,10 @@ object Routines {
 
      */
 
-    val shootGreenNoStop get() = SequentialGroup(
+    val shootGreenNoStop get() = SequentialGroupLocal(
         ParallelGroup(
             Spindexer.spinToGreen,
-            Shooter.start
+            Shooter.start.withDeadline( WaitUntil {Shooter.motor.velocity > Shooter.controller.goal.velocity })
         ),
         Delay(0.2),
         ParallelGroup(
@@ -163,10 +163,10 @@ object Routines {
         )
     )
 
-    val shootPurpleNoStop get() = SequentialGroup(
+    val shootPurpleNoStop get() = SequentialGroupLocal(
         ParallelGroup(
             Spindexer.spinToPurple,
-            Shooter.start
+            Shooter.start.withDeadline( WaitUntil {Shooter.motor.velocity > Shooter.controller.goal.velocity })
         ),
         Delay(0.2),
         ParallelGroup(
@@ -189,7 +189,7 @@ object Routines {
     val motifShoot = LambdaCommand().setStart { motifShootCompleted = false; selection() }.setIsDone { motifShootCompleted }
 
     val GPPMotifShoot: Command
-        get() = SequentialGroup(
+        get() = SequentialGroupLocal(
             Shooter.start,
             InstantCommand { motifShootCompleted = false },
             shootGreenNoStop,
@@ -202,7 +202,7 @@ object Routines {
         )
 
     val PGPMotifShoot: Command
-        get() = SequentialGroup(
+        get() = SequentialGroupLocal(
             Shooter.start,
             InstantCommand { motifShootCompleted = false },
             shootPurpleNoStop,
@@ -215,7 +215,7 @@ object Routines {
         )
 
     val PPGMotifShoot: Command
-        get() = SequentialGroup(
+        get() = SequentialGroupLocal(
             Shooter.start,
             InstantCommand { motifShootCompleted = false },
             shootPurpleNoStop,

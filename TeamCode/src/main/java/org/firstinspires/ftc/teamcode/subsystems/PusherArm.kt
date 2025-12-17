@@ -8,6 +8,7 @@ import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.hardware.impl.ServoEx
 import dev.nextftc.hardware.positionable.SetPosition
+import org.firstinspires.ftc.teamcode.SequentialGroupLocal
 
 object PusherArm : Subsystem {
 
@@ -19,7 +20,7 @@ object PusherArm : Subsystem {
 //    val up = InstantCommand { servo.position = 1.0 }
 //    val down = InstantCommand { servo.position = 0.65 }
 
-    val push get() = SequentialGroup(
+    val push get() = SequentialGroupLocal(
         Delay(0.2),
         up,
         Delay(0.4),

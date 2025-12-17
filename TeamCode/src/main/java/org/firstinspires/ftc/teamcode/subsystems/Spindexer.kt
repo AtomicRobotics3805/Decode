@@ -14,7 +14,6 @@ import dev.nextftc.core.commands.Command
 import dev.nextftc.core.commands.conditionals.IfElseCommand
 import dev.nextftc.core.commands.delays.Delay
 import dev.nextftc.core.commands.delays.WaitUntil
-import dev.nextftc.core.commands.groups.SequentialGroup
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.commands.utility.LambdaCommand
 import dev.nextftc.core.commands.utility.NullCommand
@@ -27,6 +26,7 @@ import dev.nextftc.ftc.Gamepads
 import dev.nextftc.hardware.controllable.RunToPosition
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
+import org.firstinspires.ftc.teamcode.SequentialGroupLocal
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.slots
 import java.time.Instant
@@ -171,7 +171,7 @@ object Spindexer : Subsystem {
         return if (selectedIndex == -1) {
             NullCommand()
         } else {
-            SequentialGroup(
+            SequentialGroupLocal(
                 InstantCommand { traveling = false },
                 InstantCommand {
                     currentStatus = when (selectedIndex) {
@@ -203,7 +203,7 @@ object Spindexer : Subsystem {
         return if (selectedIndex == -1) {
             NullCommand()
         } else {
-            SequentialGroup(
+            SequentialGroupLocal(
                 InstantCommand { traveling = false },
                 InstantCommand { currentStatus = when (selectedIndex) {
                     0 -> SpindexerStatus.TOP_0
@@ -232,7 +232,7 @@ object Spindexer : Subsystem {
         return if (selectedIndex == -1) {
             NullCommand()
         } else {
-            SequentialGroup(
+            SequentialGroupLocal(
                 InstantCommand { traveling = false },
                 InstantCommand { currentStatus = when (selectedIndex) {
                     0 -> SpindexerStatus.BOTTOM_0

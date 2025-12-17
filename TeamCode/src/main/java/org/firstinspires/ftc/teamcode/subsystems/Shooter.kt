@@ -11,9 +11,11 @@ import dev.nextftc.core.commands.Command
 import dev.nextftc.core.commands.delays.WaitUntil
 import dev.nextftc.core.commands.groups.ParallelGroup
 import dev.nextftc.core.commands.utility.InstantCommand
+import dev.nextftc.core.commands.utility.LambdaCommand
 import dev.nextftc.core.commands.utility.NullCommand
 import dev.nextftc.core.subsystems.Subsystem
 import dev.nextftc.extensions.pedro.PedroComponent
+import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.hardware.controllable.RunToVelocity
 import org.firstinspires.ftc.teamcode.AutoAdjustingCalc.calculatePower
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
@@ -30,6 +32,8 @@ object Shooter : Subsystem {
 //    val encoder = MotorEx("motor_c2")
 
     var controlled = true
+
+    var shoot = false
 
     val motor = DecoupledMotorEx("motor_e1", "motor_c2").reversed()
 
@@ -54,6 +58,7 @@ object Shooter : Subsystem {
 
     var loopCount = 0
     val loopThreshold = 40
+
     val checkWithinToleranceForCorrectNumberOfLoops = WaitUntil {
         if (loopCount >= loopThreshold) {
             true
@@ -70,14 +75,16 @@ object Shooter : Subsystem {
 
     val start: Command
         get() {
-            return ParallelGroup(
-                ProxyShoot { shooterSpeedNoRatio }.requires(this),
-                checkWithinToleranceForCorrectNumberOfLoops
-            ).requires(this)
+            return LambdaCommand().setIsDone {
+                motor.velocity > controller.goal.velocity
+            }.setStart {
+                shoot = true
+            }
         }
 
-    val stop = RunToVelocity(controller, (1500 / 60.0) * ticksPerRev, KineticState(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
-        Double.POSITIVE_INFINITY)).requires(this)
+    val stop = LambdaCommand().setIsDone { true }.setStart {
+        shoot = false
+    }
 
     val reverse = RunToVelocity(controller, -((1000 / 60.0) * ticksPerRev)).requires(this)
 
@@ -89,31 +96,16 @@ object Shooter : Subsystem {
 
         shooterSpeedNoRatio = calculatePower().roundToInt()
 
-    }
-
-    class ProxyShoot(val speed: () -> Int): Command() {
-        private var command: Command = NullCommand()
-
-        override val isDone: Boolean
-            get() {
-                return command.isDone
+        if (ActiveOpMode.opModeIsActive) {
+            if (shoot) {
+                controller.goal = KineticState(0.0, (shooterSpeedNoRatio / 60.0) * ticksPerRev)
+            } else {
+                controller.goal = KineticState(0.0, (1500 / 60.0) * ticksPerRev)
             }
-
-        override fun start() {
-            command = RunToVelocity(controller, (speed() / 60.0) * ticksPerRev, KineticState(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
-                Double.POSITIVE_INFINITY))
-
-            command.start()
         }
 
-        override fun update() {
-            command.update()
-        }
-
-        override fun stop(interrupted: Boolean) {
-            command.stop(interrupted)
-        }
     }
+
 }
 
 //object Shooter : Subsystem {

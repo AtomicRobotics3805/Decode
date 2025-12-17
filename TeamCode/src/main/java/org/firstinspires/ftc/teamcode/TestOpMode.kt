@@ -46,7 +46,7 @@ class TestOpMode : NextFTCOpMode() {
     override fun onStartButtonPressed() {
 
 //        Gamepads.gamepad1.a.whenBecomesTrue { Spindexer.spinToGreen() }
-//        Gamepads.gamepad1.x.whenBecomesTrue { SequentialGroup(PusherArm.push, Spindexer.spinToPurple)() }
+//        Gamepads.gamepad1.x.whenBecomesTrue { SequentialGroupLocal(PusherArm.push, Spindexer.spinToPurple)() }
 //        Gamepads.gamepad1.b.whenBecomesTrue { Spindexer.spinToIntake() }
 //        Gamepads.gamepad1.y.whenBecomesTrue { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY }
 

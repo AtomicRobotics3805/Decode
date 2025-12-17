@@ -57,6 +57,9 @@ class CompetitionTeleOp : NextFTCOpMode() {
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
 
+
+
+
     val imuOffset = 0.0.deg.inRad
 
     companion object {
@@ -92,6 +95,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
     private val imu = Gyro("imu", Direction.LEFT, Direction.UP).zeroed()
 
     override fun onStartButtonPressed() {
+        LimeLight.autoRelocalize = true
         PedroComponent.follower.pose = AutonomousInfo.autoEndPos
         PusherArm.down()
         Routines.setMotifSelection()

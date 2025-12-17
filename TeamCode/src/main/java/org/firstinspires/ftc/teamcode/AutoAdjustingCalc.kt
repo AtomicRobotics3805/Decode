@@ -32,13 +32,13 @@ object AutoAdjustingCalc {
         val currentPos = PedroComponent.follower.pose
 
         if (AutonomousInfo.redAuto) {
-            val dx = 142 - currentPos.x
-            val dy = 142 - currentPos.y
+            val dx = 140 - currentPos.x
+            val dy = 140 - currentPos.y
 
-            return atan2(dx, dy)
+            return atan2(dy, dx)
         } else {
-            val dx = 2 - currentPos.x
-            val dy = 142 - currentPos.y
+            val dx = 4 - currentPos.x
+            val dy = 140 - currentPos.y
 
             return atan2(dy, dx)
         }
