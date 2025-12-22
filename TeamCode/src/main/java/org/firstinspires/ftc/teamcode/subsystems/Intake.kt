@@ -8,6 +8,7 @@ import dev.nextftc.hardware.impl.MotorEx
 
 object Intake : Subsystem {
 
+    var intakeModifier = 1.0
     val motor = MotorEx("motor_e2").reversed()
 
     override fun initialize() {

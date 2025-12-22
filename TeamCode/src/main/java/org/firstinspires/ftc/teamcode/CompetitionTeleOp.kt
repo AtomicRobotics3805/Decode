@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode
 
+import android.icu.number.Scale
 import com.bylazar.configurables.annotations.Configurable
 import com.bylazar.graph.PanelsGraph
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.RobotLog
+import dev.nextftc.bindings.BindingManager
 import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
 import dev.nextftc.control.feedback.AngleType
@@ -17,6 +19,7 @@ import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.core.units.deg
 import dev.nextftc.core.units.rad
+import dev.nextftc.extensions.fateweaver.FateComponent
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.ftc.Gamepads
@@ -39,6 +42,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import java.util.function.Supplier
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 
@@ -52,10 +56,13 @@ class CompetitionTeleOp : NextFTCOpMode() {
                 /*ZeroSensor*/),
             BulkReadComponent,
             PedroComponent(Constants::createFollower),
-            BindingsComponent
+            BindingsComponent,
+            FateComponent
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
+
+    val debugTelemetry = false
 
 
 
@@ -64,7 +71,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
     companion object {
         @JvmField
-        var coefficients = PIDCoefficients(-0.8, 0.0, 0.005)
+        var coefficients = PIDCoefficients(-1.0, 0.0, 0.005)
+
 
         @JvmField
         val controller = controlSystem {
@@ -95,6 +103,10 @@ class CompetitionTeleOp : NextFTCOpMode() {
     private val backLeftMotor = MotorEx("motor_c0").brakeMode()
     private val backRightMotor = MotorEx("motor_c3").brakeMode()
 
+    override fun onInit() {
+        Drawing.init()
+    }
+
     override fun onStartButtonPressed() {
         LimeLight.autoRelocalize = true
         PedroComponent.follower.pose = AutonomousInfo.autoEndPos
@@ -122,20 +134,43 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
 
         Gamepads.gamepad1.rightStickButton whenBecomesTrue { imu.zero() }
-        Gamepads.gamepad1.rightBumper whenBecomesTrue {
-            driverControlled.scalar = 0.3
-        } whenBecomesFalse {
-            driverControlled.scalar = 1.0
-        } // TODO: Add autoalign and make this enable auto alignment
 
+        Gamepads.gamepad1.leftTrigger.asButton { it >= 0.3 } whenBecomesTrue { autoAimPID.usePID = true} whenBecomesFalse { autoAimPID.usePID = false }
 
-        Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 } whenBecomesTrue Routines.intake whenBecomesFalse Intake.slowOut
-        Gamepads.gamepad1.leftTrigger.asButton { it > 0.5 } whenBecomesTrue Intake.reverse whenBecomesFalse Intake.slowOut
-
-        Gamepads.gamepad1.leftBumper whenBecomesTrue Routines.teleOpMotifShoot whenBecomesFalse {
-            Shooter.stop()
-            PusherArm.down()
+        Gamepads.gamepad1.rightBumper.inLayer("driving") {
+            whenBecomesTrue {
+                driverControlled.scalar = 0.3
+            }.whenBecomesFalse {
+                driverControlled.scalar = 1.0
+            }
+        }.inLayer("intake") {
+            whenBecomesTrue {
+                Intake.intakeModifier = -1.0
+            }.whenBecomesFalse {
+                Intake.intakeModifier = 1.0
+                driverControlled.scalar = 1.0
+            }
         }
+
+
+        Gamepads.gamepad1.rightTrigger.asButton { it >= 0.1 } whenBecomesTrue {
+            BindingManager.layer = "intake"
+            Spindexer.spinToIntake()
+            Intake.intakeModifier = 1.0
+        } whenTrue {
+            Intake.motor.power = ((Gamepads.gamepad1.rightTrigger.get()/2)+0.5) * Intake.intakeModifier
+        } whenBecomesFalse {
+            Intake.slowOut()
+            BindingManager.layer = "driving"
+        }
+
+        Gamepads.gamepad1.leftBumper whenBecomesTrue({
+            Routines.teleOpMotifShoot()
+        }) whenBecomesFalse({
+                Shooter.stop()
+                PusherArm.down()
+            }
+        )
 
         Gamepads.gamepad1.back whenTrue Spindexer.zeroCounterClockwise whenBecomesFalse Spindexer.endZero
         Gamepads.gamepad1.start whenTrue Spindexer.zeroClockwise whenBecomesFalse Spindexer.endZero
@@ -167,14 +202,14 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         //region Backup
 
-//        Gamepads.gamepad2.dpadLeft whenBecomesTrue Spindexer.spinToSlotZero
-//        Gamepads.gamepad2.dpadUp whenBecomesTrue Spindexer.spinToSlotOne
-//        Gamepads.gamepad2.dpadRight whenBecomesTrue Spindexer.spinToSlotTwo
+        Gamepads.gamepad2.dpadLeft whenBecomesTrue Spindexer.spinToSlotZero
+        Gamepads.gamepad2.dpadUp whenBecomesTrue Spindexer.spinToSlotOne
+        Gamepads.gamepad2.dpadRight whenBecomesTrue Spindexer.spinToSlotTwo
 
         Gamepads.gamepad2.start whenBecomesTrue { AutonomousInfo.redAuto = !AutonomousInfo.redAuto }
 
-        Gamepads.gamepad2.dpadUp whenBecomesTrue { Shooter.shooterSpeedNoRatio += 50 }
-        Gamepads.gamepad2.dpadDown whenBecomesTrue { Shooter.shooterSpeedNoRatio -= 50 }
+//        Gamepads.gamepad2.dpadUp whenBecomesTrue { Shooter.shooterSpeedNoRatio += 50 }
+//        Gamepads.gamepad2.dpadDown whenBecomesTrue { Shooter.shooterSpeedNoRatio -= 50 }
 
         Gamepads.gamepad2.a.whenBecomesTrue {
             Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN
@@ -184,12 +219,6 @@ class CompetitionTeleOp : NextFTCOpMode() {
         }
         Gamepads.gamepad2.b.whenBecomesTrue {
             Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY
-        }
-
-        Gamepads.gamepad1.rightStickX lessThan(0.1) and Gamepads.gamepad1.leftBumper and Gamepads.gamepad2.back.not() whenBecomesTrue {
-            autoAimPID.usePID = true
-        } whenBecomesFalse {
-            autoAimPID.usePID = false
         }
 
         Gamepads.gamepad2.rightBumper whenBecomesTrue {
@@ -216,26 +245,62 @@ class CompetitionTeleOp : NextFTCOpMode() {
         RobotLog.d("Motor Amp: Spindexer Motor: " + Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Shooter Motor: " + Shooter.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
 
-        ActiveOpMode.telemetry.addData("Current velocity:", Shooter.motor.state.velocity / Shooter.ticksPerRev * 60.0)
-        ActiveOpMode.telemetry.addData("Target velocity:", Shooter.controller.goal.velocity / Shooter.ticksPerRev * 60.0)
-        ActiveOpMode.telemetry.addData("Shooter power:", Shooter.motor.power)
+        if (debugTelemetry) {
+            ActiveOpMode.telemetry.addData(
+                "Current velocity:",
+                Shooter.motor.state.velocity / Shooter.ticksPerRev * 60.0
+            )
+            ActiveOpMode.telemetry.addData(
+                "Target velocity:",
+                Shooter.controller.goal.velocity / Shooter.ticksPerRev * 60.0
+            )
+            ActiveOpMode.telemetry.addData("Shooter power:", Shooter.motor.power)
 
-        ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
+            ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
 
-        ActiveOpMode.telemetry.addData("Raw Encoder", Spindexer.motor.state.position)
-        ActiveOpMode.telemetry.addData("Angle", ticksToAngle(Spindexer.motor.state.position).normalized.inDeg)
-        ActiveOpMode.telemetry.addData("Spindexer goal", Spindexer.controller.goal.position.rad.inDeg)
-        ActiveOpMode.telemetry.addData("Spindexer slots", "0:["+ Spindexer.slots[0]+"], 1:["+ Spindexer.slots[1]+"], 2:["+ Spindexer.slots[2]+"]")
-        ActiveOpMode.telemetry.addData("Spindexer status", Spindexer.currentStatus)
+            ActiveOpMode.telemetry.addData("Raw Encoder", Spindexer.motor.state.position)
+            ActiveOpMode.telemetry.addData(
+                "Angle",
+                ticksToAngle(Spindexer.motor.state.position).normalized.inDeg
+            )
+            ActiveOpMode.telemetry.addData(
+                "Spindexer goal",
+                Spindexer.controller.goal.position.rad.inDeg
+            )
+            ActiveOpMode.telemetry.addData(
+                "Spindexer slots",
+                "0:[" + Spindexer.slots[0] + "], 1:[" + Spindexer.slots[1] + "], 2:[" + Spindexer.slots[2] + "]"
+            )
+            ActiveOpMode.telemetry.addData("Spindexer status", Spindexer.currentStatus)
 
-        ActiveOpMode.telemetry.addData("Pose", PedroComponent.follower.pose)
+            ActiveOpMode.telemetry.addData("Pose", PedroComponent.follower.pose)
 
-        ActiveOpMode.telemetry.addLine("=+=+=+=+=+=+=+=+=+=")
+            ActiveOpMode.telemetry.addLine("=+=+=+=+=+=+=+=+=+=")
 
-        ActiveOpMode.telemetry.addData("Distance", sqrt(((goalPos.x - PedroComponent.follower.pose.x)*(goalPos.x - PedroComponent.follower.pose.x)) + ((goalPos.y - PedroComponent.follower.pose.y)*(goalPos.y - PedroComponent.follower.pose.y)))
-        )
-        ActiveOpMode.telemetry.addData("Shooter target", Shooter.shooterSpeedNoRatio)
+            ActiveOpMode.telemetry.addData(
+                "Distance",
+                sqrt(((goalPos.x - PedroComponent.follower.pose.x) * (goalPos.x - PedroComponent.follower.pose.x)) + ((goalPos.y - PedroComponent.follower.pose.y) * (goalPos.y - PedroComponent.follower.pose.y)))
+            )
+            ActiveOpMode.telemetry.addData("Shooter target", Shooter.shooterSpeedNoRatio)
+        } else {
+            ActiveOpMode.telemetry.addData("Red Side", AutonomousInfo.redAuto)
 
+            ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
+
+            ActiveOpMode.telemetry.addData(
+                "Spindexer slots",
+                "0:[" + Spindexer.slots[0] + "], 1:[" + Spindexer.slots[1] + "], 2:[" + Spindexer.slots[2] + "]"
+            )
+
+            ActiveOpMode.telemetry.addData("Spindexer status", Spindexer.currentStatus)
+
+            ActiveOpMode.telemetry.addData(
+                "Distance",
+                sqrt(((goalPos.x - PedroComponent.follower.pose.x) * (goalPos.x - PedroComponent.follower.pose.x)) + ((goalPos.y - PedroComponent.follower.pose.y) * (goalPos.y - PedroComponent.follower.pose.y)))
+            )
+
+            ActiveOpMode.telemetry.addData("Auto Align", autoAimPID.usePID)
+        }
 
         ActiveOpMode.telemetry.update()
     }

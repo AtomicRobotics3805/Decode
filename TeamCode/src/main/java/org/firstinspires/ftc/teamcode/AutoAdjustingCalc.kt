@@ -19,12 +19,12 @@ object AutoAdjustingCalc {
         if (AutonomousInfo.redAuto) {
             val distance = sqrt(((goalPos.mirror().x - currentPos.x)*(goalPos.mirror().x - currentPos.x)) + ((goalPos.mirror().y - currentPos.y)*(goalPos.mirror().y - currentPos.y)))
 
-            return (0.00559054*(distance*distance)) + (10.59177 * distance) + 1906.02268
+            return (0.0357839*(distance*distance)) + (8.43768 * distance) + 1714.48071
         }
         else {
             val distance = sqrt(((goalPos.x - currentPos.x)*(goalPos.x - currentPos.x)) + ((goalPos.y - currentPos.y)*(goalPos.y - currentPos.y)))
 
-            return (0.00559054*(distance*distance)) + (10.59177 * distance) + 1906.02268
+            return (0.0357839*(distance*distance)) + (8.43768 * distance) + 1714.48071
         }
     }
 
@@ -32,13 +32,13 @@ object AutoAdjustingCalc {
         val currentPos = PedroComponent.follower.pose
 
         if (AutonomousInfo.redAuto) {
-            val dx = 140 - currentPos.x
-            val dy = 140 - currentPos.y
+            val dx = 141 - currentPos.x
+            val dy = 141 - currentPos.y
 
             return atan2(dy, dx)
         } else {
-            val dx = 4 - currentPos.x
-            val dy = 140 - currentPos.y
+            val dx = 3 - currentPos.x
+            val dy = 141 - currentPos.y
 
             return atan2(dy, dx)
         }

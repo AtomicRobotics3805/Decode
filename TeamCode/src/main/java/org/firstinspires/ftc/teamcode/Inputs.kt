@@ -9,5 +9,4 @@ object Inputs {
         return Gamepads.gamepad1.rightTrigger.asButton { it > 0.5 }
     }
 
-
 }

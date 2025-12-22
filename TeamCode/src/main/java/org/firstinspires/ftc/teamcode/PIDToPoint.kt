@@ -18,9 +18,9 @@ class PIDToPoint(val point: Pose, val posTolerance: Double, val headingTolerance
     override val isDone: Boolean
         get() = (
                 sqrt(
-                    point.x - PedroComponent.follower.pose.x).pow(2) +
+                    (point.x - PedroComponent.follower.pose.x).pow(2) +
                     (point.y - PedroComponent.follower.pose.y).pow(2)) < posTolerance
-                && abs(point.heading - PedroComponent.follower.pose.heading) < headingTolerance
+                && abs(point.heading - PedroComponent.follower.pose.heading) < headingTolerance)
 
     override fun start() {
         PedroComponent.follower.holdPoint(point)

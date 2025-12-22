@@ -42,6 +42,8 @@ class SixArtifactGoalStartBlue : NextFTCOpMode() {
 //    lateinit var follower: Follower
 
     override fun onInit() {
+
+        LimeLight.autoRelocalize = false
         PusherArm.down()
         TrajectoryFactory.buildTrajectories(PedroComponent.Companion.follower)
         PedroComponent.Companion.follower.setStartingPose(TrajectoryFactory.goalStartPos)

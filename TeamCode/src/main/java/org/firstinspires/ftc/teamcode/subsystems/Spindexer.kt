@@ -135,12 +135,12 @@ object Spindexer : Subsystem {
 
     val zeroClockwise: Command get() = InstantCommand {
         controllerDisabled = true
-        motor.power = 0.1
+        motor.power = 0.2
     }
 
     val zeroCounterClockwise: Command get() = InstantCommand {
         controllerDisabled = true
-        motor.power = -0.1
+        motor.power = -0.2
     }
 
     val endZero: Command get() = InstantCommand {
