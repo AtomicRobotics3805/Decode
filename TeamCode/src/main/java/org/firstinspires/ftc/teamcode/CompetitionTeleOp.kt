@@ -208,7 +208,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad2.dpadUp whenBecomesTrue Spindexer.spinToSlotOne
         Gamepads.gamepad2.dpadRight whenBecomesTrue Spindexer.spinToSlotTwo
 
-        Gamepads.gamepad2.start whenBecomesTrue { AutonomousInfo.redAuto = !AutonomousInfo.redAuto }
+        Gamepads.gamepad2.back whenBecomesTrue { AutonomousInfo.redAuto = !AutonomousInfo.redAuto }
 
 //        Gamepads.gamepad2.dpadUp whenBecomesTrue { Shooter.shooterSpeedNoRatio += 50 }
 //        Gamepads.gamepad2.dpadDown whenBecomesTrue { Shooter.shooterSpeedNoRatio -= 50 }

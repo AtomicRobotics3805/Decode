@@ -16,9 +16,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 object TrajectoryFactory {
 
-    val redPickupOffset = 4.5
+    const val redPickupOffset = 4.5
 
-    val bluePickupOffset = 2.0
+    const val bluePickupOffset = 2.0
 
     //region Poses
 

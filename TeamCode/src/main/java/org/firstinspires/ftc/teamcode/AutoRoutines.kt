@@ -137,14 +137,15 @@ object AutoRoutines {
                 ParallelGroup(
                     FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
                     SequentialGroupLocal(
-                        Delay(0.6),
-                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
-                        Spindexer.spinToIntake,
                         Delay(0.8),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(0.8),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(0.9),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                        Intake.jiggleThing,
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
@@ -174,14 +175,15 @@ object AutoRoutines {
                 ParallelGroup(
                     FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
                     SequentialGroupLocal(
-                        Delay(0.6),
+                        Delay(0.8),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.7),
+                        Delay(0.8),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                         Spindexer.spinToIntake,
-                        Delay(0.7),
+                        Delay(0.9),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Intake.jiggleThing,
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
