@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode
 
 import android.icu.number.Scale
 import com.bylazar.configurables.annotations.Configurable
+import com.bylazar.field.Style
 import com.bylazar.graph.PanelsGraph
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
+import com.pedropathing.geometry.Pose
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.RobotLog
 import dev.nextftc.bindings.BindingManager
@@ -225,6 +227,14 @@ class CompetitionTeleOp : NextFTCOpMode() {
             autoAimPID.usePID = true
         } whenBecomesFalse {
             autoAimPID.usePID = false
+        }
+
+        Gamepads.gamepad2.rightStickButton.whenBecomesTrue {
+            if (AutonomousInfo.redAuto) {
+                PedroComponent.follower.pose = PedroComponent.follower.pose.withHeading(0.0)
+            } else {
+                PedroComponent.follower.pose = PedroComponent.follower.pose.withHeading(180.deg.inRad)
+            }
         }
 
 
