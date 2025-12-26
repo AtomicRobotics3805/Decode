@@ -40,15 +40,15 @@ object TrajectoryFactory {
 
     val spikeMark1PosMiddle = Pose(31.6, 83.1, 180.deg.inRad)
 
-    val spikeMark1PosOuter = Pose(24.6, 83.1, 180.deg.inRad)
+    val spikeMark1PosOuter = Pose(26.6, 83.1, 180.deg.inRad)
 
-    val spikeMark2PosPre = Pose(41.6, 59.5, 180.deg.inRad)
+    val spikeMark2PosPre = Pose(41.6, 61.5, 180.deg.inRad)
 
-    val spikeMark2PosInner = Pose(36.75, 59.5, 180.deg.inRad)
+    val spikeMark2PosInner = Pose(36.75, 61.5, 180.deg.inRad)
 
-    val spikeMark2PosMiddle = Pose(31.6, 59.5, 180.deg.inRad)
+    val spikeMark2PosMiddle = Pose(31.6, 61.5, 180.deg.inRad)
 
-    val spikeMark2PosOuter = Pose(24.6, 59.5, 180.deg.inRad)
+    val spikeMark2PosOuter = Pose(26.6, 61.5, 180.deg.inRad)
 
     val dumpPos = Pose(14.5, 77.0, 180.deg.inRad)
 
@@ -58,7 +58,7 @@ object TrajectoryFactory {
 
     val spikeMark3PosMiddle = Pose(30.6, 35.6, 180.deg.inRad)
 
-    val spikeMark3PosOuter = Pose(24.6, 35.6, 180.deg.inRad)
+    val spikeMark3PosOuter = Pose(25.6, 35.6, 180.deg.inRad)
 
     val outOfTheWayPos = Pose(41.0, 70.0, 180.deg.inRad)
 
