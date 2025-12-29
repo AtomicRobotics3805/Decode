@@ -19,22 +19,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
 object AutoRoutines {
 
-    val threeArtifactGoalStartAutoRoutine
-        get() = SequentialGroupLocal(
-            Spindexer.enableTraveling,
-            FollowPath(TrajectoryFactory.goalStartToObelisk, true),
-//            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
-            Delay(0.25),
-            LimeLight.detectMotif,
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.obeliskToScore, true),
-                SequentialGroupLocal(
-                    Delay(0.5),
-                    Routines.motifShoot
-                )
-            )
-        )
-
     val secondVolleyDelay = 0.0
     val preFirstVolleyDelay = 0.0
 
