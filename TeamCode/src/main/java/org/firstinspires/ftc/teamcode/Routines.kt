@@ -30,8 +30,6 @@ object Routines {
 //            InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.EMPTY }
         )
 
-    val autoShoot
-
     val stopShoot
         get() = ParallelGroup(
             Shooter.stop,

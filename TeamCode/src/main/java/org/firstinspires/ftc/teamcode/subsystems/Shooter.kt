@@ -89,9 +89,10 @@ object Shooter : Subsystem {
                     shoot = true
                 } else {
                     calculateVelocity = false
-                    controller.goal = KineticState(0.0, autoShootVel, 0.0)
+                    shoot = true
+                    controller.goal = KineticState(0.0, (autoShootVel / 60.0) * ticksPerRev, 0.0)
                 }
-            }.setStop { calculateVelocity = true }
+            }
         }
 
     val stop = LambdaCommand().setIsDone { true }.setStart {
