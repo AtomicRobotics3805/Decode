@@ -25,7 +25,7 @@ object Intake : Subsystem {
 
     val jiggleThing = SequentialGroupLocal(
         reverse,
-        Delay(0.2),
+        Delay(0.1),
         start,
         Delay(0.5)
     )
