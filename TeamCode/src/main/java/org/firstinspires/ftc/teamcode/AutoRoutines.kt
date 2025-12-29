@@ -11,6 +11,7 @@ import dev.nextftc.core.commands.utility.LambdaCommand
 import dev.nextftc.core.units.deg
 import dev.nextftc.extensions.pedro.FollowPath
 import dev.nextftc.ftc.ActiveOpMode
+import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
@@ -103,6 +104,7 @@ object AutoRoutines {
 
     val nineArtifactGoalStartAutoRoutine
         get() = SequentialGroupLocal(
+            InstantCommand { AutonomousInfo.autoRunning = true },
             //region First motif
             Spindexer.enableTraveling,
             ParallelGroup(
@@ -201,6 +203,7 @@ object AutoRoutines {
 
     val nineArtifactDumpGoalStartAutoRoutine
         get() = SequentialGroupLocal(
+            InstantCommand { AutonomousInfo.autoRunning = true },
             //region First motif
             Spindexer.enableTraveling,
             ParallelGroup(
@@ -300,6 +303,7 @@ object AutoRoutines {
 
     val farParkAutoRoutine
         get() = SequentialGroupLocal(
+            InstantCommand { AutonomousInfo.autoRunning = true },
             FollowPath(TrajectoryFactory.farStartToPark)
         )
 

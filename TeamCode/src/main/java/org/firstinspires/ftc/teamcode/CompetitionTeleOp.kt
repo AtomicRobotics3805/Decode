@@ -111,6 +111,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
     override fun onStartButtonPressed() {
         LimeLight.autoRelocalize = true
+        AutonomousInfo.autoRunning = false
         PedroComponent.follower.pose = AutonomousInfo.autoEndPos
         PusherArm.down()
         Routines.setMotifSelection()

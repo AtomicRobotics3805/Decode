@@ -19,6 +19,7 @@ import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.hardware.controllable.RunToVelocity
 import org.firstinspires.ftc.teamcode.AutoAdjustingCalc.calculatePower
 import org.firstinspires.ftc.teamcode.DecoupledMotorEx
+import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import kotlin.math.roundToInt
 
 @Configurable
@@ -34,6 +35,11 @@ object Shooter : Subsystem {
     var controlled = true
 
     var shoot = false
+
+    @JvmField
+    var autoShootVel = 2400.0
+
+    var calculateVelocity = true
 
     val motor = DecoupledMotorEx("motor_e1", "motor_c2").reversed()
 
@@ -78,8 +84,14 @@ object Shooter : Subsystem {
             return LambdaCommand().setIsDone {
                 motor.velocity > controller.goal.velocity
             }.setStart {
-                shoot = true
-            }
+                if (!AutonomousInfo.autoRunning) {
+                    calculateVelocity = true
+                    shoot = true
+                } else {
+                    calculateVelocity = false
+                    controller.goal = KineticState(0.0, autoShootVel, 0.0)
+                }
+            }.setStop { calculateVelocity = true }
         }
 
     val stop = LambdaCommand().setIsDone { true }.setStart {
@@ -94,12 +106,11 @@ object Shooter : Subsystem {
             motor.power = controller.calculate(motor.state)
         }
 
-        shooterSpeedNoRatio = calculatePower().roundToInt()
-
         if (ActiveOpMode.opModeIsActive) {
-            if (shoot) {
+            if (shoot && calculateVelocity) {
+                shooterSpeedNoRatio = calculatePower().roundToInt()
                 controller.goal = KineticState(0.0, (shooterSpeedNoRatio / 60.0) * ticksPerRev)
-            } else {
+            } else if (calculateVelocity) {
                 controller.goal = KineticState(0.0, (1500 / 60.0) * ticksPerRev)
             }
         }
