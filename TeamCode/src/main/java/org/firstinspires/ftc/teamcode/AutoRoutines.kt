@@ -22,6 +22,8 @@ object AutoRoutines {
     val secondVolleyDelay = 0.0
     val preFirstVolleyDelay = 0.0
 
+
+    @Deprecated("Outdated")
     val sixArtifactGoalStartAutoRoutine
         get() = SequentialGroupLocal(
             //region First motif
@@ -123,15 +125,14 @@ object AutoRoutines {
                 ParallelGroup(
                     FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
                     SequentialGroupLocal(
-                        Delay(1.0),
+                        Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(1.0),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(1.0),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
-                        Intake.jiggleThing,
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
@@ -161,15 +162,14 @@ object AutoRoutines {
                 ParallelGroup(
                     FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
                     SequentialGroupLocal(
-                        Delay(1.0),
+                        Delay(0.4),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(1.0),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                         Spindexer.spinToIntake,
-                        Delay(1.0),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
-                        Intake.jiggleThing,
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
