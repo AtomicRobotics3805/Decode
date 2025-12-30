@@ -17,7 +17,7 @@ object TrajectoryFactory {
 
     //region Poses
 
-    val goalStartPos = Pose(26.0, 130.0, (-40 - 90).deg.inRad)
+    val goalStartPos = Pose(26.0, 130.0, (-40 + 90).deg.inRad)
 
     val farStartPos = Pose(57.0, 9.0, 270.deg.inRad)
 
@@ -25,7 +25,7 @@ object TrajectoryFactory {
 
     val farAutoShootPos = Pose(35.0, 132.0, 0.deg.inRad)
 
-    val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, -125.deg.inRad)
+    val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, 55.deg.inRad)
 
     val scorePos = Pose(61.0, 102.5, 146.deg.inRad)
 
