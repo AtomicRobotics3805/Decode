@@ -20,13 +20,13 @@ object AutoRoutines {
         get() = SequentialGroupLocal(
             //region First motif
             Spindexer.enableTraveling,
-            FollowPath(TrajectoryFactoryAtInterleague.goalStartToObelisk, true),
+            FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
             Delay(0.25),
             Delay(preFirstVolleyDelay),
             LimeLight.detectMotif,
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.obeliskToScore, true),
+                FollowPath(TrajectoryFactory.obeliskToScore, true),
                 SequentialGroupLocal(
                     Delay(0.5),
                     Routines.motifShoot
@@ -38,35 +38,35 @@ object AutoRoutines {
 
             // Drive to pre-pickup pos
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.scoreToSpikeMark1, true),
+                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
                 Spindexer.spinToIntake,
                 Intake.start
             ),
 
             // Pickup first ball
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.spikeMark1Pickup1, true),
+                FollowPath(TrajectoryFactory.spikeMark1Pickup1, true),
                 InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
             ),
 
             // Pickup second ball
             Spindexer.spinToIntake,
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.spikeMark1Pickup2, true),
+                FollowPath(TrajectoryFactory.spikeMark1Pickup2, true),
                 InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
             ),
 
             // Pickup third ball
             Spindexer.spinToIntake,
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.spikeMark1Pickup3, true),
+                FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
                 InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
             ),
 
             // Drive to score
             ParallelGroup(
                 Intake.slowOut,
-                FollowPath(TrajectoryFactoryAtInterleague.spikeMark1PickupToScore, true),
+                FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true),
                 Spindexer.enableTraveling
             ),
 
@@ -75,7 +75,7 @@ object AutoRoutines {
             Routines.motifShoot,
 
             //endregion
-            FollowPath(TrajectoryFactoryAtInterleague.scoreToOutOfTheWay, true),
+            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
             Intake.stop
         )
 
@@ -86,13 +86,13 @@ object AutoRoutines {
             //region First motif
             Spindexer.enableTraveling,
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.goalStartToObelisk, true),
+                FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //                Shooter.stop
             ),
 //            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
             LimeLight.detectMotif,
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.obeliskToScore, true),
+                FollowPath(TrajectoryFactory.obeliskToScore, true),
                 SequentialGroupLocal(
                     Delay(0.5),
                     Routines.motifShoot
@@ -104,7 +104,7 @@ object AutoRoutines {
 
             // Drive to pre-pickup pos
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.scoreToSpikeMark1, true),
+                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
                 Spindexer.spinToIntake,
                 SequentialGroupLocal(
                     Delay(1.0),
@@ -115,7 +115,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactoryAtInterleague.spikeMark1Pickup3, true),
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
                     SequentialGroupLocal(
                         Delay(0.5),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -129,7 +129,7 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(0.6),
-                        FollowPath(TrajectoryFactoryAtInterleague.spikeMark1PickupToScore, true)
+                        FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true)
                     )
                 )
             ),
@@ -141,7 +141,7 @@ object AutoRoutines {
 
             // Drive to pre-pickup pos
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.scoreToSpikeMark2, true),
+                FollowPath(TrajectoryFactory.scoreToSpikeMark2, true),
                 Spindexer.spinToIntake,
                 SequentialGroupLocal(
                     Delay(1.0),
@@ -152,7 +152,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactoryAtInterleague.spikeMark2Pickup3, true),
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
                     SequentialGroupLocal(
                         Delay(0.5),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -166,14 +166,14 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(0.6),
-                        FollowPath(TrajectoryFactoryAtInterleague.spikeMark2PickupToScore, true)
+                        FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
                     )
                 )
             ),
             Routines.motifShoot,
 
             //endregion
-            FollowPath(TrajectoryFactoryAtInterleague.scoreToOutOfTheWay, true),
+            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
             Intake.stop
         )
 
@@ -183,13 +183,13 @@ object AutoRoutines {
             //region First motif
             Spindexer.enableTraveling,
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.goalStartToObelisk, true),
+                FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //                Shooter.stop
             ),
 //            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
             LimeLight.detectMotif,
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.obeliskToScore, true),
+                FollowPath(TrajectoryFactory.obeliskToScore, true),
                 SequentialGroupLocal(
                     Delay(0.5),
                     Routines.motifShoot
@@ -201,7 +201,7 @@ object AutoRoutines {
 
             // Drive to pre-pickup pos
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.scoreToSpikeMark1, true),
+                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
                 Spindexer.spinToIntake,
                 SequentialGroupLocal(
                     Delay(1.0),
@@ -212,7 +212,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactoryAtInterleague.spikeMark1Pickup3, true),
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
                     SequentialGroupLocal(
                         Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -226,9 +226,9 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(0.6),
-                        FollowPath(TrajectoryFactoryAtInterleague.spikeMark1ToDump, true),
+                        FollowPath(TrajectoryFactory.spikeMark1ToDump, true),
                         Delay(1.5),
-                        FollowPath(TrajectoryFactoryAtInterleague.dumpToScore, true)
+                        FollowPath(TrajectoryFactory.dumpToScore, true)
                     )
                 )
             ),
@@ -240,7 +240,7 @@ object AutoRoutines {
 
             // Drive to pre-pickup pos
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.scoreToSpikeMark2, true),
+                FollowPath(TrajectoryFactory.scoreToSpikeMark2, true),
                 Spindexer.spinToIntake,
                 SequentialGroupLocal(
                     Delay(1.0),
@@ -251,7 +251,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactoryAtInterleague.spikeMark2Pickup3, true),
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
                     SequentialGroupLocal(
                         Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -265,14 +265,14 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(0.6),
-                        FollowPath(TrajectoryFactoryAtInterleague.spikeMark2PickupToScore, true)
+                        FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
                     )
                 )
             ),
             Routines.motifShoot,
 
             //endregion
-            FollowPath(TrajectoryFactoryAtInterleague.scoreToOutOfTheWay, true),
+            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
             Intake.stop
         )
 
@@ -280,14 +280,14 @@ object AutoRoutines {
     val farParkAutoRoutine
         get() = SequentialGroupLocal(
             InstantCommand { AutonomousInfo.autoRunning = true },
-            FollowPath(TrajectoryFactoryAtInterleague.farStartToPark)
+            FollowPath(TrajectoryFactory.farStartToPark)
         )
 
     val threeArtifactFarStartAutoRoutine
         get() = SequentialGroupLocal(
             Spindexer.enableTraveling,
             ParallelGroup(
-                FollowPath(TrajectoryFactoryAtInterleague.farStartToShoot, true),
+                FollowPath(TrajectoryFactory.farStartToShoot, true),
                 SequentialGroupLocal(
                     Delay(1.0),
                     LimeLight.detectMotif,
@@ -295,7 +295,7 @@ object AutoRoutines {
                     Routines.motifShoot
                 )
             ),
-            FollowPath(TrajectoryFactoryAtInterleague.farShootPosToPark, true)
+            FollowPath(TrajectoryFactory.farShootPosToPark, true)
         )
 }
 

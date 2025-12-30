@@ -12,7 +12,7 @@ import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
 import org.firstinspires.ftc.teamcode.AutoRoutines
 import org.firstinspires.ftc.teamcode.Drawing
-import org.firstinspires.ftc.teamcode.TrajectoryFactoryAtInterleague
+import org.firstinspires.ftc.teamcode.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 import org.firstinspires.ftc.teamcode.subsystems.Intake
@@ -40,8 +40,8 @@ class SixArtifactGoalStartRed : NextFTCOpMode() {
     override fun onInit() {
         LimeLight.autoRelocalize = false
         PusherArm.down()
-        TrajectoryFactoryAtInterleague.buildTrajectories(PedroComponent.follower)
-        PedroComponent.follower.setStartingPose(TrajectoryFactoryAtInterleague.goalStartPos.mirror())
+        TrajectoryFactory.buildTrajectories(PedroComponent.follower)
+        PedroComponent.follower.setStartingPose(TrajectoryFactory.goalStartPos.mirror())
         Drawing.init()
         Spindexer.slots = arrayOf(Spindexer.SpindexerSlotStatus.GREEN, Spindexer.SpindexerSlotStatus.PURPLE,
             Spindexer.SpindexerSlotStatus.PURPLE)

@@ -3,18 +3,13 @@ package org.firstinspires.ftc.teamcode
 import com.pedropathing.follower.Follower
 import com.pedropathing.geometry.BezierCurve
 import com.pedropathing.geometry.BezierLine
-import com.pedropathing.geometry.BezierPoint
 import com.pedropathing.geometry.Pose
-import com.pedropathing.paths.PathBuilder
 import com.pedropathing.paths.PathChain
 import dev.nextftc.core.units.deg
-import dev.nextftc.extensions.pedro.PedroComponent
-import dev.nextftc.ftc.ActiveOpMode
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 
-object TrajectoryFactoryAtInterleague {
+object TrajectoryFactory {
 
     val redPickupOffset = 4.5
 
