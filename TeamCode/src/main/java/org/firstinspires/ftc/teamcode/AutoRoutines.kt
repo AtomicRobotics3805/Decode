@@ -123,7 +123,7 @@ object AutoRoutines {
                         Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.7),
+                        Delay(1.0),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                         Intake.slowOut
                     ),
@@ -160,7 +160,7 @@ object AutoRoutines {
                         Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                         Spindexer.spinToIntake,
-                        Delay(0.7),
+                        Delay(1.0),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Intake.slowOut
                     ),
