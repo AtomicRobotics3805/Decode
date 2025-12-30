@@ -32,7 +32,7 @@ object TrajectoryFactoryAtInterleague {
 
     val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, -125.deg.inRad)
 
-    val scorePos = Pose(29.5, 119.5, -42.deg.inRad)
+    val scorePos = Pose(61.0, 102.5, 146.deg.inRad)
 
     val spikeMark1PosPre = Pose(41.6, 83.1, 180.deg.inRad)
 
