@@ -42,13 +42,13 @@ object TrajectoryFactoryAtInterleague {
 
     val spikeMark1PosOuter = Pose(26.6, 83.1, 180.deg.inRad)
 
-    val spikeMark2PosPre = Pose(41.6, 61.0, 180.deg.inRad)
+    val spikeMark2PosPre = Pose(41.6, 59.0, 180.deg.inRad)
 
-    val spikeMark2PosInner = Pose(36.75, 61.0, 180.deg.inRad)
+    val spikeMark2PosInner = Pose(36.75, 59.0, 180.deg.inRad)
 
-    val spikeMark2PosMiddle = Pose(31.6, 61.0, 180.deg.inRad)
+    val spikeMark2PosMiddle = Pose(31.6, 59.0, 180.deg.inRad)
 
-    val spikeMark2PosOuter = Pose(26.6, 61.0, 180.deg.inRad)
+    val spikeMark2PosOuter = Pose(26.6, 59.0, 180.deg.inRad)
 
     val dumpPos = Pose(14.5, 77.0, 180.deg.inRad)
 
