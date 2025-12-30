@@ -3,18 +3,13 @@ package org.firstinspires.ftc.teamcode
 import com.pedropathing.follower.Follower
 import com.pedropathing.geometry.BezierCurve
 import com.pedropathing.geometry.BezierLine
-import com.pedropathing.geometry.BezierPoint
 import com.pedropathing.geometry.Pose
-import com.pedropathing.paths.PathBuilder
 import com.pedropathing.paths.PathChain
 import dev.nextftc.core.units.deg
-import dev.nextftc.extensions.pedro.PedroComponent
-import dev.nextftc.ftc.ActiveOpMode
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 
-object TrajectoryFactory {
+object TrajectoryFactoryAfterInterleague {
 
     //region Poses
 
@@ -57,6 +52,12 @@ object TrajectoryFactory {
     val spikeMark3PosOuter = Pose(21.1, 35.6, 180.deg.inRad)
 
     val outOfTheWayPos = Pose(41.0, 70.0, 180.deg.inRad)
+
+
+
+
+
+
 
     //endregion
 
