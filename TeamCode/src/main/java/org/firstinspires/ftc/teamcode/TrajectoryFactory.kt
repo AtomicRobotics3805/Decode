@@ -17,7 +17,7 @@ object TrajectoryFactory {
 
     //region Poses
 
-    val goalStartPos = Pose(26.0, 130.0, (-40 + 90).deg.inRad)
+    val goalStartPos = Pose(28.0, 130.0, (-40 + 90).deg.inRad)
 
     val farStartPos = Pose(57.0, 9.0, 270.deg.inRad)
 
