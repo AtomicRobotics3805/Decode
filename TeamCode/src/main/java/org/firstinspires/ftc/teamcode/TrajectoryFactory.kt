@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 
 object TrajectoryFactory {
 
-    val redPickupOffset = 4.5
+    val redPickupOffset = 5.0
 
     val bluePickupOffset = 2.0
 
@@ -37,7 +37,7 @@ object TrajectoryFactory {
 
     val spikeMark1PosOuter = Pose(26.6, 83.1, 180.deg.inRad)
 
-    val spikeMark2PosPre = Pose(41.6, 59.0, 180.deg.inRad)
+    val spikeMark2PosPre = Pose(40.6, 59.0, 180.deg.inRad)
 
     val spikeMark2PosInner = Pose(36.75, 59.0, 180.deg.inRad)
 
