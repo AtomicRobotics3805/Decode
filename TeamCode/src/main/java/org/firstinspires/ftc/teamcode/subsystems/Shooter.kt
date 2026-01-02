@@ -36,6 +36,8 @@ object Shooter : Subsystem {
 
     var shoot = false
 
+    var trueStop = false
+
     @JvmField
     var autoShootVel = 2400.0
 
@@ -50,6 +52,7 @@ object Shooter : Subsystem {
     override fun initialize() {
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         controller.goal = KineticState()
+        trueStop = false
     }
 
     @JvmField
@@ -84,6 +87,7 @@ object Shooter : Subsystem {
             return LambdaCommand().setIsDone {
                 motor.velocity > controller.goal.velocity
             }.setStart {
+                trueStop = false
                 if (!AutonomousInfo.autoRunning) {
                     calculateVelocity = true
                     shoot = true
@@ -97,10 +101,15 @@ object Shooter : Subsystem {
 
     val stop = LambdaCommand().setIsDone { true }.setStart {
         shoot = false
+        trueStop = false
+    }
+
+    val actualStop = LambdaCommand().setIsDone { true }.setStart {
+        shoot = false
+        trueStop = true
     }
 
     val reverse = RunToVelocity(controller, -((1000 / 60.0) * ticksPerRev)).requires(this)
-
 
     override fun periodic() {
         if (controlled) {
@@ -108,11 +117,13 @@ object Shooter : Subsystem {
         }
 
         if (ActiveOpMode.opModeIsActive) {
-            if (shoot && calculateVelocity) {
+            if (shoot && calculateVelocity && !trueStop) {
                 shooterSpeedNoRatio = calculatePower().roundToInt()
                 controller.goal = KineticState(0.0, (shooterSpeedNoRatio / 60.0) * ticksPerRev)
-            } else if (calculateVelocity) {
+            } else if (calculateVelocity && !trueStop) {
                 controller.goal = KineticState(0.0, (1500 / 60.0) * ticksPerRev)
+            } else if (trueStop) {
+                controller.goal = KineticState(velocity = 0.0)
             }
         }
 

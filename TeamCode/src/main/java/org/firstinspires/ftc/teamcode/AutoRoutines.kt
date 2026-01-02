@@ -7,77 +7,11 @@ import dev.nextftc.extensions.pedro.FollowPath
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
+import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
 object AutoRoutines {
 
-    val secondVolleyDelay = 0.0
-    val preFirstVolleyDelay = 0.0
-
-
-    @Deprecated("Outdated")
-    val sixArtifactGoalStartAutoRoutine
-        get() = SequentialGroupLocal(
-            //region First motif
-            Spindexer.enableTraveling,
-            FollowPath(TrajectoryFactory.goalStartToObelisk, true),
-//            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
-            Delay(0.25),
-            Delay(preFirstVolleyDelay),
-            LimeLight.detectMotif,
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.obeliskToScore, true),
-                SequentialGroupLocal(
-                    Delay(0.5),
-                    Routines.motifShoot
-                )
-            ),
-            //endregion
-
-            //region Second motif
-
-            // Drive to pre-pickup pos
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
-                Spindexer.spinToIntake,
-                Intake.start
-            ),
-
-            // Pickup first ball
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.spikeMark1Pickup1, true),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
-            ),
-
-            // Pickup second ball
-            Spindexer.spinToIntake,
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.spikeMark1Pickup2, true),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE }
-            ),
-
-            // Pickup third ball
-            Spindexer.spinToIntake,
-            ParallelGroup(
-                FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
-                InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN }
-            ),
-
-            // Drive to score
-            ParallelGroup(
-                Intake.slowOut,
-                FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true),
-                Spindexer.enableTraveling
-            ),
-
-            Delay(secondVolleyDelay),
-
-            Routines.motifShoot,
-
-            //endregion
-            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
-            Intake.stop
-        )
 
 
     val nineArtifactGoalStartAutoRoutine
@@ -115,12 +49,12 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true, 0.25),
                     SequentialGroupLocal(
-                        Delay(0.4),
+                        Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(1.0),
+                        Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(1.0),
@@ -128,7 +62,7 @@ object AutoRoutines {
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
-                        Delay(0.6),
+                        Delay(1.5),
                         FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true)
                     )
                 )
@@ -152,12 +86,12 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true, 0.25),
                     SequentialGroupLocal(
-                        Delay(0.5),
+                        Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(1.0),
+                        Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                         Spindexer.spinToIntake,
                         Delay(1.0),
@@ -165,7 +99,7 @@ object AutoRoutines {
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
-                        Delay(0.6),
+                        Delay(1.5),
                         FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
                     )
                 )
@@ -174,7 +108,8 @@ object AutoRoutines {
 
             //endregion
             FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
-            Intake.stop
+            Intake.stop,
+            Shooter.actualStop
         )
 
     val nineArtifactDumpGoalStartAutoRoutine
