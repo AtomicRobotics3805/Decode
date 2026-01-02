@@ -92,10 +92,10 @@ object AutoRoutines {
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(0.6),
-                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                         Spindexer.spinToIntake,
                         Delay(1.0),
-                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
@@ -112,9 +112,10 @@ object AutoRoutines {
             Shooter.actualStop
         )
 
-    val nineArtifactDumpGoalStartAutoRoutine
+    val GoalStartDumpAfterFirstAutoRoutine
         get() = SequentialGroupLocal(
             InstantCommand { AutonomousInfo.autoRunning = true },
+
             //region First motif
             Spindexer.enableTraveling,
             ParallelGroup(
@@ -147,22 +148,22 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true),
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true, 0.25),
                     SequentialGroupLocal(
+                        Delay(0.3),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
                         Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.7),
-                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
-                        Spindexer.spinToIntake,
-                        Delay(0.7),
+                        Delay(1.0),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
-                        Delay(0.6),
-                        FollowPath(TrajectoryFactory.spikeMark1ToDump, true),
                         Delay(1.5),
+                        FollowPath(TrajectoryFactory.spikeMark1ToDump, true),
+                        Delay(2.0),
                         FollowPath(TrajectoryFactory.dumpToScore, true)
                     )
                 )
@@ -186,20 +187,20 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true),
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true, 0.25),
                     SequentialGroupLocal(
+                        Delay(0.3),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
                         Delay(0.6),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.7),
+                        Delay(1.0),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
-                        Spindexer.spinToIntake,
-                        Delay(0.7),
-                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
-                        Delay(0.6),
+                        Delay(1.5),
                         FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
                     )
                 )
@@ -207,9 +208,218 @@ object AutoRoutines {
             Routines.motifShoot,
 
             //endregion
+
             FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
-            Intake.stop
+            Intake.stop,
+            Shooter.actualStop
         )
+
+    val GoalStartDumpAfterSecondAutoRoutine
+        get() = SequentialGroupLocal(
+            InstantCommand { AutonomousInfo.autoRunning = true },
+
+            //region First motif
+            Spindexer.enableTraveling,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.goalStartToObelisk, true),
+//                Shooter.stop
+            ),
+//            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
+            LimeLight.detectMotif,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.obeliskToScore, true),
+                SequentialGroupLocal(
+                    Delay(0.5),
+                    Routines.motifShoot
+                )
+            ),
+            //endregion
+
+            //region Second motif
+
+            // Drive to pre-pickup pos
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
+                Spindexer.spinToIntake,
+                SequentialGroupLocal(
+                    Delay(1.0),
+                    Intake.start
+                )
+            ),
+
+            // Pickup ballz
+            SequentialGroupLocal(
+                ParallelGroup(
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true, 0.25),
+                    SequentialGroupLocal(
+                        Delay(0.3),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(0.6),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(1.0),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                        Intake.slowOut
+                    ),
+                    SequentialGroupLocal(
+                        Delay(1.5),
+                        FollowPath(TrajectoryFactory.spikeMark1PickupToScore)
+                    )
+                )
+            ),
+
+            Routines.motifShoot,
+
+
+            //region Third motif
+
+            // Drive to pre-pickup pos
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.scoreToSpikeMark2, true),
+                Spindexer.spinToIntake,
+                SequentialGroupLocal(
+                    Delay(1.0),
+                    Intake.start
+                )
+            ),
+
+            // Pickup ballz
+            SequentialGroupLocal(
+                ParallelGroup(
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true, 0.25),
+                    SequentialGroupLocal(
+                        Delay(0.3),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(0.6),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(1.0),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                        Intake.slowOut
+                    ),
+                    SequentialGroupLocal(
+                        Delay(1.5),
+                        FollowPath(TrajectoryFactory.spikeMark2ToDump, true),
+                        Delay(2.0),
+                        FollowPath(TrajectoryFactory.dumpToScore, true)
+                    )
+                )
+            ),
+            Routines.motifShoot,
+
+            //endregion
+
+            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
+            Intake.stop,
+            Shooter.actualStop
+        )
+
+    val GoalStartDumpAfterBothAutoRoutine
+        get() = SequentialGroupLocal(
+            InstantCommand { AutonomousInfo.autoRunning = true },
+
+            //region First motif
+            Spindexer.enableTraveling,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.goalStartToObelisk, true),
+//                Shooter.stop
+            ),
+//            LambdaCommand().setIsDone { false }.setUpdate { ActiveOpMode.telemetry.addLine("FINISHED PATH") },
+            LimeLight.detectMotif,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.obeliskToScore, true),
+                SequentialGroupLocal(
+                    Delay(0.5),
+                    Routines.motifShoot
+                )
+            ),
+            //endregion
+
+            //region Second motif
+
+            // Drive to pre-pickup pos
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
+                Spindexer.spinToIntake,
+                SequentialGroupLocal(
+                    Delay(1.0),
+                    Intake.start
+                )
+            ),
+
+            // Pickup ballz
+            SequentialGroupLocal(
+                ParallelGroup(
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true, 0.25),
+                    SequentialGroupLocal(
+                        Delay(0.3),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(0.6),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(1.0),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                        Intake.slowOut
+                    ),
+                    SequentialGroupLocal(
+                        Delay(1.5),
+                        FollowPath(TrajectoryFactory.spikeMark1ToDump, true),
+                        Delay(1.0),
+                        FollowPath(TrajectoryFactory.dumpToScore, true)
+                    )
+                )
+            ),
+
+            Routines.motifShoot,
+
+
+            //region Third motif
+
+            // Drive to pre-pickup pos
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.scoreToSpikeMark2, true),
+                Spindexer.spinToIntake,
+                SequentialGroupLocal(
+                    Delay(1.0),
+                    Intake.start
+                )
+            ),
+
+            // Pickup ballz
+            SequentialGroupLocal(
+                ParallelGroup(
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true, 0.25),
+                    SequentialGroupLocal(
+                        Delay(0.3),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(0.6),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Spindexer.spinToIntake,
+                        Delay(1.0),
+                        InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                        Intake.slowOut
+                    ),
+                    SequentialGroupLocal(
+                        Delay(1.5),
+                        FollowPath(TrajectoryFactory.spikeMark2ToDump, true),
+                        Delay(1.0),
+                        FollowPath(TrajectoryFactory.dumpToScore, true)
+                    )
+                )
+            ),
+            Routines.motifShoot,
+
+            //endregion
+
+            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
+            Intake.stop,
+            Shooter.actualStop
+        )
+
 
 
     val farParkAutoRoutine

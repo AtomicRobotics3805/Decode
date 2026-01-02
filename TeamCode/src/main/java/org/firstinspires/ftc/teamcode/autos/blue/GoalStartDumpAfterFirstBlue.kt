@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 
-@Autonomous(name = "\uD83D\uDFE6 Goal Start NINE Dump Blue", group = "NINE DUMP", preselectTeleOp = "Competition TeleOp")
-class NineArtifactDumpGoalStartBlue : NextFTCOpMode() {
+@Autonomous(name = "\uD83D\uDFE6 Goal NINE Dump After First Blue", group = "NINE DUMP", preselectTeleOp = "Competition TeleOp")
+class GoalStartDumpAfterFirstBlue : NextFTCOpMode() {
 
     init {
         addComponents(
@@ -52,7 +52,7 @@ class NineArtifactDumpGoalStartBlue : NextFTCOpMode() {
     }
 
     override fun onStartButtonPressed() {
-        AutoRoutines.nineArtifactDumpGoalStartAutoRoutine()
+        AutoRoutines.GoalStartDumpAfterFirstAutoRoutine()
     }
 
     override fun onUpdate() {

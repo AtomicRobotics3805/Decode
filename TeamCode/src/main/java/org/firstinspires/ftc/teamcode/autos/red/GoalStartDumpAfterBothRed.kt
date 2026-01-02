@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
 
-@Autonomous(name = "\uD83D\uDFE5 Goal NINE Dump After Second Red", group = "NINE DUMP", preselectTeleOp = "Competition TeleOp")
-class GoalStartDumpAfterSecondRed : NextFTCOpMode() {
+@Autonomous(name = "\uD83D\uDFE5 Goal NINE Dump After Both Red", group = "NINE DUMP", preselectTeleOp = "Competition TeleOp")
+class GoalStartDumpAfterBothRed : NextFTCOpMode() {
 
     init {
         addComponents(
@@ -50,7 +50,7 @@ class GoalStartDumpAfterSecondRed : NextFTCOpMode() {
     }
 
     override fun onStartButtonPressed() {
-        AutoRoutines.GoalStartDumpAfterSecondAutoRoutine()
+        AutoRoutines.GoalStartDumpAfterBothAutoRoutine()
     }
 
     override fun onUpdate() {

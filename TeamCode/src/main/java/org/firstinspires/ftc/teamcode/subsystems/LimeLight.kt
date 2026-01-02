@@ -76,7 +76,7 @@ object LimeLight : Subsystem {
 
     fun updatePos() {
 //        ll.updateRobotOrientation((PedroComponent.follower.heading.rad + 90.deg).inDeg)
-        ll.updateRobotOrientation(CompetitionTeleOp.imu.imu.robotYawPitchRollAngles.getYaw(AngleUnit.DEGREES) + 90)
+        ll.updateRobotOrientation(CompetitionTeleOp.imu.get().inDeg + 90)
         val result: LLResult? = ll.getLatestResult()
 
         if (result != null && result.isValid) {
@@ -85,13 +85,13 @@ object LimeLight : Subsystem {
                     Pose(
                         result.fiducialResults[0].robotPoseFieldSpace.position.y * METER_TO_INCH + 72,
                         (-result.fiducialResults[0].robotPoseFieldSpace.position.x * METER_TO_INCH + 72),
-                        PedroComponent.follower.heading
+                        CompetitionTeleOp.imu.get().inRad
                     )
                 } else {
                     Pose(
                         result.botpose_MT2.position.y * METER_TO_INCH + 72,
                         (-result.botpose_MT2.position.x * METER_TO_INCH + 72),
-                        PedroComponent.follower.heading
+                        CompetitionTeleOp.imu.get().inRad
                     )
                 }
                 if (newPos.x != 72.0 && newPos.x > 0.0 && newPos.x < 144.0) {

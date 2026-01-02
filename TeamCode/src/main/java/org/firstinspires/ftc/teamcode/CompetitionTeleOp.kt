@@ -69,7 +69,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
 
 
-    val imuOffset = 0.0.deg.inRad
+    var imuOffset = 0.0.deg.inRad
 
     companion object {
         @JvmField
@@ -115,6 +115,10 @@ class CompetitionTeleOp : NextFTCOpMode() {
         PedroComponent.follower.pose = AutonomousInfo.autoEndPos
         PusherArm.down()
         Routines.setMotifSelection()
+        imu.zero()
+        imuOffset = AutonomousInfo.finalHeading
+
+        BindingManager.layer = "driving"
 
         graphManager = PanelsGraph.manager
 
