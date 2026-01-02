@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.autos.red
+package org.firstinspires.ftc.teamcode.autos.blue
 
-import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.util.RobotLog
 import dev.nextftc.control.KineticState
 import dev.nextftc.core.components.SubsystemComponent
+import dev.nextftc.core.units.rad
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.ftc.NextFTCOpMode
@@ -19,13 +19,15 @@ import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
+import org.firstinspires.ftc.teamcode.subsystems.LimeLight.matchMotif
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
+import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
+import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 
-
-@Autonomous(name = "\uD83D\uDFE5 Goal Start NINE Dump Red", group = "NINE DUMP", preselectTeleOp = "Competition TeleOp")
-class NineArtifactDumpGoalStartRed : NextFTCOpMode() {
+@Autonomous(name = "\uD83D\uDFE6 Goal NINE Dump After First Blue", group = "NINE DUMP", preselectTeleOp = "Competition TeleOp")
+class GoalStartDumpAfterFirstBlue : NextFTCOpMode() {
 
     init {
         addComponents(
@@ -34,7 +36,7 @@ class NineArtifactDumpGoalStartRed : NextFTCOpMode() {
             PedroComponent(Constants::createFollower)
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
-        AutonomousInfo.redAuto = true
+        AutonomousInfo.redAuto = false
     }
 
 //    lateinit var follower: Follower
@@ -42,26 +44,40 @@ class NineArtifactDumpGoalStartRed : NextFTCOpMode() {
     override fun onInit() {
         LimeLight.autoRelocalize = false
         PusherArm.down()
-        TrajectoryFactory.buildTrajectories(PedroComponent.follower)
-        PedroComponent.follower.setStartingPose(TrajectoryFactory.goalStartPos.mirror())
+        TrajectoryFactory.buildTrajectories(PedroComponent.Companion.follower)
+        PedroComponent.Companion.follower.setStartingPose(TrajectoryFactory.goalStartPos)
         Drawing.init()
         Spindexer.slots = arrayOf(Spindexer.SpindexerSlotStatus.GREEN, Spindexer.SpindexerSlotStatus.PURPLE,
             Spindexer.SpindexerSlotStatus.PURPLE)
     }
 
     override fun onStartButtonPressed() {
-        AutoRoutines.nineArtifactDumpGoalStartAutoRoutine()
+        AutoRoutines.GoalStartDumpAfterFirstAutoRoutine()
     }
 
     override fun onUpdate() {
-        Drawing.drawDebug(PedroComponent.follower)
+        Drawing.drawDebug(PedroComponent.Companion.follower)
+        ActiveOpMode.telemetry.addData("Current pos", PedroComponent.Companion.follower.pose)
+        ActiveOpMode.telemetry.addData("IsBusy", PedroComponent.Companion.follower.isBusy)
+
+        RobotLog.d("Motor Voltage: Drivetrain: " + PedroComponent.follower.drivetrain.voltage.toString())
 
         RobotLog.d("Motor Amp: Intake Motor: " + Intake.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Spindexer Motor: " + Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Shooter Motor: " + Shooter.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
 
-        ActiveOpMode.telemetry.addData("Current pos", PedroComponent.follower.pose)
-        ActiveOpMode.telemetry.addData("IsBusy", PedroComponent.follower.isBusy)
+        ActiveOpMode.telemetry.addData("Current velocity:", Shooter.motor.state.velocity / Shooter.ticksPerRev * 60.0)
+        ActiveOpMode.telemetry.addData("Target velocity:", Shooter.controller.goal.velocity / Shooter.ticksPerRev * 60.0)
+        ActiveOpMode.telemetry.addData("Shooter power", Shooter.motor.power)
+
+        ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
+
+        ActiveOpMode.telemetry.addData("Raw Encoder", Spindexer.motor.state.position)
+        ActiveOpMode.telemetry.addData("Angle", ticksToAngle(Spindexer.motor.state.position).normalized.inDeg)
+        ActiveOpMode.telemetry.addData("Spindexer goal", Spindexer.controller.goal.position.rad.inDeg)
+        ActiveOpMode.telemetry.addData("Spindexer slots", "0:["+ Spindexer.slots[0]+"], 1:["+ Spindexer.slots[1]+"], 2:["+ Spindexer.slots[2]+"]")
+
+        ActiveOpMode.telemetry.update()
 //        follower.update()
     }
 
