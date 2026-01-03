@@ -6,6 +6,7 @@ import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
 import com.pedropathing.paths.PathChain
 import dev.nextftc.core.units.deg
+import dev.nextftc.core.units.rad
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 
 
@@ -23,7 +24,7 @@ object TrajectoryFactory {
 
     val farParkPos = Pose(57.0, 29.0, 180.deg.inRad)
 
-    val farAutoShootPos = Pose(35.0, 132.0, 0.deg.inRad)
+    val farShootPos = Pose(58.5, 11.0, 1.9742947094299996.rad.inRad)
 
     val obeliskSensePos = /*Pose(0.0,0.0,0.0) / */ Pose(48.0, 115.0, 55.deg.inRad)
 
@@ -277,18 +278,18 @@ object TrajectoryFactory {
                 .addPath(BezierCurve(
                     farStartPos.mirror(),
                     Pose(68.0, 137.0).mirror(),
-                    farAutoShootPos.mirror()
+                    farShootPos.mirror()
                 ))
-                .setLinearHeadingInterpolation(farStartPos.mirror().heading, farAutoShootPos.mirror().heading)
+                .setLinearHeadingInterpolation(farStartPos.mirror().heading, farShootPos.mirror().heading)
                 .build()
 
             farShootPosToPark = follower.pathBuilder()
                 .addPath(BezierCurve(
-                    farAutoShootPos.mirror(),
+                    farShootPos.mirror(),
                     Pose(68.0, 137.0).mirror(),
                     farParkPos.mirror()
                 ))
-                .setLinearHeadingInterpolation(farAutoShootPos.mirror().heading, farParkPos.mirror().heading)
+                .setLinearHeadingInterpolation(farShootPos.mirror().heading, farParkPos.mirror().heading)
                 .build()
 
             farStartToPark = follower.pathBuilder()
@@ -480,18 +481,18 @@ object TrajectoryFactory {
                 .addPath(BezierCurve(
                     farStartPos,
                     Pose(68.0, 137.0),
-                    farAutoShootPos
+                    farShootPos
                 ))
-                .setLinearHeadingInterpolation(farStartPos.heading, farAutoShootPos.heading)
+                .setLinearHeadingInterpolation(farStartPos.heading, farShootPos.heading)
                 .build()
 
             farShootPosToPark = follower.pathBuilder()
                 .addPath(BezierCurve(
-                    farAutoShootPos,
+                    farShootPos,
                     Pose(68.0, 137.0),
                     farParkPos
                 ))
-                .setLinearHeadingInterpolation(farAutoShootPos.heading, farParkPos.heading)
+                .setLinearHeadingInterpolation(farShootPos.heading, farParkPos.heading)
                 .build()
 
             farStartToPark = follower.pathBuilder()
