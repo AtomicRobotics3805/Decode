@@ -18,6 +18,8 @@ import dev.nextftc.control.feedback.FeedbackType
 import dev.nextftc.control.feedback.PIDCoefficients
 import dev.nextftc.control.feedback.PIDElement
 import dev.nextftc.core.commands.CommandManager
+import dev.nextftc.core.commands.groups.ParallelGroup
+import dev.nextftc.core.commands.groups.ParallelRaceGroup
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.core.units.deg
@@ -119,8 +121,6 @@ class CompetitionTeleOp : NextFTCOpMode() {
         imu.zero()
         imuOffset = AutonomousInfo.finalHeading
 
-        BindingManager.layer = "driving"
-
         graphManager = PanelsGraph.manager
 
         //region Gamepad bindings
@@ -145,7 +145,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         Gamepads.gamepad1.leftTrigger.asButton { it >= 0.1 } whenBecomesTrue {
             Spindexer.spinToIntake()
-            Intake.intakeModifier = 1.0
+            Intake.intakeModifier = -1.0
         } whenTrue {
             Intake.motor.power = ((Gamepads.gamepad1.leftTrigger.get()/2)+0.5) * Intake.intakeModifier
         } whenBecomesFalse {
@@ -197,7 +197,12 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         Gamepads.gamepad1.dpadUp whenBecomesTrue Routines.shoot
         Gamepads.gamepad1.dpadLeft whenBecomesTrue Spindexer.spinToGreen
-        Gamepads.gamepad1.dpadRight whenBecomesTrue Spindexer.spinToPurple
+        Gamepads.gamepad1.dpadRight whenBecomesTrue ParallelGroup(
+            Shooter.stop,
+            Intake.slowOut,
+            PusherArm.down
+        ).requires(Spindexer)
+
         Gamepads.gamepad1.dpadDown whenBecomesTrue Routines.motifShoot
         Gamepads.gamepad1.b whenBecomesTrue { Spindexer.spinToLast() }
 

@@ -46,7 +46,7 @@ object Shooter : Subsystem {
     val motor = DecoupledMotorEx("motor_e1", "motor_c2").reversed()
 
 
-    @JvmField var basicFFCoefficients = BasicFeedforwardParameters(0.00045, 0.0, 0.06)
+    @JvmField var basicFFCoefficients = BasicFeedforwardParameters(0.0005, 0.0, 0.055)
     @JvmField var velPidCoefficients = PIDCoefficients(0.006, 0.0, 0.018)
 
     override fun initialize() {

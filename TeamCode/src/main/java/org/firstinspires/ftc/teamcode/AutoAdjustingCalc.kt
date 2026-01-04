@@ -24,7 +24,7 @@ object AutoAdjustingCalc {
 
         }
 
-        return (0.154609*(distance*distance)) + (-11.88388 * distance) + 3168.11157
+        return (0.0055905*(distance*distance)) + (10.59177 * distance) + 1906.02268
     }
 
     fun calculateAimAngle(): Double {
