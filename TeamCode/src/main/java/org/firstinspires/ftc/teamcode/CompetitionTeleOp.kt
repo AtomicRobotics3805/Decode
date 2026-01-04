@@ -17,6 +17,7 @@ import dev.nextftc.control.feedback.AngularFeedback
 import dev.nextftc.control.feedback.FeedbackType
 import dev.nextftc.control.feedback.PIDCoefficients
 import dev.nextftc.control.feedback.PIDElement
+import dev.nextftc.core.commands.CommandManager
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.core.units.deg
@@ -64,7 +65,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
 
-    val debugTelemetry = false
+    val debugTelemetry = true
 
 
 
@@ -142,40 +143,39 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         Gamepads.gamepad1.rightStickButton whenBecomesTrue { imu.zero() }
 
-        Gamepads.gamepad1.leftTrigger.asButton { it >= 0.3 } whenBecomesTrue { autoAimPID.usePID = true} whenBecomesFalse { autoAimPID.usePID = false }
-
-        Gamepads.gamepad1.rightBumper.inLayer("driving") {
-            whenBecomesTrue {
-                driverControlled.scalar = 0.3
-            }.whenBecomesFalse {
-                driverControlled.scalar = 1.0
-            }
-        }.inLayer("intake") {
-            whenBecomesTrue {
-                Intake.intakeModifier = -1.0
-            }.whenBecomesFalse {
-                Intake.intakeModifier = 1.0
-                driverControlled.scalar = 1.0
-            }
+        Gamepads.gamepad1.leftTrigger.asButton { it >= 0.1 } whenBecomesTrue {
+            Spindexer.spinToIntake()
+            Intake.intakeModifier = 1.0
+        } whenTrue {
+            Intake.motor.power = ((Gamepads.gamepad1.leftTrigger.get()/2)+0.5) * Intake.intakeModifier
+        } whenBecomesFalse {
+            Intake.slowOut()
         }
+
+        Gamepads.gamepad1.rightBumper whenBecomesTrue {
+                driverControlled.scalar = 0.3
+            } whenBecomesFalse {
+                driverControlled.scalar = 1.0
+            }
+
 
 
         Gamepads.gamepad1.rightTrigger.asButton { it >= 0.1 } whenBecomesTrue {
-            BindingManager.layer = "intake"
             Spindexer.spinToIntake()
             Intake.intakeModifier = 1.0
         } whenTrue {
             Intake.motor.power = ((Gamepads.gamepad1.rightTrigger.get()/2)+0.5) * Intake.intakeModifier
         } whenBecomesFalse {
             Intake.slowOut()
-            BindingManager.layer = "driving"
         }
 
         Gamepads.gamepad1.leftBumper whenBecomesTrue({
             Routines.teleOpMotifShoot()
+            autoAimPID.usePID = true
         }) whenBecomesFalse({
                 Shooter.stop()
                 PusherArm.down()
+                autoAimPID.usePID = false
             }
         )
 
@@ -198,7 +198,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
         Gamepads.gamepad1.dpadUp whenBecomesTrue Routines.shoot
         Gamepads.gamepad1.dpadLeft whenBecomesTrue Spindexer.spinToGreen
         Gamepads.gamepad1.dpadRight whenBecomesTrue Spindexer.spinToPurple
-        Gamepads.gamepad1.dpadDown whenBecomesTrue Spindexer.spinToIntake
+        Gamepads.gamepad1.dpadDown whenBecomesTrue Routines.motifShoot
         Gamepads.gamepad1.b whenBecomesTrue { Spindexer.spinToLast() }
 
 //        Gamepads.gamepad1.leftStickButton whenBecomesTrue LimeLight.detectMotif
@@ -260,6 +260,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
         RobotLog.d("Motor Amp: Spindexer Motor: " + Spindexer.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Shooter Motor: " + Shooter.motor.motor.getCurrent(CurrentUnit.AMPS).toString())
 
+
         if (debugTelemetry) {
             ActiveOpMode.telemetry.addData(
                 "Current velocity:",
@@ -292,10 +293,17 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
             ActiveOpMode.telemetry.addLine("=+=+=+=+=+=+=+=+=+=")
 
-            ActiveOpMode.telemetry.addData(
-                "Distance",
-                sqrt(((goalPos.x - PedroComponent.follower.pose.x) * (goalPos.x - PedroComponent.follower.pose.x)) + ((goalPos.y - PedroComponent.follower.pose.y) * (goalPos.y - PedroComponent.follower.pose.y)))
-            )
+            if (AutonomousInfo.redAuto) {
+                ActiveOpMode.telemetry.addData(
+                    "Distance",
+                    sqrt(((goalPos.mirror().x - PedroComponent.follower.pose.x) * (goalPos.mirror().x - PedroComponent.follower.pose.x)) + ((goalPos.mirror().y - PedroComponent.follower.pose.y) * (goalPos.mirror().y - PedroComponent.follower.pose.y)))
+                )
+            } else {
+                ActiveOpMode.telemetry.addData(
+                    "Distance",
+                    sqrt(((goalPos.x - PedroComponent.follower.pose.x) * (goalPos.x - PedroComponent.follower.pose.x)) + ((goalPos.y - PedroComponent.follower.pose.y) * (goalPos.y - PedroComponent.follower.pose.y)))
+                )
+            }
             ActiveOpMode.telemetry.addData("Shooter target", Shooter.shooterSpeedNoRatio)
         } else {
             ActiveOpMode.telemetry.addData("Red Side", AutonomousInfo.redAuto)

@@ -39,15 +39,15 @@ object Shooter : Subsystem {
     var trueStop = false
 
     @JvmField
-    var autoShootVel = 2400.0
+    var autoShootVel = 2800.0
 
     var calculateVelocity = true
 
     val motor = DecoupledMotorEx("motor_e1", "motor_c2").reversed()
 
 
-    @JvmField var basicFFCoefficients = BasicFeedforwardParameters(0.001, 0.0, 0.0)
-    @JvmField var velPidCoefficients = PIDCoefficients(0.018, 0.0, 0.015)
+    @JvmField var basicFFCoefficients = BasicFeedforwardParameters(0.00045, 0.0, 0.06)
+    @JvmField var velPidCoefficients = PIDCoefficients(0.006, 0.0, 0.018)
 
     override fun initialize() {
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -88,14 +88,8 @@ object Shooter : Subsystem {
                 motor.velocity > controller.goal.velocity
             }.setStart {
                 trueStop = false
-                if (!AutonomousInfo.autoRunning) {
-                    calculateVelocity = true
-                    shoot = true
-                } else {
-                    calculateVelocity = false
-                    shoot = true
-                    controller.goal = KineticState(0.0, (autoShootVel / 60.0) * ticksPerRev, 0.0)
-                }
+                calculateVelocity = true
+                shoot = true
             }
         }
 
@@ -124,6 +118,8 @@ object Shooter : Subsystem {
                 controller.goal = KineticState(0.0, (1500 / 60.0) * ticksPerRev)
             } else if (trueStop) {
                 controller.goal = KineticState(velocity = 0.0)
+            } else if (shoot) {
+                controller.goal = KineticState(0.0, (autoShootVel / 60.0) * ticksPerRev, 0.0)
             }
         }
 

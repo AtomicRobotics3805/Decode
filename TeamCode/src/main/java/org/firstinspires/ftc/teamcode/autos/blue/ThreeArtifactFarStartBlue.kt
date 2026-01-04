@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autos.blue
 import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.util.RobotLog
 import dev.nextftc.control.KineticState
 import dev.nextftc.core.components.SubsystemComponent
@@ -26,6 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 
+@Disabled
 @Autonomous(name = "\uD83D\uDFE6 Far Start THREE Blue", group = "THREE", preselectTeleOp = "Competition TeleOp")
 class ThreeArtifactFarStartBlue : NextFTCOpMode() {
 

@@ -16,16 +16,15 @@ object AutoAdjustingCalc {
     fun calculatePower(): Double {
         val currentPos = PedroComponent.follower.pose
 
-        if (AutonomousInfo.redAuto) {
-            val distance = sqrt(((goalPos.mirror().x - currentPos.x)*(goalPos.mirror().x - currentPos.x)) + ((goalPos.mirror().y - currentPos.y)*(goalPos.mirror().y - currentPos.y)))
+        var distance = 0.0
+        distance = if (AutonomousInfo.redAuto) {
+            sqrt(((goalPos.mirror().x - currentPos.x)*(goalPos.mirror().x - currentPos.x)) + ((goalPos.mirror().y - currentPos.y)*(goalPos.mirror().y - currentPos.y)))
+        } else {
+            sqrt(((goalPos.x - currentPos.x)*(goalPos.x - currentPos.x)) + ((goalPos.y - currentPos.y)*(goalPos.y - currentPos.y)))
 
-            return (0.0357839*(distance*distance)) + (8.43768 * distance) + 1714.48071
         }
-        else {
-            val distance = sqrt(((goalPos.x - currentPos.x)*(goalPos.x - currentPos.x)) + ((goalPos.y - currentPos.y)*(goalPos.y - currentPos.y)))
 
-            return (0.0357839*(distance*distance)) + (8.43768 * distance) + 1714.48071
-        }
+        return (0.154609*(distance*distance)) + (-11.88388 * distance) + 3168.11157
     }
 
     fun calculateAimAngle(): Double {
@@ -33,12 +32,12 @@ object AutoAdjustingCalc {
 
         if (AutonomousInfo.redAuto) {
             val dx = 141 - currentPos.x
-            val dy = 141 - currentPos.y
+            val dy = 142 - currentPos.y
 
             return atan2(dy, dx)
         } else {
             val dx = 3 - currentPos.x
-            val dy = 141 - currentPos.y
+            val dy = 142 - currentPos.y
 
             return atan2(dy, dx)
         }
