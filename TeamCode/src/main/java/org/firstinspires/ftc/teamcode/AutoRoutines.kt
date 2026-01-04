@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode
 import dev.nextftc.core.commands.delays.Delay
 import dev.nextftc.core.commands.groups.ParallelGroup
 import dev.nextftc.core.commands.utility.InstantCommand
+import dev.nextftc.core.units.rad
 import dev.nextftc.extensions.pedro.FollowPath
+import dev.nextftc.extensions.pedro.TurnTo
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
@@ -153,7 +155,7 @@ object AutoRoutines {
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.6),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(1.0),
@@ -192,7 +194,7 @@ object AutoRoutines {
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.6),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                         Spindexer.spinToIntake,
                         Delay(1.0),
@@ -255,7 +257,7 @@ object AutoRoutines {
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.6),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(1.0),
@@ -292,7 +294,7 @@ object AutoRoutines {
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.6),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(1.0),
@@ -357,7 +359,7 @@ object AutoRoutines {
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.6),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
                         Delay(1.0),
@@ -365,9 +367,8 @@ object AutoRoutines {
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
-                        Delay(1.5),
+                        Delay(1.25),
                         FollowPath(TrajectoryFactory.spikeMark1ToDump, true),
-                        Delay(1.0),
                         FollowPath(TrajectoryFactory.dumpToScore, true)
                     )
                 )
@@ -396,17 +397,18 @@ object AutoRoutines {
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                         Spindexer.spinToIntake,
-                        Delay(0.6),
+                        Delay(0.7),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                         Spindexer.spinToIntake,
                         Delay(1.0),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                        Intake.reverse,
+                        Delay(0.5),
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
-                        Delay(1.5),
+                        Delay(1.25),
                         FollowPath(TrajectoryFactory.spikeMark2ToDump, true),
-                        Delay(1.0),
                         FollowPath(TrajectoryFactory.dumpToScore, true)
                     )
                 )
@@ -415,7 +417,7 @@ object AutoRoutines {
 
             //endregion
 
-            FollowPath(TrajectoryFactory.scoreToOutOfTheWay, true),
+            FollowPath(TrajectoryFactory.scoreToGoalZonePark, true),
             Intake.stop,
             Shooter.actualStop
         )
