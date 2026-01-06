@@ -6,6 +6,7 @@ import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.subsystems.Subsystem
+import dev.nextftc.core.units.rad
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.teamcode.Routines
 
 @Configurable
 object LimeLight : Subsystem {
+
+    var TX: Double? = 0.0
 
     //region Motif
     enum class Motif {
@@ -76,8 +79,10 @@ object LimeLight : Subsystem {
 
     fun updatePos() {
 //        ll.updateRobotOrientation((PedroComponent.follower.heading.rad + 90.deg).inDeg)
-        ll.updateRobotOrientation(CompetitionTeleOp.imu.get().inDeg + 90)
+        ll.updateRobotOrientation(PedroComponent.follower.heading.rad.inDeg + 90)
         val result: LLResult? = ll.getLatestResult()
+//
+//        TX = result?.fiducialResults?.get(0)?.targetXDegrees
 
         if (result != null && result.isValid) {
             if (result.staleness <= 100) {
@@ -85,13 +90,13 @@ object LimeLight : Subsystem {
                     Pose(
                         result.fiducialResults[0].robotPoseFieldSpace.position.y * METER_TO_INCH + 72,
                         (-result.fiducialResults[0].robotPoseFieldSpace.position.x * METER_TO_INCH + 72),
-                        CompetitionTeleOp.imu.get().inRad
+                        PedroComponent.follower.heading
                     )
                 } else {
                     Pose(
                         result.botpose_MT2.position.y * METER_TO_INCH + 72,
                         (-result.botpose_MT2.position.x * METER_TO_INCH + 72),
-                        CompetitionTeleOp.imu.get().inRad
+                        PedroComponent.follower.heading
                     )
                 }
                 if (newPos.x != 72.0 && newPos.x > 0.0 && newPos.x < 144.0) {

@@ -20,9 +20,9 @@ object TrajectoryFactory {
 
     val goalStartPos = Pose(28.0, 130.0, (-40 + 90).deg.inRad)
 
-    val farStartPos = Pose(57.0, 9.0, 90.deg.inRad)
+    val farStartPos = Pose(57.0, 9.0, 180.deg.inRad)
 
-    val farParkPos = Pose(57.0, 29.0, 180.deg.inRad)
+    val farParkPos = Pose(20.0, 9.0, 180.deg.inRad)
 
     val farShootPos = Pose(58.5, 11.0, 1.9742947094299996.rad.inRad)
 
@@ -48,7 +48,7 @@ object TrajectoryFactory {
 
     val spikeMark2PosOuter = Pose(26.6, 59.0, 180.deg.inRad)
 
-    val firstDumpPos = Pose(14.5, 79.0, 180.deg.inRad)
+    val firstDumpPos = Pose(14.5, 77.5, 180.deg.inRad)
 
     val secondDumpPos = Pose(14.5, 67.0, 180.deg.inRad)
 
@@ -119,14 +119,14 @@ object TrajectoryFactory {
                 .build()
 
             obeliskToScore = follower.pathBuilder()
-                .addPath(BezierLine(obeliskSensePos.mirror(), Pose(scorePos.x, scorePos.y - 2, scorePos.heading).mirror()))
+                .addPath(BezierLine(obeliskSensePos.mirror(), scorePos.mirror()))
                 .setLinearHeadingInterpolation(obeliskSensePos.mirror().heading, scorePos.mirror().heading)
                 .build()
 
             scoreToSpikeMark1 = follower.pathBuilder()
                 .addPath(
                     BezierCurve(
-                        Pose(scorePos.mirror().x, scorePos.mirror().y - 2, scorePos.mirror().heading),
+                        Pose(scorePos.mirror().x, scorePos.mirror().y, scorePos.mirror().heading),
                         Pose(spikeMark1PosPre.x + 30, spikeMark1PosPre.y, spikeMark1PosPre.heading).mirror(),
                         Pose(spikeMark1PosPre.x - redPickupOffset, spikeMark1PosPre.y, spikeMark1PosPre.heading).mirror()
                     )
