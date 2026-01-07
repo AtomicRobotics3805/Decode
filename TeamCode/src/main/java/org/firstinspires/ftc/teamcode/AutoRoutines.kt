@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode
 import dev.nextftc.core.commands.delays.Delay
 import dev.nextftc.core.commands.groups.ParallelGroup
 import dev.nextftc.core.commands.utility.InstantCommand
-import dev.nextftc.core.units.rad
 import dev.nextftc.extensions.pedro.FollowPath
-import dev.nextftc.extensions.pedro.TurnTo
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
@@ -51,7 +49,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true, 0.28),
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup, true, 0.28),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -88,7 +86,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true, 0.28),
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup, true, 0.28),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -150,7 +148,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true, 0.25),
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup, true, 0.25),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -189,7 +187,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true, 0.25),
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup, true, 0.25),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -252,7 +250,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true, 0.25),
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup, true, 0.25),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -289,7 +287,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true, 0.25),
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup, true, 0.25),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -354,7 +352,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark1Pickup3, true, 0.25),
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup, true, 0.25),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -392,7 +390,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark2Pickup3, true, 0.25),
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup, true, 0.25),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
