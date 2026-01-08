@@ -310,6 +310,14 @@ object Spindexer : Subsystem {
 
     }
 
+    fun spinToFirstBallOfMotif() {
+        if (LimeLight.matchMotif == LimeLight.Motif.GPP) {
+            spinTo(SpindexerSlotStatus.GREEN)
+        } else {
+            spinTo(SpindexerSlotStatus.PURPLE)
+        }
+    }
+
     @Deprecated("Replace with spinTo")
     class SpinTo(val goal: SpindexerSlotStatus) : Command() {
         override val isDone: Boolean

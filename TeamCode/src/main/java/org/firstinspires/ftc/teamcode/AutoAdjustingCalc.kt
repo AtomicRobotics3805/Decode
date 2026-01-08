@@ -24,20 +24,20 @@ object AutoAdjustingCalc {
 
         }
 
-        return (0.0055905*(distance*distance)) + (10.59177 * distance) + 1906.02268
+        return (0.0303725*(distance*distance)) + (5.20557 * distance) + 1839.13148
     }
 
     fun calculateAimAngle(): Double {
         val currentPos = PedroComponent.follower.pose
 
         if (AutonomousInfo.redAuto) {
-            val dx = 141 - currentPos.x
-            val dy = 142 - currentPos.y
+            val dx = 144 - currentPos.x
+            val dy = 144 - currentPos.y
 
             return atan2(dy, dx)
         } else {
-            val dx = 3 - currentPos.x
-            val dy = 142 - currentPos.y
+            val dx = 0 - currentPos.x
+            val dy = 144 - currentPos.y
 
             return atan2(dy, dx)
         }

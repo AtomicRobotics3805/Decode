@@ -42,6 +42,8 @@ class ThreeArtifactFarStartRed : NextFTCOpMode() {
 
     override fun onInit() {
         LimeLight.autoRelocalize = false
+        LimeLight.obeliskMode = true
+        LimeLight.checkPipeline()
         PusherArm.down()
         TrajectoryFactory.buildTrajectories(PedroComponent.follower)
         PedroComponent.follower.setStartingPose(TrajectoryFactory.farStartPos.mirror())

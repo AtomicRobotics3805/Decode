@@ -43,6 +43,8 @@ class NineArtifactGoalStartBlue : NextFTCOpMode() {
 
     override fun onInit() {
         LimeLight.autoRelocalize = false
+        LimeLight.obeliskMode = true
+        LimeLight.checkPipeline()
         PusherArm.down()
         TrajectoryFactory.buildTrajectories(PedroComponent.Companion.follower)
         PedroComponent.Companion.follower.setStartingPose(TrajectoryFactory.goalStartPos)

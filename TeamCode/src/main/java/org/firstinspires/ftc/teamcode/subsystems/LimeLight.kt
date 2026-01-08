@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.Routines
 @Configurable
 object LimeLight : Subsystem {
 
+    var obeliskMode = false
+
     var TX: Double? = 0.0
 
     //region Motif
@@ -42,7 +44,11 @@ object LimeLight : Subsystem {
     override fun initialize() {
         ll = ActiveOpMode.hardwareMap.get(Limelight3A::class.java, "limelight")
 
-        ll.pipelineSwitch(0)
+        if (obeliskMode) {
+            ll.pipelineSwitch(1)
+        } else {
+            ll.pipelineSwitch(0)
+        }
 
         ll.setPollRateHz(100);
 
@@ -55,12 +61,21 @@ object LimeLight : Subsystem {
 
     var counter = 0
     override fun periodic() {
-        if (autoRelocalize && counter >= 5) {
+        if (autoRelocalize && counter >= 5 && !Shooter.shoot) {
             updatePos()
             counter = 0
         } else if (autoRelocalize) {
             counter++
         }
+    }
+
+    fun checkPipeline() {
+        if (obeliskMode) {
+            ll.pipelineSwitch(1)
+        } else {
+            ll.pipelineSwitch(0)
+        }
+
     }
 
     var detectMotif = InstantCommand {
