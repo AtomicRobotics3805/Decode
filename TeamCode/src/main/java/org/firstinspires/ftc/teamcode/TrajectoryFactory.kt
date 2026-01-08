@@ -4,6 +4,7 @@ import com.pedropathing.follower.Follower
 import com.pedropathing.geometry.BezierCurve
 import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
+import com.pedropathing.paths.Path
 import com.pedropathing.paths.PathChain
 import dev.nextftc.core.units.deg
 import dev.nextftc.core.units.rad
@@ -20,7 +21,7 @@ object TrajectoryFactory {
 
     val goalStartPos = Pose(28.0, 130.0, (-40 + 90).deg.inRad)
 
-    val farStartPos = Pose(57.0, 9.0, 180.deg.inRad)
+    val farStartPos = Pose(57.0, 9.0, 90.deg.inRad)
 
     val farShootPos = Pose(58.5, 11.0, 1.9742947094299996.rad.inRad)
 
@@ -53,6 +54,10 @@ object TrajectoryFactory {
     val spikeMark3PosMiddle = Pose(30.6, 35.6, 180.deg.inRad)
 
     val spikeMark3PosOuter = Pose(25.6, 35.6, 180.deg.inRad)
+
+    val humanPlayerPosPre = Pose(11.8, 19.0, -160.deg.inRad)
+
+    val humanPlayerPosPost = Pose(11.0, 11.4, -160.deg.inRad)
 
     val outOfTheWayPos = Pose(41.0, 70.0, 180.deg.inRad)
 
@@ -88,6 +93,21 @@ object TrajectoryFactory {
     lateinit var scoreToOutOfTheWay: PathChain
 
     lateinit var scoreToGoalZonePark: PathChain
+
+
+    lateinit var farStartToScore: PathChain
+
+    lateinit var farScoreToSpikeMark3: PathChain
+
+    lateinit var spikeMark3ToFarScore: PathChain
+
+    lateinit var farScoreToHumanPlayer: PathChain
+
+    lateinit var humanPlayerPickup: PathChain
+
+    lateinit var humanPlayerToFarScore: PathChain
+
+    lateinit var farScoreToPark: PathChain
 
 
     fun buildTrajectories(follower: Follower) {
@@ -199,6 +219,46 @@ object TrajectoryFactory {
             scoreToGoalZonePark = follower.pathBuilder()
                 .addPath(BezierLine(scorePos.mirror(), goalZoneParkPos.mirror()))
                 .setLinearHeadingInterpolation(scorePos.mirror().heading, goalZoneParkPos.mirror().heading)
+                .build()
+
+            farStartToScore = follower.pathBuilder()
+                .addPath(BezierLine(farStartPos.mirror(), farShootPos.mirror()))
+                .setLinearHeadingInterpolation(farStartPos.mirror().heading, farShootPos.mirror().heading)
+                .build()
+
+            farScoreToSpikeMark3 = follower.pathBuilder()
+                .addPath(BezierLine(farShootPos.mirror(), spikeMark3PosPre.mirror()))
+                .setLinearHeadingInterpolation(farShootPos.mirror().heading, spikeMark3PosPre.mirror().heading)
+                .build()
+
+            spikeMark3Pickup = follower.pathBuilder()
+                .addPath(BezierLine(spikeMark3PosMiddle.mirror(), spikeMark3PosOuter.mirror()))
+                .setLinearHeadingInterpolation(spikeMark3PosMiddle.mirror().heading, spikeMark3PosOuter.mirror().heading)
+                .build()
+
+            spikeMark3ToFarScore = follower.pathBuilder()
+                .addPath(BezierLine(spikeMark3PosOuter.mirror(), farShootPos.mirror()))
+                .setLinearHeadingInterpolation(spikeMark3PosOuter.mirror().heading, farShootPos.mirror().heading)
+                .build()
+
+            farScoreToHumanPlayer = follower.pathBuilder()
+                .addPath(BezierLine(farShootPos.mirror(), humanPlayerPosPre.mirror()))
+                .setLinearHeadingInterpolation(farShootPos.mirror().heading, humanPlayerPosPre.mirror().heading)
+                .build()
+
+            humanPlayerPickup = follower.pathBuilder()
+                .addPath(BezierLine(humanPlayerPosPre.mirror(), humanPlayerPosPost.mirror()))
+                .setLinearHeadingInterpolation(humanPlayerPosPre.mirror().heading, humanPlayerPosPost.mirror().heading)
+                .build()
+
+            humanPlayerToFarScore = follower.pathBuilder()
+                .addPath(BezierLine(humanPlayerPosPost.mirror(), farShootPos.mirror()))
+                .setLinearHeadingInterpolation(humanPlayerPosPost.mirror().heading, farShootPos.mirror().heading)
+                .build()
+
+            farScoreToPark = follower.pathBuilder()
+                .addPath(BezierLine(farShootPos.mirror(), farParkPos.mirror()))
+                .setLinearHeadingInterpolation(farShootPos.mirror().heading, farParkPos.mirror().heading)
                 .build()
 
         } else {
@@ -318,6 +378,46 @@ object TrajectoryFactory {
             scoreToGoalZonePark = follower.pathBuilder()
                 .addPath(BezierLine(scorePos, goalZoneParkPos))
                 .setLinearHeadingInterpolation(scorePos.heading, goalZoneParkPos.heading)
+                .build()
+
+            farStartToScore = follower.pathBuilder()
+                .addPath(BezierLine(farStartPos, farShootPos))
+                .setLinearHeadingInterpolation(farStartPos.heading, farShootPos.heading)
+                .build()
+
+            farScoreToSpikeMark3 = follower.pathBuilder()
+                .addPath(BezierLine(farShootPos, spikeMark3PosPre))
+                .setLinearHeadingInterpolation(farShootPos.heading, spikeMark3PosPre.heading)
+                .build()
+
+            spikeMark3Pickup = follower.pathBuilder()
+                .addPath(BezierLine(spikeMark3PosMiddle, spikeMark3PosOuter))
+                .setLinearHeadingInterpolation(spikeMark3PosMiddle.heading, spikeMark3PosOuter.heading)
+                .build()
+
+            spikeMark3ToFarScore = follower.pathBuilder()
+                .addPath(BezierLine(spikeMark3PosOuter, farShootPos))
+                .setLinearHeadingInterpolation(spikeMark3PosOuter.heading, farShootPos.heading)
+                .build()
+
+            farScoreToHumanPlayer = follower.pathBuilder()
+                .addPath(BezierLine(farShootPos, humanPlayerPosPre))
+                .setLinearHeadingInterpolation(farShootPos.heading, humanPlayerPosPre.heading)
+                .build()
+
+            humanPlayerPickup = follower.pathBuilder()
+                .addPath(BezierLine(humanPlayerPosPre, humanPlayerPosPost))
+                .setLinearHeadingInterpolation(humanPlayerPosPre.heading, humanPlayerPosPost.heading)
+                .build()
+
+            humanPlayerToFarScore = follower.pathBuilder()
+                .addPath(BezierLine(humanPlayerPosPost, farShootPos))
+                .setLinearHeadingInterpolation(humanPlayerPosPost.heading, farShootPos.heading)
+                .build()
+
+            farScoreToPark = follower.pathBuilder()
+                .addPath(BezierLine(farShootPos, farParkPos))
+                .setLinearHeadingInterpolation(farShootPos.heading, farParkPos.heading)
                 .build()
         }
     }

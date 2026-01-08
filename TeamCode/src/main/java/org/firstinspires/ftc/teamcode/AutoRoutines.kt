@@ -420,34 +420,94 @@ object AutoRoutines {
             Shooter.actualStop
         )
 
-
-
-    val farParkAutoRoutine
-        get() = SequentialGroupLocal(
-            InstantCommand { AutonomousInfo.autoRunning = true },
-            FollowPath(TrajectoryFactory.farStartToPark)
-        )
-
     val threeArtifactFarStartAutoRoutine
         get() = SequentialGroupLocal(
-            Spindexer.enableTraveling,
+            InstantCommand { AutonomousInfo.autoRunning = true },
+            LimeLight.detectMotif,
+            FollowPath(TrajectoryFactory.farStartToScore, true),
+            Routines.motifShoot,
+            FollowPath(TrajectoryFactory.farScoreToPark, true),
+            Intake.stop,
+            Shooter.actualStop
+        )
+
+    val sixArtifactFarStartAutoRoutine
+        get() = SequentialGroupLocal(
+            InstantCommand { AutonomousInfo.autoRunning = true },
+            LimeLight.detectMotif,
+            FollowPath(TrajectoryFactory.farStartToScore, true),
+            Routines.motifShoot,
             ParallelGroup(
-                FollowPath(TrajectoryFactory.farStartToShoot, true),
+                FollowPath(TrajectoryFactory.spikeMark3Pickup, true, 0.25),
                 SequentialGroupLocal(
+                    Delay(0.3),
+                    InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                    Spindexer.spinToIntake,
+                    Delay(0.7),
+                    InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                    Spindexer.spinToIntake,
                     Delay(1.0),
-                    LimeLight.detectMotif,
-                    Delay(0.5),
-                    Routines.motifShoot
+                    InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                    Intake.slowOut
+                ),
+                SequentialGroupLocal(
+                    Delay(1.25),
+                    FollowPath(TrajectoryFactory.spikeMark3PickupToScore, true)
                 )
             ),
-            FollowPath(TrajectoryFactory.farShootPosToPark, true)
+            Routines.motifShoot,
+            FollowPath(TrajectoryFactory.farScoreToPark, true),
+            Intake.stop,
+            Shooter.actualStop
+        )
+
+    val nineArtifactFarStartAutoRoutine
+        get() = SequentialGroupLocal(
+            InstantCommand { AutonomousInfo.autoRunning = true },
+            LimeLight.detectMotif,
+            FollowPath(TrajectoryFactory.farStartToScore, true),
+            Routines.motifShoot,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.spikeMark3Pickup, true, 0.25),
+                SequentialGroupLocal(
+                    Delay(0.3),
+                    InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                    Spindexer.spinToIntake,
+                    Delay(0.7),
+                    InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                    Spindexer.spinToIntake,
+                    Delay(1.0),
+                    InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                    Intake.slowOut
+                ),
+                SequentialGroupLocal(
+                    Delay(1.25),
+                    FollowPath(TrajectoryFactory.spikeMark3PickupToScore, true)
+                )
+            ),
+            Routines.motifShoot,
+            FollowPath(TrajectoryFactory.farScoreToHumanPlayer),
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.humanPlayerPickup, true, 0.25),
+                SequentialGroupLocal(
+                    Delay(0.3),
+                    InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                    Spindexer.spinToIntake,
+                    Delay(0.7),
+                    InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
+                    Spindexer.spinToIntake,
+                    Delay(1.0),
+                    InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                    Intake.slowOut
+                ),
+                SequentialGroupLocal(
+                    Delay(1.25),
+                    FollowPath(TrajectoryFactory.humanPlayerToFarScore, true)
+                )
+            ),
+            Routines.motifShoot,
+            FollowPath(TrajectoryFactory.farScoreToPark, true),
+            Intake.stop,
+            Shooter.actualStop
         )
 }
-
-
-
-
-//            PIDToPoint(TrajectoryFactory.obeliskSensePos, 6.0, 10.deg.inRad),
-
-//            ParallelRaceGroup(WaitUntil { LimeLight.matchMotif != LimeLight.Motif.UNKNOWN}, Delay(1.0)),
-//            PIDToPoint(TrajectoryFactory.scorePos, 6.0, 10.deg.inRad),
