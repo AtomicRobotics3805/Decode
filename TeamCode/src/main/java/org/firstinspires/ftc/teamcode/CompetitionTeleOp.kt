@@ -18,8 +18,10 @@ import dev.nextftc.control.feedback.FeedbackType
 import dev.nextftc.control.feedback.PIDCoefficients
 import dev.nextftc.control.feedback.PIDElement
 import dev.nextftc.core.commands.CommandManager
+import dev.nextftc.core.commands.delays.Delay
 import dev.nextftc.core.commands.groups.ParallelGroup
 import dev.nextftc.core.commands.groups.ParallelRaceGroup
+import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.core.units.deg
@@ -30,6 +32,7 @@ import dev.nextftc.ftc.ActiveOpMode
 import dev.nextftc.ftc.Gamepads
 import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
+import dev.nextftc.ftc.components.LoopTimeComponent
 import dev.nextftc.hardware.driving.FieldCentric
 import dev.nextftc.hardware.driving.MecanumDriverControlled
 import org.firstinspires.ftc.teamcode.subsystems.Direction
@@ -62,7 +65,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
             BulkReadComponent,
             PedroComponent(Constants::createFollower),
             BindingsComponent,
-            FateComponent
+//            FateComponent,
+            LoopTimeComponent()
         )
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
@@ -114,6 +118,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
     override fun onStartButtonPressed() {
         LimeLight.autoRelocalize = true
+        LimeLight.obeliskMode = false
+        LimeLight.checkPipeline()
         AutonomousInfo.autoRunning = false
         PedroComponent.follower.pose = AutonomousInfo.autoEndPos
         PusherArm.down()
@@ -203,11 +209,25 @@ class CompetitionTeleOp : NextFTCOpMode() {
             PusherArm.down
         ).requires(Spindexer)
 
-        Gamepads.gamepad1.dpadDown whenBecomesTrue Routines.motifShoot
+        Gamepads.gamepad1.dpadDown whenBecomesTrue Routines.motifShoot whenBecomesFalse {
+            Shooter.stop()
+            PusherArm.down()
+        }
         Gamepads.gamepad1.b whenBecomesTrue { Spindexer.spinToLast() }
 
 //        Gamepads.gamepad1.leftStickButton whenBecomesTrue LimeLight.detectMotif
-        Gamepads.gamepad1.leftStickButton whenBecomesTrue { LimeLight.detectMotif }
+        Gamepads.gamepad1.leftStickButton whenBecomesTrue SequentialGroupLocal(
+            InstantCommand {
+                LimeLight.obeliskMode = true
+                LimeLight.checkPipeline()
+            },
+            Delay(0.25),
+            LimeLight.detectMotif,
+            InstantCommand {
+                LimeLight.obeliskMode = false
+                LimeLight.checkPipeline()
+            })
+
 
 
         //endregion

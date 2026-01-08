@@ -115,7 +115,7 @@ object Shooter : Subsystem {
                 shooterSpeedNoRatio = calculatePower().roundToInt()
                 controller.goal = KineticState(0.0, (shooterSpeedNoRatio / 60.0) * ticksPerRev)
             } else if (calculateVelocity && !trueStop) {
-                controller.goal = KineticState(0.0, (1500 / 60.0) * ticksPerRev)
+                controller.goal = KineticState(0.0, (2000 / 60.0) * ticksPerRev)
             } else if (trueStop) {
                 controller.goal = KineticState(velocity = 0.0)
             } else if (shoot) {

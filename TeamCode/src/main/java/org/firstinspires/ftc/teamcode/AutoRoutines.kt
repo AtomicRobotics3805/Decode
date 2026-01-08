@@ -14,13 +14,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
 object AutoRoutines {
 
-
-
     val nineArtifactGoalStartAutoRoutine
         get() = SequentialGroupLocal(
             InstantCommand { AutonomousInfo.autoRunning = true },
             //region First motif
-            Spindexer.enableTraveling,
+//            Spindexer.enableTraveling,
             ParallelGroup(
                 FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //                Shooter.stop
@@ -29,6 +27,7 @@ object AutoRoutines {
             LimeLight.detectMotif,
             ParallelGroup(
                 FollowPath(TrajectoryFactory.obeliskToScore, true),
+                InstantCommand(Spindexer::spinToFirstBallOfMotif),
                 SequentialGroupLocal(
                     Delay(0.5),
                     Routines.motifShoot
@@ -65,7 +64,13 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(1.5),
-                        FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true)
+                        ParallelGroup(
+                            SequentialGroupLocal(
+                                Delay(0.75),
+                                InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                            ),
+                            FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true)
+                        )
                     )
                 )
             ),
@@ -102,7 +107,13 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(1.5),
-                        FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
+                        ParallelGroup(
+                            SequentialGroupLocal(
+                                Delay(0.75),
+                                InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                            ),
+                            FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
+                        )
                     )
                 )
             ),
@@ -119,7 +130,6 @@ object AutoRoutines {
             InstantCommand { AutonomousInfo.autoRunning = true },
 
             //region First motif
-            Spindexer.enableTraveling,
             ParallelGroup(
                 FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //                Shooter.stop
@@ -221,7 +231,6 @@ object AutoRoutines {
             InstantCommand { AutonomousInfo.autoRunning = true },
 
             //region First motif
-            Spindexer.enableTraveling,
             ParallelGroup(
                 FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //                Shooter.stop
@@ -323,7 +332,6 @@ object AutoRoutines {
             InstantCommand { AutonomousInfo.autoRunning = true },
 
             //region First motif
-            Spindexer.enableTraveling,
             ParallelGroup(
                 FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //                Shooter.stop
@@ -367,8 +375,14 @@ object AutoRoutines {
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
-                        Delay(1.25),
-                        FollowPath(TrajectoryFactory.spikeMark1ToDump, true),
+                        Delay(1.5),
+                        ParallelGroup(
+                            SequentialGroupLocal(
+                                Delay(0.75),
+                                InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                            ),
+                            FollowPath(TrajectoryFactory.spikeMark1ToDump, true)
+                        ),
                         FollowPath(TrajectoryFactory.dumpToScore, true)
                     )
                 )
@@ -407,8 +421,14 @@ object AutoRoutines {
                         Intake.slowOut
                     ),
                     SequentialGroupLocal(
-                        Delay(1.25),
-                        FollowPath(TrajectoryFactory.spikeMark2ToDump, true),
+                        Delay(1.5),
+                        ParallelGroup(
+                            SequentialGroupLocal(
+                                Delay(0.75),
+                                InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                            ),
+                            FollowPath(TrajectoryFactory.spikeMark2ToDump, true)
+                        ),
                         FollowPath(TrajectoryFactory.dumpToScore, true)
                     )
                 )

@@ -27,7 +27,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 
-@Disabled
 @Autonomous(name = "\uD83D\uDFE6 Goal NINE Dump After Both Blue", group = "NINE DUMP", preselectTeleOp = "Competition TeleOp")
 class GoalStartDumpAfterBothBlue : NextFTCOpMode() {
 
@@ -45,6 +44,8 @@ class GoalStartDumpAfterBothBlue : NextFTCOpMode() {
 
     override fun onInit() {
         LimeLight.autoRelocalize = false
+        LimeLight.obeliskMode = true
+        LimeLight.checkPipeline()
         PusherArm.down()
         TrajectoryFactory.buildTrajectories(PedroComponent.Companion.follower)
         PedroComponent.Companion.follower.setStartingPose(TrajectoryFactory.goalStartPos)
