@@ -23,7 +23,7 @@ object TrajectoryFactory {
 
     val farStartPos = Pose(57.0, 9.0, 90.deg.inRad)
 
-    val farShootPos = Pose(58.5, 11.0, 1.9742947094299996.rad.inRad)
+    val farShootPos = Pose(58.5, 13.0, 112.deg.inRad)
 
     val farParkPos = Pose(20.0, 9.0, 180.deg.inRad)
 
@@ -55,9 +55,11 @@ object TrajectoryFactory {
 
     val spikeMark3PosOuter = Pose(25.6, 35.6, 180.deg.inRad)
 
-    val humanPlayerPosPre = Pose(11.8, 19.0, -160.deg.inRad)
+    val humanPlayerPosPre = Pose(11.8, 19.0, -140.deg.inRad)
 
-    val humanPlayerPosPost = Pose(11.0, 11.4, -160.deg.inRad)
+    val humanPlayerPosMiddle = Pose(9.0, 9.0, 270.deg.inRad)
+
+    val humanPlayerPosPost = Pose(11.0, 11.4, -140.deg.inRad)
 
     val outOfTheWayPos = Pose(41.0, 70.0, 180.deg.inRad)
 
@@ -247,8 +249,8 @@ object TrajectoryFactory {
                 .build()
 
             humanPlayerPickup = follower.pathBuilder()
-                .addPath(BezierLine(humanPlayerPosPre.mirror(), humanPlayerPosPost.mirror()))
-                .setLinearHeadingInterpolation(humanPlayerPosPre.mirror().heading, humanPlayerPosPost.mirror().heading)
+                .addPath(BezierLine(humanPlayerPosMiddle.mirror(), humanPlayerPosPost.mirror()))
+                .setLinearHeadingInterpolation(humanPlayerPosMiddle.mirror().heading, humanPlayerPosPost.mirror().heading)
                 .build()
 
             humanPlayerToFarScore = follower.pathBuilder()
@@ -386,7 +388,7 @@ object TrajectoryFactory {
                 .build()
 
             farScoreToSpikeMark3 = follower.pathBuilder()
-                .addPath(BezierLine(farShootPos, spikeMark3PosPre))
+                .addPath(BezierLine(farShootPos, Pose(spikeMark3PosPre.x - bluePickupOffset, spikeMark3PosPre.y, spikeMark3PosPre.heading)))
                 .setLinearHeadingInterpolation(farShootPos.heading, spikeMark3PosPre.heading)
                 .build()
 
@@ -406,8 +408,8 @@ object TrajectoryFactory {
                 .build()
 
             humanPlayerPickup = follower.pathBuilder()
-                .addPath(BezierLine(humanPlayerPosPre, humanPlayerPosPost))
-                .setLinearHeadingInterpolation(humanPlayerPosPre.heading, humanPlayerPosPost.heading)
+                .addPath(BezierLine(humanPlayerPosMiddle, humanPlayerPosPost))
+                .setLinearHeadingInterpolation(humanPlayerPosMiddle.heading, humanPlayerPosPost.heading)
                 .build()
 
             humanPlayerToFarScore = follower.pathBuilder()

@@ -24,7 +24,6 @@ import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
-@Disabled
 @Autonomous(name = "\uD83D\uDFE5 Far Start SIX Red", group = "SIX", preselectTeleOp = "Competition TeleOp")
 class SixArtifactFarStartRed : NextFTCOpMode() {
 

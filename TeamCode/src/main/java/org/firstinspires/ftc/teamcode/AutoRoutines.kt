@@ -172,7 +172,13 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(1.5),
-                        FollowPath(TrajectoryFactory.spikeMark1ToDump, true),
+                        ParallelGroup(
+                            SequentialGroupLocal(
+                                Delay(0.75),
+                                InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                            ),
+                            FollowPath(TrajectoryFactory.spikeMark1ToDump, true)
+                        ),
                         Delay(2.0),
                         FollowPath(TrajectoryFactory.dumpToScore, true)
                     )
@@ -211,7 +217,13 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(1.5),
-                        FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
+                        ParallelGroup(
+                            SequentialGroupLocal(
+                                Delay(0.75),
+                                InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                            ),
+                            FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
+                        )
                     )
                 )
             ),
@@ -273,7 +285,13 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(1.5),
-                        FollowPath(TrajectoryFactory.spikeMark1PickupToScore)
+                        ParallelGroup(
+                            SequentialGroupLocal(
+                                Delay(0.75),
+                                InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                            ),
+                            FollowPath(TrajectoryFactory.spikeMark1PickupToScore, true)
+                        )
                     )
                 )
             ),
@@ -310,7 +328,13 @@ object AutoRoutines {
                     ),
                     SequentialGroupLocal(
                         Delay(1.5),
-                        FollowPath(TrajectoryFactory.spikeMark2ToDump, true),
+                        ParallelGroup(
+                            SequentialGroupLocal(
+                                Delay(0.75),
+                                InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                            ),
+                            FollowPath(TrajectoryFactory.spikeMark2ToDump, true)
+                        ),
                         Delay(2.0),
                         FollowPath(TrajectoryFactory.dumpToScore, true)
                     )
@@ -444,7 +468,10 @@ object AutoRoutines {
         get() = SequentialGroupLocal(
             InstantCommand { AutonomousInfo.autoRunning = true },
             LimeLight.detectMotif,
-            FollowPath(TrajectoryFactory.farStartToScore, true),
+            ParallelGroup(
+                InstantCommand { Spindexer.spinToFirstBallOfMotif() },
+                FollowPath(TrajectoryFactory.farStartToScore, true),
+            ),
             Routines.motifShoot,
             FollowPath(TrajectoryFactory.farScoreToPark, true),
             Intake.stop,
@@ -455,24 +482,38 @@ object AutoRoutines {
         get() = SequentialGroupLocal(
             InstantCommand { AutonomousInfo.autoRunning = true },
             LimeLight.detectMotif,
-            FollowPath(TrajectoryFactory.farStartToScore, true),
+            ParallelGroup(
+                InstantCommand { Spindexer.spinToFirstBallOfMotif() },
+                FollowPath(TrajectoryFactory.farStartToScore, true),
+            ),
             Routines.motifShoot,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.farScoreToSpikeMark3),
+                Intake.start,
+                Spindexer.spinToIntake
+            ),
             ParallelGroup(
                 FollowPath(TrajectoryFactory.spikeMark3Pickup, true, 0.25),
                 SequentialGroupLocal(
-                    Delay(0.3),
+                    Delay(0.4),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                     Spindexer.spinToIntake,
                     Delay(0.7),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                     Spindexer.spinToIntake,
-                    Delay(1.0),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                    Delay(1.0),
                     Intake.slowOut
                 ),
                 SequentialGroupLocal(
                     Delay(1.25),
-                    FollowPath(TrajectoryFactory.spikeMark3PickupToScore, true)
+                    ParallelGroup(
+                        SequentialGroupLocal(
+                            Delay(0.75),
+                            InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                        ),
+                        FollowPath(TrajectoryFactory.spikeMark3ToFarScore, true)
+                    )
                 )
             ),
             Routines.motifShoot,
@@ -485,44 +526,68 @@ object AutoRoutines {
         get() = SequentialGroupLocal(
             InstantCommand { AutonomousInfo.autoRunning = true },
             LimeLight.detectMotif,
-            FollowPath(TrajectoryFactory.farStartToScore, true),
+            ParallelGroup(
+                InstantCommand { Spindexer.spinToFirstBallOfMotif() },
+                FollowPath(TrajectoryFactory.farStartToScore, true),
+            ),
             Routines.motifShoot,
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.farScoreToSpikeMark3),
+                Intake.start,
+                Spindexer.spinToIntake
+            ),
             ParallelGroup(
                 FollowPath(TrajectoryFactory.spikeMark3Pickup, true, 0.25),
                 SequentialGroupLocal(
-                    Delay(0.3),
+                    Delay(0.4),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                     Spindexer.spinToIntake,
                     Delay(0.7),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                     Spindexer.spinToIntake,
-                    Delay(1.0),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                    Delay(1.0),
                     Intake.slowOut
                 ),
                 SequentialGroupLocal(
                     Delay(1.25),
-                    FollowPath(TrajectoryFactory.spikeMark3PickupToScore, true)
+                    ParallelGroup(
+                        SequentialGroupLocal(
+                            Delay(0.85),
+                            InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                        ),
+                        FollowPath(TrajectoryFactory.spikeMark3ToFarScore, true)
+                    )
                 )
             ),
             Routines.motifShoot,
-            FollowPath(TrajectoryFactory.farScoreToHumanPlayer),
             ParallelGroup(
-                FollowPath(TrajectoryFactory.humanPlayerPickup, true, 0.25),
+                FollowPath(TrajectoryFactory.farScoreToHumanPlayer),
+                Intake.start,
+                Spindexer.spinToIntake
+            ),
+            ParallelGroup(
+                FollowPath(TrajectoryFactory.humanPlayerPickup, true, 0.5),
                 SequentialGroupLocal(
-                    Delay(0.3),
+                    Delay(0.4),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
                     Spindexer.spinToIntake,
                     Delay(0.7),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.GREEN },
                     Spindexer.spinToIntake,
-                    Delay(1.0),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
+                    Delay(1.5),
                     Intake.slowOut
                 ),
                 SequentialGroupLocal(
                     Delay(1.25),
-                    FollowPath(TrajectoryFactory.humanPlayerToFarScore, true)
+                    ParallelGroup(
+                        SequentialGroupLocal(
+                            Delay(0.75),
+                            InstantCommand(Spindexer::spinToFirstBallOfMotif)
+                        ),
+                        FollowPath(TrajectoryFactory.humanPlayerToFarScore, true)
+                    )
                 )
             ),
             Routines.motifShoot,

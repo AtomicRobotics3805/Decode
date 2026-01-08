@@ -27,7 +27,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import org.firstinspires.ftc.teamcode.subsystems.SpindexerSensor
 
-@Disabled
 @Autonomous(name = "\uD83D\uDFE6 Far Start SIX Blue", group = "SIX", preselectTeleOp = "Competition TeleOp")
 class SixArtifactFarStartBlue : NextFTCOpMode() {
 
