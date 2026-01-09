@@ -80,13 +80,12 @@ class GoalStartDumpAfterFirstBlue : NextFTCOpMode() {
         ActiveOpMode.telemetry.addData("Spindexer slots", "0:["+ Spindexer.slots[0]+"], 1:["+ Spindexer.slots[1]+"], 2:["+ Spindexer.slots[2]+"]")
 
         ActiveOpMode.telemetry.update()
-//        follower.update()
+        AutonomousInfo.finalHeading = PedroComponent.follower.heading
+        AutonomousInfo.autoEndPos = PedroComponent.follower.pose
     }
 
     override fun onStop() {
         Spindexer.controller.goal = KineticState()
         Shooter.controller.goal = KineticState()
-        AutonomousInfo.finalHeading = PedroComponent.follower.heading
-        AutonomousInfo.autoEndPos = PedroComponent.follower.pose
     }
 }

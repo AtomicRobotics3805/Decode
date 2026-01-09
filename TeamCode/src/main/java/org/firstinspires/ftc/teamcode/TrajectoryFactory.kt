@@ -57,7 +57,7 @@ object TrajectoryFactory {
 
     val humanPlayerPosPre = Pose(11.8, 19.0, -140.deg.inRad)
 
-    val humanPlayerPosMiddle = Pose(11.0, 11.4, -140.deg.inRad)
+    val humanPlayerPosMiddle = Pose(13.0, 13.4, -140.deg.inRad)
 
     val humanPlayerPosPost = Pose(10.0, 10.0, 270.deg.inRad)
 

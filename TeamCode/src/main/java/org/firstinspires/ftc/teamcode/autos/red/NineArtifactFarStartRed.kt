@@ -64,13 +64,13 @@ class NineArtifactFarStartRed : NextFTCOpMode() {
 
         ActiveOpMode.telemetry.addData("Current pos", PedroComponent.follower.pose)
         ActiveOpMode.telemetry.addData("IsBusy", PedroComponent.follower.isBusy)
-//        follower.update()
+
+        AutonomousInfo.finalHeading = PedroComponent.follower.heading
+        AutonomousInfo.autoEndPos = PedroComponent.follower.pose
     }
 
     override fun onStop() {
         Spindexer.controller.goal = KineticState()
         Shooter.controller.goal = KineticState()
-        AutonomousInfo.finalHeading = PedroComponent.follower.heading
-        AutonomousInfo.autoEndPos = PedroComponent.follower.pose
     }
 }
