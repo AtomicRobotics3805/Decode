@@ -94,7 +94,7 @@ object LimeLight : Subsystem {
 
     fun updatePos() {
 //        ll.updateRobotOrientation((PedroComponent.follower.heading.rad + 90.deg).inDeg)
-        ll.updateRobotOrientation(PedroComponent.follower.heading.rad.inDeg + 90)
+        ll.updateRobotOrientation(CompetitionTeleOp.imu.get().inDeg + 90)
         val result: LLResult? = ll.getLatestResult()
 //
 //        TX = result?.fiducialResults?.get(0)?.targetXDegrees

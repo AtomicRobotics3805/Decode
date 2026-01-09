@@ -567,7 +567,7 @@ object AutoRoutines {
                 Spindexer.spinToIntake
             ),
             ParallelGroup(
-                FollowPath(TrajectoryFactory.humanPlayerPickup, true, 0.5),
+                FollowPath(TrajectoryFactory.humanPlayerPickup, true),
                 SequentialGroupLocal(
                     Delay(0.4),
                     InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -580,7 +580,7 @@ object AutoRoutines {
                     Intake.slowOut
                 ),
                 SequentialGroupLocal(
-                    Delay(1.25),
+                    Delay(3.0),
                     ParallelGroup(
                         SequentialGroupLocal(
                             Delay(0.75),

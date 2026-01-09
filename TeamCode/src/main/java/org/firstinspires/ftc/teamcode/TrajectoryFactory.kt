@@ -19,7 +19,7 @@ object TrajectoryFactory {
 
     //region Poses
 
-    val goalStartPos = Pose(28.0, 130.0, (-40 + 90).deg.inRad)
+    val goalStartPos = Pose(27.0, 131.0, (-40 + 90).deg.inRad)
 
     val farStartPos = Pose(57.0, 9.0, 90.deg.inRad)
 
@@ -27,11 +27,11 @@ object TrajectoryFactory {
 
     val farParkPos = Pose(20.0, 9.0, 180.deg.inRad)
 
-    val goalZoneParkPos = Pose(61.0, 102.0, 180.deg.inRad)
+    val goalZoneParkPos = Pose(61.0, 104.0, 180.deg.inRad)
 
     val obeliskSensePos = Pose(48.0, 115.0, 55.deg.inRad)
 
-    val scorePos = Pose(59.0, 104.5, 146.deg.inRad)
+    val scorePos = Pose(55.0, 108.5, 146.deg.inRad)
 
     val spikeMark1PosPre = Pose(41.6, 83.1, 180.deg.inRad)
 
@@ -47,7 +47,7 @@ object TrajectoryFactory {
 
     val firstDumpPos = Pose(14.5, 77.5, 180.deg.inRad)
 
-    val secondDumpPos = Pose(14.5, 67.0, 180.deg.inRad)
+    val secondDumpPos = Pose(14.5, 68.0, 180.deg.inRad)
 
     val spikeMark3PosPre = Pose(40.6, 35.6, 180.deg.inRad)
 
@@ -57,9 +57,9 @@ object TrajectoryFactory {
 
     val humanPlayerPosPre = Pose(11.8, 19.0, -140.deg.inRad)
 
-    val humanPlayerPosMiddle = Pose(9.0, 9.0, 270.deg.inRad)
+    val humanPlayerPosMiddle = Pose(11.0, 11.4, -140.deg.inRad)
 
-    val humanPlayerPosPost = Pose(11.0, 11.4, -140.deg.inRad)
+    val humanPlayerPosPost = Pose(10.0, 10.0, 270.deg.inRad)
 
     val outOfTheWayPos = Pose(41.0, 70.0, 180.deg.inRad)
 

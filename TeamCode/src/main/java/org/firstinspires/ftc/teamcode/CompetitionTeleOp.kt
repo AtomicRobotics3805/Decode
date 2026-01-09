@@ -124,8 +124,11 @@ class CompetitionTeleOp : NextFTCOpMode() {
         PedroComponent.follower.pose = AutonomousInfo.autoEndPos
         PusherArm.down()
         Routines.setMotifSelection()
-        imu.zero()
-        imuOffset = AutonomousInfo.finalHeading
+
+        imu.offset = (-PedroComponent.follower.heading).rad
+
+//        imu.zero()
+//        imuOffset = AutonomousInfo.finalHeading
 
         graphManager = PanelsGraph.manager
 
