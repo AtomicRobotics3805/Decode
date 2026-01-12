@@ -52,6 +52,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import java.util.function.Supplier
 import kotlin.math.abs
 import kotlin.math.sqrt
+import kotlin.time.ComparableTimeMark
+import kotlin.time.DurationUnit
+import kotlin.time.TimeSource.Monotonic.markNow
 
 
 @Configurable
@@ -112,6 +115,10 @@ class CompetitionTeleOp : NextFTCOpMode() {
     private val backLeftMotor = MotorEx("motor_c0").brakeMode()
     private val backRightMotor = MotorEx("motor_c3").brakeMode()
 
+    private lateinit var startTime: ComparableTimeMark
+
+    var iterations = 0
+
     override fun onInit() {
         Drawing.init()
     }
@@ -124,6 +131,9 @@ class CompetitionTeleOp : NextFTCOpMode() {
         PedroComponent.follower.pose = AutonomousInfo.autoEndPos
         PusherArm.down()
         Routines.setMotifSelection()
+
+        startTime = markNow()
+        iterations = 0
 
         imu.offset = (-PedroComponent.follower.heading).rad
 
@@ -150,7 +160,15 @@ class CompetitionTeleOp : NextFTCOpMode() {
         //region Driver
 
 
-        Gamepads.gamepad1.rightStickButton whenBecomesTrue { imu.zero() }
+        Gamepads.gamepad1.rightStickButton whenBecomesTrue {
+            imu.zero()
+
+            if (AutonomousInfo.redAuto) {
+                PedroComponent.follower.pose = PedroComponent.follower.pose.withHeading(0.0)
+            } else {
+                PedroComponent.follower.pose = PedroComponent.follower.pose.withHeading(180.deg.inRad)
+            }
+        }
 
         Gamepads.gamepad1.leftTrigger.asButton { it >= 0.1 } whenBecomesTrue {
             Spindexer.spinToIntake()
@@ -278,6 +296,11 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
     override fun onUpdate() {
         Drawing.drawDebug(PedroComponent.Companion.follower)
+
+        iterations++
+
+        ActiveOpMode.telemetry.addData("Average loop time", (markNow() - startTime).toDouble(
+            DurationUnit.MILLISECONDS) / iterations)
 
         RobotLog.d("Motor Amp: Left Front Drive: " + frontLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Left Back Drive: " + backLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
