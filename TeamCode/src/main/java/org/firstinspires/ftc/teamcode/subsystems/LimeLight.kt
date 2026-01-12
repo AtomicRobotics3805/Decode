@@ -6,12 +6,12 @@ import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.subsystems.Subsystem
-import dev.nextftc.core.units.rad
+import dev.nextftc.core.units.deg
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.CompetitionTeleOp
 import org.firstinspires.ftc.teamcode.Routines
+import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 
 
 @Configurable
@@ -67,6 +67,24 @@ object LimeLight : Subsystem {
         } else if (autoRelocalize) {
             counter++
         }
+    }
+
+    fun getTX(): Double {
+        var tX = 3805.0
+        if (AutonomousInfo.redAuto) {
+            for (tag in ll.latestResult.fiducialResults) {
+                if (tag.fiducialId == 24) {
+                    tX = tag.targetXDegrees.deg.inRad
+                }
+            }
+        } else {
+            for (tag in ll.latestResult.fiducialResults) {
+                if (tag.fiducialId == 20) {
+                    tX = tag.targetXDegrees.deg.inRad
+                }
+            }
+        }
+        return tX
     }
 
     fun checkPipeline() {

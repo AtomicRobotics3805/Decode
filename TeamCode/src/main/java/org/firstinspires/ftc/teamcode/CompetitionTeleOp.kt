@@ -17,6 +17,8 @@ import dev.nextftc.control.feedback.AngularFeedback
 import dev.nextftc.control.feedback.FeedbackType
 import dev.nextftc.control.feedback.PIDCoefficients
 import dev.nextftc.control.feedback.PIDElement
+import dev.nextftc.control.feedforward.BasicFeedforward
+import dev.nextftc.control.feedforward.BasicFeedforwardParameters
 import dev.nextftc.core.commands.CommandManager
 import dev.nextftc.core.commands.delays.Delay
 import dev.nextftc.core.commands.groups.ParallelGroup
@@ -83,7 +85,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
     companion object {
         @JvmField
-        var coefficients = PIDCoefficients(-1.0, 0.0, 0.005)
+        var coefficients = PIDCoefficients(-2.0, 0.0, 0.1)
 
 
         @JvmField
@@ -100,9 +102,13 @@ class CompetitionTeleOp : NextFTCOpMode() {
         }
 
         fun calculateHeadingPID(): Double {
-            controller.goal = KineticState(AutoAdjustingCalc.calculateAimAngle())
+            controller.goal = KineticState(0.0)
 
-            return controller.calculate(KineticState(PedroComponent.follower.heading))
+            return if (LimeLight.getTX() != 3805.0) {
+                controller.calculate(KineticState(LimeLight.getTX()))
+            } else {
+                0.0
+            }
         }
 
         val autoAimPID = PIDJoystickBlend(Gamepads.gamepad1.rightStickX::get, ::calculateHeadingPID)
@@ -198,7 +204,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         Gamepads.gamepad1.leftBumper whenBecomesTrue({
             Routines.teleOpMotifShoot()
-            autoAimPID.usePID = true
+            autoAimPID.  usePID = true
         }) whenBecomesFalse({
                 Shooter.stop()
                 PusherArm.down()
@@ -301,6 +307,8 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
         ActiveOpMode.telemetry.addData("Average loop time", (markNow() - startTime).toDouble(
             DurationUnit.MILLISECONDS) / iterations)
+
+        ActiveOpMode.telemetry.addData("tX", LimeLight.getTX())
 
         RobotLog.d("Motor Amp: Left Front Drive: " + frontLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())
         RobotLog.d("Motor Amp: Left Back Drive: " + backLeftMotor.motor.getCurrent(CurrentUnit.AMPS).toString())

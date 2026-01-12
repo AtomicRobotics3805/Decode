@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.bylazar.configurables.annotations.Configurable
 import com.pedropathing.geometry.Pose
 import dev.nextftc.core.units.deg
 import dev.nextftc.core.units.rad
@@ -27,7 +28,7 @@ object AutoAdjustingCalc {
         return (0.0303725*(distance*distance)) + (5.20557 * distance) + 1839.13148
     }
 
-    fun calculateAimAngle(): Double {
+    fun calculateAimAngleOld(): Double {
         val currentPos = PedroComponent.follower.pose
 
         if (AutonomousInfo.redAuto) {
