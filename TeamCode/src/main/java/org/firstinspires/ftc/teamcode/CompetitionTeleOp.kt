@@ -27,6 +27,7 @@ import dev.nextftc.core.commands.utility.InstantCommand
 import dev.nextftc.core.components.BindingsComponent
 import dev.nextftc.core.components.SubsystemComponent
 import dev.nextftc.core.units.deg
+import dev.nextftc.core.units.m
 import dev.nextftc.core.units.rad
 import dev.nextftc.extensions.fateweaver.FateComponent
 import dev.nextftc.extensions.pedro.PedroComponent
@@ -76,7 +77,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
 
-    val debugTelemetry = true
+    val debugTelemetry = false
 
 
 
@@ -85,29 +86,50 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
     companion object {
         @JvmField
-        var coefficients = PIDCoefficients(-2.0, 0.0, 0.1)
+        var mainCoefficients = PIDCoefficients(-1.25, 0.0, 0.05)
+
+        @JvmField
+        var secondaryCoefficients = PIDCoefficients(-1.0, 0.0, 0.2)
+
+        @JvmField
+        var pidSwitch = 30.0
 
 
         @JvmField
-        val controller = controlSystem {
+        val mainController = controlSystem {
             feedback(
                 AngularFeedback(
                     AngleType.RADIANS,
                     PIDElement(
                         FeedbackType.POSITION,
-                        coefficients
+                        mainCoefficients
+                    )
+                )
+            )
+        }
+
+        @JvmField
+        val secondaryController = controlSystem {
+            feedback(
+                AngularFeedback(
+                    AngleType.RADIANS,
+                    PIDElement(
+                        FeedbackType.POSITION,
+                        secondaryCoefficients
                     )
                 )
             )
         }
 
         fun calculateHeadingPID(): Double {
-            controller.goal = KineticState(0.0)
+            if (abs(AutoAdjustingCalc.calculateAimAngle() - PedroComponent.follower.heading) < pidSwitch.deg.inRad) {
+                secondaryController.goal = KineticState(AutoAdjustingCalc.calculateAimAngle())
 
-            return if (LimeLight.getTX() != 3805.0) {
-                controller.calculate(KineticState(LimeLight.getTX()))
+                return secondaryController.calculate(KineticState(PedroComponent.follower.heading))
             } else {
-                0.0
+                mainController.goal = KineticState(AutoAdjustingCalc.calculateAimAngle())
+
+                return mainController.calculate(KineticState(PedroComponent.follower.heading))
             }
         }
 
@@ -355,7 +377,15 @@ class CompetitionTeleOp : NextFTCOpMode() {
             if (AutonomousInfo.redAuto) {
                 ActiveOpMode.telemetry.addData(
                     "Distance",
-                    sqrt(((goalPos.mirror().x - PedroComponent.follower.pose.x) * (goalPos.mirror().x - PedroComponent.follower.pose.x)) + ((goalPos.mirror().y - PedroComponent.follower.pose.y) * (goalPos.mirror().y - PedroComponent.follower.pose.y)))
+                    if (!LimeLight.ll.latestResult.fiducialResults.any { it.fiducialId == if (AutonomousInfo.redAuto) 24 else 20 } ) {
+                        if (AutonomousInfo.redAuto) {
+                            sqrt(((goalPos.mirror().x - PedroComponent.follower.pose.x) * (goalPos.mirror().x - PedroComponent.follower.pose.x)) + ((goalPos.mirror().y - PedroComponent.follower.pose.y) * (goalPos.mirror().y - PedroComponent.follower.pose.y)))
+                        } else {
+                            sqrt(((goalPos.x - PedroComponent.follower.pose.x) * (goalPos.x - PedroComponent.follower.pose.x)) + ((goalPos.y - PedroComponent.follower.pose.y) * (goalPos.y - PedroComponent.follower.pose.y)))
+                        }
+                    } else {
+                        abs(LimeLight.ll.latestResult.fiducialResults[0].robotPoseTargetSpace.position.z.m.inIn)
+                    }
                 )
             } else {
                 ActiveOpMode.telemetry.addData(
@@ -378,8 +408,22 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
             ActiveOpMode.telemetry.addData(
                 "Distance",
-                sqrt(((goalPos.x - PedroComponent.follower.pose.x) * (goalPos.x - PedroComponent.follower.pose.x)) + ((goalPos.y - PedroComponent.follower.pose.y) * (goalPos.y - PedroComponent.follower.pose.y)))
+                if (!LimeLight.ll.latestResult.fiducialResults.any { it.fiducialId == if (AutonomousInfo.redAuto) 24 else 20 } ) {
+                    if (AutonomousInfo.redAuto) {
+                        sqrt(((goalPos.mirror().x - PedroComponent.follower.pose.x) * (goalPos.mirror().x - PedroComponent.follower.pose.x)) + ((goalPos.mirror().y - PedroComponent.follower.pose.y) * (goalPos.mirror().y - PedroComponent.follower.pose.y)))
+                    } else {
+                        sqrt(((goalPos.x - PedroComponent.follower.pose.x) * (goalPos.x - PedroComponent.follower.pose.x)) + ((goalPos.y - PedroComponent.follower.pose.y) * (goalPos.y - PedroComponent.follower.pose.y)))
+                    }
+                } else {
+                    abs(LimeLight.ll.latestResult.fiducialResults[0].robotPoseTargetSpace.position.z.m.inIn)
+                }
             )
+            ActiveOpMode.telemetry.addData(
+                "Using LL dist",
+                LimeLight.ll.latestResult.fiducialResults.any { it.fiducialId == if (AutonomousInfo.redAuto) 24 else 20 }
+            )
+
+            telemetry.addData("Auto align", AutoAdjustingCalc.pose)
 
             ActiveOpMode.telemetry.addData("Auto Align", autoAimPID.usePID)
         }

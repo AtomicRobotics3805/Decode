@@ -61,12 +61,7 @@ object LimeLight : Subsystem {
 
     var counter = 0
     override fun periodic() {
-        if (autoRelocalize && counter >= 5 && !Shooter.shoot) {
-            updatePos()
-            counter = 0
-        } else if (autoRelocalize) {
-            counter++
-        }
+
     }
 
     fun getTX(): Double {
