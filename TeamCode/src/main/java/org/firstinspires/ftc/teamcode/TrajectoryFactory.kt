@@ -19,7 +19,7 @@ object TrajectoryFactory {
 
     //region Poses
 
-    val goalStartPos = Pose(27.0, 131.0, (-40 + 90).deg.inRad)
+    val goalStartPos = Pose(27.0, 131.0, 55.deg.inRad)
 
     val farStartPos = Pose(57.0, 9.0, 90.deg.inRad)
 
@@ -31,7 +31,7 @@ object TrajectoryFactory {
 
     val obeliskSensePos = Pose(48.0, 115.0, 55.deg.inRad)
 
-    val scorePos = Pose(55.0, 108.5, 146.deg.inRad)
+    val scorePos = Pose(55.0, 108.5, 146.5.deg.inRad)
 
     val spikeMark1PosPre = Pose(41.6, 83.1, 180.deg.inRad)
 
@@ -39,7 +39,7 @@ object TrajectoryFactory {
 
     val spikeMark1PosOuter = Pose(26.6, 83.1, 180.deg.inRad)
 
-    val spikeMark2PosPre = Pose(40.6, 59.0, 180.deg.inRad)
+    val spikeMark2PosPre = Pose(41.6, 59.0, 180.deg.inRad)
 
     val spikeMark2PosMiddle = Pose(31.6, 59.0, 180.deg.inRad)
 
@@ -170,7 +170,7 @@ object TrajectoryFactory {
 
             spikeMark1ToDump = follower.pathBuilder()
                 .addPath(BezierCurve(Pose(spikeMark1PosOuter.x - redPickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading).mirror(),
-                    Pose(28.5, firstDumpPos.y).mirror(),
+                    Pose(35.5, firstDumpPos.y).mirror(),
                     firstDumpPos.mirror()))
                 .setLinearHeadingInterpolation(spikeMark1PosOuter.mirror().heading, firstDumpPos.mirror().heading)
                 .build()
@@ -320,7 +320,7 @@ object TrajectoryFactory {
 
             spikeMark1ToDump = follower.pathBuilder()
                 .addPath(BezierCurve(Pose(spikeMark1PosOuter.x - redPickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading),
-                    Pose(28.5, firstDumpPos.y),
+                    Pose(35.5, firstDumpPos.y),
                     firstDumpPos))
                 .setLinearHeadingInterpolation(spikeMark1PosOuter.heading, firstDumpPos.heading)
                 .build()

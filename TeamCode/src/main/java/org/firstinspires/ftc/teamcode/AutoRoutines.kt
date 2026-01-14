@@ -48,7 +48,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark1Pickup, true, 0.28),
+                    FollowPath(TrajectoryFactory.spikeMark1Pickup, true, 0.25),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -91,7 +91,7 @@ object AutoRoutines {
             // Pickup ballz
             SequentialGroupLocal(
                 ParallelGroup(
-                    FollowPath(TrajectoryFactory.spikeMark2Pickup, true, 0.28),
+                    FollowPath(TrajectoryFactory.spikeMark2Pickup, true, 0.23),
                     SequentialGroupLocal(
                         Delay(0.3),
                         InstantCommand { Spindexer.slots[Spindexer.currentStatus.id] = Spindexer.SpindexerSlotStatus.PURPLE },
@@ -107,7 +107,7 @@ object AutoRoutines {
                         Delay(1.5),
                         ParallelGroup(
                             SequentialGroupLocal(
-                                Delay(0.75),
+                                Delay(0.9),
                                 InstantCommand(Spindexer::spinToFirstBallOfMotif)
                             ),
                             FollowPath(TrajectoryFactory.spikeMark2PickupToScore, true)
