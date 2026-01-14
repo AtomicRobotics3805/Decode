@@ -86,7 +86,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
     companion object {
         @JvmField
-        var mainCoefficients = PIDCoefficients(-1.25, 0.0, 0.05)
+        var mainCoefficients = PIDCoefficients(-0.8, 0.0, 0.08)
 
         @JvmField
         var secondaryCoefficients = PIDCoefficients(-1.0, 0.0, 0.2)
