@@ -31,23 +31,23 @@ object TrajectoryFactory {
 
     val obeliskSensePos = Pose(48.0, 115.0, 55.deg.inRad)
 
-    val scorePos = Pose(55.0, 108.5, 146.5.deg.inRad)
+    val scorePos = Pose(56.0, 87.5, 133.deg.inRad)
 
-    val spikeMark1PosPre = Pose(41.6, 83.1, 180.deg.inRad)
+    val spikeMark1PosPre = Pose(41.6, 85.8, 180.deg.inRad)
 
-    val spikeMark1PosMiddle = Pose(31.6, 83.1, 180.deg.inRad)
+    val spikeMark1PosMiddle = Pose(31.6, 85.8, 180.deg.inRad)
 
-    val spikeMark1PosOuter = Pose(26.6, 83.1, 180.deg.inRad)
+    val spikeMark1PosOuter = Pose(26.6, 85.8, 180.deg.inRad)
 
-    val spikeMark2PosPre = Pose(41.6, 59.0, 180.deg.inRad)
+    val spikeMark2PosPre = Pose(41.6, 60.0, 180.deg.inRad)
 
-    val spikeMark2PosMiddle = Pose(31.6, 59.0, 180.deg.inRad)
+    val spikeMark2PosMiddle = Pose(31.6, 60.0, 180.deg.inRad)
 
-    val spikeMark2PosOuter = Pose(26.6, 59.0, 180.deg.inRad)
+    val spikeMark2PosOuter = Pose(26.6, 60.0, 180.deg.inRad)
 
-    val firstDumpPos = Pose(14.5, 77.5, 180.deg.inRad)
+    val firstDumpPos = Pose(16.5, 79.0, 180.deg.inRad)
 
-    val secondDumpPos = Pose(14.5, 68.0, 180.deg.inRad)
+    val secondDumpPos = Pose(16.5, 68.0, 180.deg.inRad)
 
     val spikeMark3PosPre = Pose(40.6, 35.6, 180.deg.inRad)
 
@@ -83,7 +83,9 @@ object TrajectoryFactory {
     lateinit var spikeMark1ToDump: PathChain
     lateinit var spikeMark2ToDump: PathChain
 
-    lateinit var dumpToScore: PathChain
+    lateinit var firstDumpToScore: PathChain
+
+    lateinit var secondDumpToScore: PathChain
 
     lateinit var spikeMark2PickupToScore: PathChain
 
@@ -182,10 +184,16 @@ object TrajectoryFactory {
                 .setLinearHeadingInterpolation(spikeMark2PosOuter.mirror().heading, secondDumpPos.mirror().heading)
                 .build()
 
-            dumpToScore = follower.pathBuilder()
-                .addPath(BezierCurve(Pose(25.0, 71.0, scorePos.heading).mirror(),
+            firstDumpToScore = follower.pathBuilder()
+                .addPath(BezierCurve(firstDumpPos.mirror(),
                     scorePos.mirror()))
-                .setLinearHeadingInterpolation(spikeMark2PosOuter.mirror().heading, scorePos.mirror().heading)
+                .setLinearHeadingInterpolation(firstDumpPos.mirror().heading, scorePos.mirror().heading)
+                .build()
+
+            secondDumpToScore = follower.pathBuilder()
+                .addPath(BezierCurve(secondDumpPos.mirror(),
+                    scorePos.mirror()))
+                .setLinearHeadingInterpolation(secondDumpPos.mirror().heading, scorePos.mirror().heading)
                 .build()
 
             spikeMark2PickupToScore = follower.pathBuilder()
@@ -319,7 +327,7 @@ object TrajectoryFactory {
 
 
             spikeMark1ToDump = follower.pathBuilder()
-                .addPath(BezierCurve(Pose(spikeMark1PosOuter.x - redPickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading),
+                .addPath(BezierCurve(Pose(spikeMark1PosOuter.x - bluePickupOffset, spikeMark1PosOuter.y, spikeMark1PosOuter.heading),
                     Pose(35.5, firstDumpPos.y),
                     firstDumpPos))
                 .setLinearHeadingInterpolation(spikeMark1PosOuter.heading, firstDumpPos.heading)
@@ -333,11 +341,17 @@ object TrajectoryFactory {
                 .setLinearHeadingInterpolation(spikeMark2PosOuter.heading, secondDumpPos.heading)
                 .build()
 
-            dumpToScore = follower.pathBuilder()
+            firstDumpToScore = follower.pathBuilder()
                 .addPath(BezierCurve(firstDumpPos,
                     Pose(25.0, 71.0, scorePos.heading),
                     scorePos))
                 .setLinearHeadingInterpolation(spikeMark2PosOuter.heading, scorePos.heading)
+                .build()
+
+            secondDumpToScore = follower.pathBuilder()
+                .addPath(BezierCurve(secondDumpPos,
+                    scorePos))
+                .setLinearHeadingInterpolation(secondDumpPos.heading, scorePos.heading)
                 .build()
 
             spikeMark2PickupToScore = follower.pathBuilder()

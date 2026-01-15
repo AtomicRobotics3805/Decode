@@ -13,6 +13,7 @@ import dev.nextftc.ftc.NextFTCOpMode
 import dev.nextftc.ftc.components.BulkReadComponent
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.AutoRoutines
+import org.firstinspires.ftc.teamcode.AutoRoutinesV2
 import org.firstinspires.ftc.teamcode.Drawing
 import org.firstinspires.ftc.teamcode.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
@@ -54,7 +55,7 @@ class GoalStartDumpAfterSecondBlue : NextFTCOpMode() {
     }
 
     override fun onStartButtonPressed() {
-        AutoRoutines.GoalStartDumpAfterSecondAutoRoutine()
+        AutoRoutinesV2.goalStartNineDumpSecond()
     }
 
     override fun onUpdate() {

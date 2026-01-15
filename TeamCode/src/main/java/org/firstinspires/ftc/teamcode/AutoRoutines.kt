@@ -7,6 +7,7 @@ import dev.nextftc.extensions.pedro.FollowPath
 import org.firstinspires.ftc.teamcode.autos.AutonomousInfo
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.LimeLight
+import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
 
@@ -37,7 +38,7 @@ object AutoRoutines {
 
             // Drive to pre-pickup pos
             ParallelGroup(
-                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
+                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true, 0.75),
                 Spindexer.spinToIntake,
                 SequentialGroupLocal(
                     Delay(1.0),
@@ -80,7 +81,7 @@ object AutoRoutines {
 
             // Drive to pre-pickup pos
             ParallelGroup(
-                FollowPath(TrajectoryFactory.scoreToSpikeMark2, true),
+                FollowPath(TrajectoryFactory.scoreToSpikeMark2, true, 0.75),
                 Spindexer.spinToIntake,
                 SequentialGroupLocal(
                     Delay(1.0),
@@ -126,8 +127,8 @@ object AutoRoutines {
     val GoalStartDumpAfterFirstAutoRoutine
         get() = SequentialGroupLocal(
             InstantCommand { AutonomousInfo.autoRunning = true },
-
             //region First motif
+//            Spindexer.enableTraveling,
             ParallelGroup(
                 FollowPath(TrajectoryFactory.goalStartToObelisk, true),
 //                Shooter.stop
@@ -136,6 +137,7 @@ object AutoRoutines {
             LimeLight.detectMotif,
             ParallelGroup(
                 FollowPath(TrajectoryFactory.obeliskToScore, true),
+                InstantCommand(Spindexer::spinToFirstBallOfMotif),
                 SequentialGroupLocal(
                     Delay(0.5),
                     Routines.motifShoot
@@ -147,7 +149,7 @@ object AutoRoutines {
 
             // Drive to pre-pickup pos
             ParallelGroup(
-                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true),
+                FollowPath(TrajectoryFactory.scoreToSpikeMark1, true, 0.75),
                 Spindexer.spinToIntake,
                 SequentialGroupLocal(
                     Delay(1.0),
@@ -180,7 +182,7 @@ object AutoRoutines {
                             FollowPath(TrajectoryFactory.spikeMark1ToDump, true)
                         ),
                         Delay(2.0),
-                        FollowPath(TrajectoryFactory.dumpToScore, true)
+                        FollowPath(TrajectoryFactory.firstDumpToScore, true)
                     )
                 )
             ),
@@ -336,7 +338,7 @@ object AutoRoutines {
                             FollowPath(TrajectoryFactory.spikeMark2ToDump, true)
                         ),
                         Delay(2.0),
-                        FollowPath(TrajectoryFactory.dumpToScore, true)
+                        FollowPath(TrajectoryFactory.firstDumpToScore, true)
                     )
                 )
             ),
@@ -405,7 +407,7 @@ object AutoRoutines {
                             ),
                             FollowPath(TrajectoryFactory.spikeMark1ToDump, true)
                         ),
-                        FollowPath(TrajectoryFactory.dumpToScore, true)
+                        FollowPath(TrajectoryFactory.firstDumpToScore, true)
                     )
                 )
             ),
@@ -451,7 +453,7 @@ object AutoRoutines {
                             ),
                             FollowPath(TrajectoryFactory.spikeMark2ToDump, true)
                         ),
-                        FollowPath(TrajectoryFactory.dumpToScore, true)
+                        FollowPath(TrajectoryFactory.firstDumpToScore, true)
                     )
                 )
             ),
