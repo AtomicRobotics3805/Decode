@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.Configurable
+import com.qualcomm.robotcore.hardware.AnalogInput
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import dev.nextftc.control.KineticState
@@ -22,6 +23,7 @@ import dev.nextftc.core.units.Angle
 import dev.nextftc.core.units.deg
 import dev.nextftc.core.units.rad
 import dev.nextftc.ftc.ActiveOpMode
+import dev.nextftc.ftc.ActiveOpMode.hardwareMap
 import dev.nextftc.ftc.Gamepads
 import dev.nextftc.hardware.controllable.RunToPosition
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
@@ -61,6 +63,11 @@ object Spindexer : Subsystem {
     @JvmField
     var currentStatus = SpindexerStatus.TOP_0
 
+    lateinit var encoder: AnalogInput
+
+    @JvmField
+    var offset = 103.5
+
     @JvmField
     var traveling = false
 
@@ -78,6 +85,7 @@ object Spindexer : Subsystem {
     val motor = DecoupledMotorEx("motor_e0", "motor_e0")
 
     override fun initialize() {
+        encoder = hardwareMap.get(AnalogInput::class.java, "encoder")
         motor.encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         controller.goal = KineticState(0.0)
         currentStatus = SpindexerStatus.TOP_0
@@ -109,7 +117,7 @@ object Spindexer : Subsystem {
     override fun periodic() {
         controller.goal = KineticState(currentStatus.angle.inRad + if(traveling) 30.deg.inRad else 0.0)
 
-        motor.power = controller.calculate(motor.state)
+        motor.power = controller.calculate(KineticState(((encoder.voltage -0.043)/3.1 * 360 + offset).deg.normalized.inRad))
 
     }
 

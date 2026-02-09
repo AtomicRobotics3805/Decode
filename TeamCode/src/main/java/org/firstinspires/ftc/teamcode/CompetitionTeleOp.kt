@@ -51,6 +51,8 @@ import org.firstinspires.ftc.teamcode.subsystems.LimeLight.matchMotif
 import org.firstinspires.ftc.teamcode.subsystems.PusherArm
 import org.firstinspires.ftc.teamcode.subsystems.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer
+import org.firstinspires.ftc.teamcode.subsystems.Spindexer.encoder
+import org.firstinspires.ftc.teamcode.subsystems.Spindexer.offset
 import org.firstinspires.ftc.teamcode.subsystems.Spindexer.ticksToAngle
 import java.util.function.Supplier
 import kotlin.math.abs
@@ -77,7 +79,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
         telemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
     }
 
-    val debugTelemetry = false
+    val debugTelemetry = true
 
 
 
@@ -355,11 +357,7 @@ class CompetitionTeleOp : NextFTCOpMode() {
 
             ActiveOpMode.telemetry.addData("Motif:", matchMotif.toString())
 
-            ActiveOpMode.telemetry.addData("Raw Encoder", Spindexer.motor.state.position)
-            ActiveOpMode.telemetry.addData(
-                "Angle",
-                ticksToAngle(Spindexer.motor.state.position).normalized.inDeg
-            )
+            ActiveOpMode.telemetry.addData("Angle", ((encoder.voltage -0.043)/3.1 * 360 + offset))
             ActiveOpMode.telemetry.addData(
                 "Spindexer goal",
                 Spindexer.controller.goal.position.rad.inDeg
