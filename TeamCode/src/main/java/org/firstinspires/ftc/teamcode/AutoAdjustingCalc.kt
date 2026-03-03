@@ -34,7 +34,7 @@ object AutoAdjustingCalc {
             abs(LimeLight.ll.latestResult.fiducialResults[0].robotPoseTargetSpace.position.z.m.inIn)
         }
 
-        return (0.0303725*(distance*distance)) + (5.20557 * distance) + 1839.13148
+        return (0.0937119*(distance*distance)) + (-2.1386 * distance) + 2042.09419
     }
 
     fun calculateAimAngle(): Double {

@@ -197,7 +197,7 @@ object AutoRoutinesV2 {
                 SequentialGroupLocal(
                     Callbacks.waitFor(Callbacks.Callback.FIRST_PICKUP_COMPLETE),
                     FollowPath(TrajectoryFactory.spikeMark1ToDump, true),
-                    Delay(2.0),
+                    Delay(1.0),
                     FollowPath(TrajectoryFactory.firstDumpToScore, true)
                 )
             ),
@@ -206,7 +206,7 @@ object AutoRoutinesV2 {
                 SequentialGroupLocal(
                     Callbacks.waitFor(Callbacks.Callback.SECOND_PICKUP_COMPLETE),
                     FollowPath(TrajectoryFactory.spikeMark2ToDump, true),
-                    Delay(2.0),
+                    Delay(1.0),
                     FollowPath(TrajectoryFactory.secondDumpToScore, true)
                 )
             ),
